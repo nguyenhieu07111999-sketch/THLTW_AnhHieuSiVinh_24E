@@ -1,1 +1,1 @@
-test up pull new
+test up pull new 1
