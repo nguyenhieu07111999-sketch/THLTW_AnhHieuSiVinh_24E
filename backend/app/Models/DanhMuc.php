@@ -1,0 +1,25 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class DanhMuc extends Model
+{
+    protected $table = 'danh_muc';
+
+    const CREATED_AT = 'ngay_tao';
+    const UPDATED_AT = 'ngay_cap_nhat';
+
+    protected $fillable = [
+        'ten_danh_muc',
+        'duong_dan_dm',
+        'hinh_anh',
+        'mo_ta',
+        'sp_noi_bat',
+    ];
+
+    protected $casts = [
+        'sp_noi_bat' => 'boolean',
+    ];
+}
