@@ -4,99 +4,101 @@ namespace App\Http\Controllers;
 
 use App\Models\SanPham;
 use App\Http\Resources\SanPhamResource;
+use App\Http\Requests\StoreSanPhamRequest;
+use App\Http\Requests\UpdateSanPhamRequest;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
+use Illuminate\Support\Str;
 
 class SanPhamController extends Controller
 {
-    /**
-     * Lấy danh sách sản phẩm (có phân trang)
-     */
-    public function index()
+   
+    public function index(Request $request)
     {
-        $sanPhams = SanPham::latest('ngay_tao')->paginate(10);
+        $query = SanPham::query();
+
+        if ($request->filled('search')) {
+            $query->where('ten_san_pham', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->filled('danh_muc_id')) {
+            $query->where('danh_muc_id', $request->danh_muc_id);
+        }
+
+        $perPage = $request->get('per_page', 10);
+        $sanPhams = $query->latest('ngay_tao')->paginate($perPage);
+
         return SanPhamResource::collection($sanPhams);
     }
 
-    /**
-     * Thêm mới sản phẩm
-     */
-    public function store(Request $request)
+    public function store(StoreSanPhamRequest $request)
     {
-        $validated = $request->validate([
-            'danh_muc_id' => 'required|integer',
-            'thuong_hieu_id' => 'nullable|integer',
-            'ten_san_pham' => 'required|string|max:255',
-            'duong_dan_sp' => 'required|string|max:255|unique:san_pham,duong_dan_sp',
-            'hinh_anh' => 'nullable|string|max:255',
-            'gia_ban' => 'required|numeric|min:0',
-            'gia_giam' => 'nullable|numeric|min:0',
-            'so_luong_ton_kho' => 'required|integer|min:0',
-            'don_vi_tinh' => 'nullable|string|max:50',
-            'mo_ta_ngan' => 'nullable|string',
-            'chi_tiet' => 'nullable|string',
-            'trang_thai' => ['nullable', Rule::in(['hien_thi', 'an'])],
-        ]);
+        $validated = $request->validated();
+
+        if (empty($validated['duong_dan_sp'])) {
+            $validated['duong_dan_sp'] = Str::slug($validated['ten_san_pham']) . '-' . time();
+        }
 
         $sanPham = SanPham::create($validated);
 
         return (new SanPhamResource($sanPham))
+            ->additional(['message' => 'Thêm sản phẩm thành công!'])
             ->response()
             ->setStatusCode(201);
     }
 
-    /**
-     * Lấy thông tin chi tiết một sản phẩm
-     */
     public function show($id)
     {
         $sanPham = SanPham::findOrFail($id);
         return new SanPhamResource($sanPham);
     }
 
-    /**
-     * Cập nhật thông tin sản phẩm
-     */
-    public function update(Request $request, $id)
+    public function update(UpdateSanPhamRequest $request, $id)
     {
         $sanPham = SanPham::findOrFail($id);
+        $validated = $request->validated();
 
-        $validated = $request->validate([
-            'danh_muc_id' => 'sometimes|required|integer',
-            'thuong_hieu_id' => 'nullable|integer',
-            'ten_san_pham' => 'sometimes|required|string|max:255',
-            'duong_dan_sp' => [
-                'sometimes',
-                'required',
-                'string',
-                'max:255',
-                Rule::unique('san_pham', 'duong_dan_sp')->ignore($sanPham->id)
-            ],
-            'hinh_anh' => 'nullable|string|max:255',
-            'gia_ban' => 'sometimes|required|numeric|min:0',
-            'gia_giam' => 'nullable|numeric|min:0',
-            'so_luong_ton_kho' => 'sometimes|required|integer|min:0',
-            'don_vi_tinh' => 'nullable|string|max:50',
-            'mo_ta_ngan' => 'nullable|string',
-            'chi_tiet' => 'nullable|string',
-            'trang_thai' => ['nullable', Rule::in(['hien_thi', 'an'])],
-        ]);
+        if (isset($validated['ten_san_pham']) && empty($validated['duong_dan_sp'])) {
+            $validated['duong_dan_sp'] = Str::slug($validated['ten_san_pham']) . '-' . $sanPham->id;
+        }
 
         $sanPham->update($validated);
 
-        return new SanPhamResource($sanPham);
+        return (new SanPhamResource($sanPham))
+            ->additional(['message' => 'Cập nhật sản phẩm thành công!']);
     }
 
-    /**
-     * Xóa sản phẩm
-     */
     public function destroy($id)
     {
         $sanPham = SanPham::findOrFail($id);
         $sanPham->delete();
 
         return response()->json([
-            'message' => 'Xóa sản phẩm thành công'
+            'message' => 'Đã chuyển sản phẩm vào thùng rác!'
+        ], 200);
+    }
+
+    public function trashed()
+    {
+        $sanPhams = SanPham::onlyTrashed()->latest('ngay_xoa')->paginate(10);
+        return SanPhamResource::collection($sanPhams);
+    }
+
+    public function restore($id)
+    {
+        $sanPham = SanPham::onlyTrashed()->findOrFail($id);
+        $sanPham->restore();
+
+        return (new SanPhamResource($sanPham))
+            ->additional(['message' => 'Khôi phục sản phẩm thành công!']);
+    }
+
+    public function forceDelete($id)
+    {
+        $sanPham = SanPham::onlyTrashed()->findOrFail($id);
+        $sanPham->forceDelete();
+
+        return response()->json([
+            'message' => 'Đã xóa vĩnh viễn sản phẩm khỏi hệ thống!'
         ], 200);
     }
 }
