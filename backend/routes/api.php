@@ -1,4 +1,6 @@
 <?php
+
+use App\Http\Controllers\DanhMucController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SanPhamController;
@@ -12,7 +14,11 @@ Route::get('/ping', function () {
     return response()->json(['message' => 'API is working!']);
 });
 
-//Sp
+
+
+Route::apiResource('danh-muc', DanhMucController::class);
+
+
 Route::prefix('san-pham')->group(function () {
     Route::get('/thung-rac', [SanPhamController::class, 'trashed']);
     Route::post('/{id}/khoi-phuc', [SanPhamController::class, 'restore']);
