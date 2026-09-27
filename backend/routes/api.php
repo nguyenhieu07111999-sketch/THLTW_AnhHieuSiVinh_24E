@@ -13,7 +13,27 @@ Route::get('/ping', function () {
 });
 
 //Sp
-Route::get('/san-pham', [SanPhamController::class, 'index']);
+Route::prefix('san-pham')->group(function () {
+    Route::get('/thung-rac', [SanPhamController::class, 'trashed']);
+    Route::post('/{id}/khoi-phuc', [SanPhamController::class, 'restore']);
+    Route::delete('/{id}/xoa-vinh-vien', [SanPhamController::class, 'forceDelete']);
+
+    Route::get('/', [SanPhamController::class, 'index']);          
+    Route::post('/', [SanPhamController::class, 'store']);         
+    Route::get('/{id}', [SanPhamController::class, 'show']);      
+    Route::put('/{id}', [SanPhamController::class, 'update']);     
+    Route::delete('/{id}', [SanPhamController::class, 'destroy']);  
+});
 
 //Thương hiệu
-Route::get('/thuong-hieu', [ThuongHieuController::class, 'index']);
+Route::prefix('thuong-hieu')->group(function () {
+    Route::get('/thung-rac', [ThuongHieuController::class, 'trashed']);
+    Route::post('/{id}/khoi-phuc', [ThuongHieuController::class, 'restore']);
+    Route::delete('/{id}/xoa-vinh-vien', [ThuongHieuController::class, 'forceDelete']);
+
+    Route::get('/', [ThuongHieuController::class, 'index']);          
+    Route::post('/', [ThuongHieuController::class, 'store']);         
+    Route::get('/{id}', [ThuongHieuController::class, 'show']);       
+    Route::put('/{id}', [ThuongHieuController::class, 'update']);     
+    Route::delete('/{id}', [ThuongHieuController::class, 'destroy']);  
+});
