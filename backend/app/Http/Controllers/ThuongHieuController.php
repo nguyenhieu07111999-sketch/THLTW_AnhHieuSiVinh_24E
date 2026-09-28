@@ -14,15 +14,11 @@ class ThuongHieuController extends Controller
    
     public function index(Request $request)
     {
-        $query = ThuongHieu::query();
-
-        if ($request->filled('search')) {
-            $query->where('ten_thuong_hieu', 'like', '%' . $request->search . '%');
-        }
-
-        $perPage = $request->get('per_page', 10);
-        $thuongHieus = $query->latest('ngay_tao')->paginate($perPage);
-        
+        $thuongHieus = ThuongHieu::query()
+            ->hienThi() 
+            ->timKiem($request->input('search'))
+            ->sapXep($request->input('sort', 'moi_nhat'))
+            ->paginate($request->get('per_page', 10));
 
         return ThuongHieuResource::collection($thuongHieus);
     }
