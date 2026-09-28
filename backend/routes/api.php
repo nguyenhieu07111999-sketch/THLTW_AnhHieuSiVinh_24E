@@ -20,6 +20,11 @@ Route::post('/dang-ky', [AuthController::class, 'register']);
 Route::post('/dang-nhap', [AuthController::class, 'login']);
 Route::post('/admin/dang-nhap', [AuthController::class, 'adminLogin']);
 
+// Đăng xuất (admin và người dùng đều dùng được)
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/dang-xuat', [AuthController::class, 'logout']);
+});
+
 // ===== CÔNG KHAI: chỉ xem =====
 Route::apiResource('danh-muc', DanhMucController::class)->only(['index', 'show']);
 
