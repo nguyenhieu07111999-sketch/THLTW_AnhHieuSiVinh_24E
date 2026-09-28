@@ -22,6 +22,7 @@ class ThuongHieuController extends Controller
 
         $perPage = $request->get('per_page', 10);
         $thuongHieus = $query->latest('ngay_tao')->paginate($perPage);
+        
 
         return ThuongHieuResource::collection($thuongHieus);
     }
