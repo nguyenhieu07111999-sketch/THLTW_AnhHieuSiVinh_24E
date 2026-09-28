@@ -1,10 +1,11 @@
 <?php
 
-use App\Http\Controllers\DanhMucController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DanhMucController;
 use App\Http\Controllers\SanPhamController;
 use App\Http\Controllers\ThuongHieuController;
+use App\Http\Controllers\AuthController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -14,7 +15,8 @@ Route::get('/ping', function () {
     return response()->json(['message' => 'API is working!']);
 });
 
-
+Route::post('/dang-ky', [AuthController::class, 'register']);
+Route::post('/dang-nhap', [AuthController::class, 'login']);
 
 Route::apiResource('danh-muc', DanhMucController::class);
 
