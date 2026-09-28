@@ -46,4 +46,101 @@ class SanPham extends Model
     {
         return $this->belongsTo(ThuongHieu::class, 'thuong_hieu_id');
     }
+
+    // ==================== LOCAL SCOPES ====================
+
+    /**
+     * 1. Lọc sản phẩm đang hiển thị/kích hoạt (Dùng cho Client)
+     */
+    public function scopeHienThi($query)
+    {
+        return $query->where('trang_thai', 'hien_thi'); // Hoặc 'hoat_dong' tùy enum/string trong CSDL của bạn
+    }
+
+    /**
+     * 2. Lọc sản phẩm còn hàng trong kho
+     */
+    public function scopeConHang($query)
+    {
+        return $query->where('so_luong_ton_kho', '>', 0);
+    }
+
+    /**
+     * 3. Lọc sản phẩm đang có chương trình giảm giá/khuyến mãi
+     */
+    public function scopeDangGiamGia($query)
+    {
+        return $query->whereNotNull('gia_giam')
+                     ->where('gia_giam', '>', 0)
+                     ->whereColumn('gia_giam', '<', 'gia_ban');
+    }
+
+    /**
+     * 4. Tìm kiếm sản phẩm theo tên hoặc mã
+     */
+    public function scopeTimKiem($query, $keyword)
+    {
+        if ($keyword) {
+            return $query->where('ten_san_pham', 'LIKE', "%{$keyword}%");
+        }
+        return $query;
+    }
+
+    /**
+     * 5. Lọc sản phẩm theo danh mục và thương hiệu
+     */
+    public function scopeTheoDanhMuc($query, $danhMucId)
+    {
+        if ($danhMucId) {
+            return $query->where('danh_muc_id', $danhMucId);
+        }
+        return $query;
+    }
+
+    public function scopeTheoThuongHieu($query, $thuongHieuId)
+    {
+        if ($thuongHieuId) {
+            return $query->where('thuong_hieu_id', $thuongHieuId);
+        }
+        return $query;
+    }
+
+    /**
+     * 6. Lọc theo khoảng giá (Lấy theo giá giảm nếu có, ngược lại lấy giá bán)
+     */
+    public function scopeTheoKhoangGia($query, $min = null, $max = null)
+    {
+        if ($min !== null) {
+            $query->where(function ($q) use ($min) {
+                $q->where('gia_giam', '>=', $min)
+                  ->orWhere(function ($sub) use ($min) {
+                      $sub->whereNull('gia_giam')->where('gia_ban', '>=', $min);
+                  });
+            });
+        }
+
+        if ($max !== null) {
+            $query->where(function ($q) use ($max) {
+                $q->where('gia_giam', '<=', $max)
+                  ->orWhere(function ($sub) use ($max) {
+                      $sub->whereNull('gia_giam')->where('gia_ban', '<=', $max);
+                  });
+            });
+        }
+
+        return $query;
+    }
+
+    /**
+     * 7. Sắp xếp sản phẩm (Mới nhất, giá tăng/giảm)
+     */
+    public function scopeSapXep($query, $sortBy = 'moi_nhat')
+    {
+        return match ($sortBy) {
+            'gia_tang' => $query->orderBy('gia_ban', 'asc'),
+            'gia_giam' => $query->orderBy('gia_ban', 'desc'),
+            'oldest'   => $query->orderBy('ngay_tao', 'asc'),
+            default    => $query->orderBy('ngay_tao', 'desc'),
+        };
+    }
 }

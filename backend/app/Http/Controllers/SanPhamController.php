@@ -14,18 +14,14 @@ class SanPhamController extends Controller
    
     public function index(Request $request)
     {
-        $query = SanPham::query();
-
-        if ($request->filled('search')) {
-            $query->where('ten_san_pham', 'like', '%' . $request->search . '%');
-        }
-
-        if ($request->filled('danh_muc_id')) {
-            $query->where('danh_muc_id', $request->danh_muc_id);
-        }
-
-        $perPage = $request->get('per_page', 10);
-        $sanPhams = $query->latest('ngay_tao')->paginate($perPage);
+        $sanPhams = SanPham::query()
+            ->hienThi()
+            ->timKiem($request->input('search'))
+            ->theoDanhMuc($request->input('danh_muc_id'))
+            ->theoThuongHieu($request->input('thuong_hieu_id'))
+            ->theoKhoangGia($request->input('gia_min'), $request->input('gia_max'))
+            ->sapXep($request->input('sort', 'moi_nhat'))
+            ->paginate($request->get('per_page', 10));
 
         return SanPhamResource::collection($sanPhams);
     }

@@ -35,4 +35,46 @@ class ThuongHieu extends Model
     {
         return $this->hasMany(SanPham::class, 'thuong_hieu_id');
     }
+
+    // ==================== LOCAL SCOPES ====================
+
+    /**
+     * 1. Lọc thương hiệu đang hiển thị/hoạt động (Dùng cho Client)
+     */
+    public function scopeHienThi($query)
+    {
+        return $query->where('trang_thai', 'hien_thi'); // Hoặc 'hoat_dong' tùy giá trị enum/string trong CSDL
+    }
+
+    /**
+     * 2. Tìm kiếm thương hiệu theo tên
+     */
+    public function scopeTimKiem($query, $keyword)
+    {
+        if (!empty($keyword)) {
+            return $query->where('ten_thuong_hieu', 'LIKE', "%{$keyword}%");
+        }
+        return $query;
+    }
+
+    /**
+     * 3. Lọc các thương hiệu đang có sản phẩm (Dành cho trang lọc sản phẩm)
+     */
+    public function scopeCoSanPham($query)
+    {
+        return $query->has('sanPhams');
+    }
+
+    /**
+     * 4. Sắp xếp thương hiệu (Mới nhất, tên A-Z hoặc Z-A)
+     */
+    public function scopeSapXep($query, $sortBy = 'moi_nhat')
+    {
+        return match ($sortBy) {
+            'ten_az'  => $query->orderBy('ten_thuong_hieu', 'asc'),
+            'ten_za'  => $query->orderBy('ten_thuong_hieu', 'desc'),
+            'cu_nhat' => $query->orderBy('ngay_tao', 'asc'),
+            default   => $query->orderBy('ngay_tao', 'desc'),
+        };
+    }
 }
