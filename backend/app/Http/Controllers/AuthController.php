@@ -6,6 +6,7 @@ use App\Http\Requests\RegisterNguoiDungRequest;
 use App\Http\Requests\LoginNguoiDungRequest;
 use App\Http\Resources\TaiKhoanNguoiDungResource;
 use App\Models\TaiKhoanNguoiDung;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
@@ -58,5 +59,14 @@ class AuthController extends Controller
                 'access_token' => $token,
                 'token_type'   => 'Bearer',
             ]);
+    }
+
+    public function logout(Request $request)
+    {
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json([
+            'message' => 'Đăng xuất thành công!'
+        ], 200);
     }
 }
