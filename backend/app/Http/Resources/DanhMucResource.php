@@ -11,6 +11,7 @@ class DanhMucResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'parent_id' => $this->parent_id,
             'ten_danh_muc' => $this->ten_danh_muc,
             'duong_dan_dm' => $this->duong_dan_dm,
             'hinh_anh' => $this->hinh_anh,
@@ -18,6 +19,8 @@ class DanhMucResource extends JsonResource
             'sp_noi_bat' => $this->sp_noi_bat,
             'ngay_tao' => $this->ngay_tao,
             'ngay_cap_nhat' => $this->ngay_cap_nhat,
+            'children' => DanhMucResource::collection($this->whenLoaded('children')),
+            'parent' => new DanhMucResource($this->whenLoaded('parent')),
         ];
     }
 }
