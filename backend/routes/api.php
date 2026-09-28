@@ -18,6 +18,10 @@ Route::get('/ping', function () {
 Route::post('/dang-ky', [AuthController::class, 'register']);
 Route::post('/dang-nhap', [AuthController::class, 'login']);
 
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/dang-xuat', [AuthController::class, 'logout']);
+});
+
 Route::apiResource('danh-muc', DanhMucController::class);
 
 
