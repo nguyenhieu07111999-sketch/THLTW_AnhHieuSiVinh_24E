@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreDanhMucRequest extends FormRequest
 {
@@ -14,6 +15,12 @@ class StoreDanhMucRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'parent_id' => [
+                'nullable',
+                'integer',
+                // Cha phải tồn tại và phải là danh mục cấp 1 (không có cha)
+                Rule::exists('danh_muc', 'id')->whereNull('parent_id'),
+            ],
             'ten_danh_muc' => 'required|string|max:255',
             'duong_dan_dm' => 'nullable|string|max:255|unique:danh_muc,duong_dan_dm',
             'hinh_anh' => 'nullable|string|max:255',
@@ -27,6 +34,7 @@ class StoreDanhMucRequest extends FormRequest
         return [
             'ten_danh_muc.required' => 'Tên danh mục là bắt buộc',
             'duong_dan_dm.unique' => 'Đường dẫn này đã tồn tại',
+            'parent_id.exists' => 'Danh mục cha không tồn tại hoặc không phải danh mục cấp 1',
         ];
     }
 }

@@ -12,6 +12,7 @@ class DanhMuc extends Model
     const UPDATED_AT = 'ngay_cap_nhat';
 
     protected $fillable = [
+        'parent_id',
         'ten_danh_muc',
         'duong_dan_dm',
         'hinh_anh',
@@ -22,4 +23,16 @@ class DanhMuc extends Model
     protected $casts = [
         'sp_noi_bat' => 'boolean',
     ];
+
+    // Danh mục cha
+    public function parent()
+    {
+        return $this->belongsTo(self::class, 'parent_id');
+    }
+
+    // Danh mục con
+    public function children()
+    {
+        return $this->hasMany(self::class, 'parent_id');
+    }
 }

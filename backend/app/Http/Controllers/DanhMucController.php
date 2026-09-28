@@ -13,20 +13,27 @@ use Illuminate\Support\Str;
 
 class DanhMucController extends Controller
 {
-    // GET /api/danh-muc?per_page=10&page=1
+    // GET /api/danh-muc?per_page=10&page=1        -> danh mục cha (kèm children)
+    // GET /api/danh-muc?parent_id=2               -> các danh mục con của id=2
     public function index(Request $request): AnonymousResourceCollection
     {
         $perPage = $request->input('per_page', 10);
 
-        $danhMucs = DanhMuc::orderBy('ngay_tao', 'desc')->paginate($perPage);
+        $query = DanhMuc::with('children')->orderBy('ngay_tao', 'desc');
 
-        return DanhMucResource::collection($danhMucs);
+        if ($request->filled('parent_id')) {
+            $query->where('parent_id', $request->input('parent_id'));
+        } else {
+            $query->whereNull('parent_id');
+        }
+
+        return DanhMucResource::collection($query->paginate($perPage));
     }
 
     // GET /api/danh-muc/{id}
     public function show($id): JsonResponse
     {
-        $danhMuc = DanhMuc::find($id);
+        $danhMuc = DanhMuc::with(['children', 'parent'])->find($id);
 
         if (!$danhMuc) {
             return response()->json(['success' => false, 'message' => 'Không tìm thấy danh mục'], 404);
@@ -80,6 +87,14 @@ class DanhMucController extends Controller
 
         if (!$danhMuc) {
             return response()->json(['success' => false, 'message' => 'Không tìm thấy danh mục'], 404);
+        }
+
+        // Không cho xoá danh mục cha khi còn danh mục con
+        if ($danhMuc->children()->exists()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không thể xoá: danh mục còn danh mục con',
+            ], 409);
         }
 
         $danhMuc->delete();
