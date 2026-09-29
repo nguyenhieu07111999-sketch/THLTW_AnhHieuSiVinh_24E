@@ -67,6 +67,34 @@ export default function TrangChu() {
     { id: 12, ten: 'Khoai Lang Mật Da Lạt', gia: '35.000đ', daBan: '850', icon: '🍠' },
   ];
 
+  // 3. Danh sách tin tức / bài viết mới nhất
+  const tinTucMoitNhat = [
+    {
+      id: 1,
+      tieuDe: 'Mẹo Chọn Rau Củ Tươi Sạch Không Bị Tồn Thuốc Bảy Ngày',
+      tomTat: 'Bật mí cách phân biệt rau củ hữu cơ chuẩn VietGAP và rau củ thông thường cực kỳ đơn giản...',
+      ngayDang: '28/09/2026',
+      danhMuc: 'Mẹo Hay',
+      icon: '💡',
+    },
+    {
+      id: 2,
+      tieuDe: 'Cách Bảo Quản Dâu Tây Đà Lạt Tươi Lâu Trong Tủ Lạnh',
+      tomTat: 'Giữ dâu tây luôn mọng nước, không bị dập hay mốc trong cả tuần với các bước bảo quản chuẩn chuyên gia...',
+      ngayDang: '25/09/2026',
+      danhMuc: 'Cẩm Nang',
+      icon: '🍓',
+    },
+    {
+      id: 3,
+      tieuDe: 'Thực Đơn 7 Ngày Detox Cơ Thể Bằng Nước Ép Tươi',
+      tomTat: 'Gợi ý các công thức nước ép kết hợp từ táo, bơ, cà rốt giúp thanh lọc cơ thể và đẹp da tự nhiên...',
+      ngayDang: '20/09/2026',
+      danhMuc: 'Sức Khỏe',
+      icon: '🍹',
+    },
+  ];
+
   return (
     <div className="space-y-12 pb-12">
       {/* 1. SLIDER BANNER QUẢNG CÁO TỰ ĐỘNG CHUYỂN */}
@@ -94,7 +122,7 @@ export default function TrangChu() {
           ))}
         </div>
 
-        {/* Nút chỉ số chuyển Banner (Dots) */}
+        {/* Dots điều hướng Banner */}
         <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">
           {banners.map((_, index) => (
             <button
@@ -126,11 +154,9 @@ export default function TrangChu() {
               onClick={() => router.push(`/danh-muc/${sp.id}`)}
               className="relative bg-white rounded-2xl p-4 border border-rose-100 shadow-sm hover:shadow-md transition-all cursor-pointer group"
             >
-              {/* Tag Giảm giá */}
               <span className="absolute top-3 left-3 bg-rose-500 text-white text-xs font-bold px-2 py-1 rounded-lg z-10">
                 -{sp.giamGia}
               </span>
-
               <div className="h-40 bg-rose-50/50 rounded-xl mb-3 flex items-center justify-center text-5xl group-hover:scale-105 transition-transform">
                 {sp.icon}
               </div>
@@ -225,6 +251,48 @@ export default function TrangChu() {
               >
                 Thêm vào giỏ
               </button>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 5. TIN TỨC & KINH NGHIỆM NÔNG SẢN */}
+      <section className="max-w-7xl mx-auto px-4">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
+            <span>📰</span> Tin Tức & Kinh Nghiệm
+          </h2>
+          <Link href="/bai-viet" className="text-sm font-semibold text-emerald-700 hover:underline">
+            Xem tất cả bài viết &rarr;
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {tinTucMoitNhat.map((baiViet) => (
+            <div
+              key={baiViet.id}
+              onClick={() => router.push(`/bai-viet/${baiViet.id}`)}
+              className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col justify-between group"
+            >
+              <div>
+                <div className="h-44 bg-slate-100 rounded-xl mb-4 flex items-center justify-center text-6xl group-hover:scale-105 transition-transform">
+                  {baiViet.icon}
+                </div>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="bg-emerald-100 text-emerald-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                    {baiViet.danhMuc}
+                  </span>
+                  <span className="text-xs text-gray-400">{baiViet.ngayDang}</span>
+                </div>
+                <h3 className="font-bold text-gray-800 text-base mb-2 group-hover:text-emerald-700 transition-colors line-clamp-2">
+                  {baiViet.tieuDe}
+                </h3>
+                <p className="text-gray-600 text-xs line-clamp-3 mb-4">{baiViet.tomTat}</p>
+              </div>
+
+              <span className="text-xs font-bold text-emerald-600 group-hover:translate-x-1 transition-transform inline-flex items-center gap-1">
+                Đọc tiếp &rarr;
+              </span>
             </div>
           ))}
         </div>
