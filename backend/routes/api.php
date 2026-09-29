@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DanhMucController;
 use App\Http\Controllers\SanPhamController;
 use App\Http\Controllers\ThuongHieuController;
+use App\Http\Controllers\GioHangController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -20,12 +21,18 @@ Route::post('/dang-ky', [AuthController::class, 'register']);
 Route::post('/dang-nhap', [AuthController::class, 'login']);
 Route::post('/admin/dang-nhap', [AuthController::class, 'adminLogin']);
 
-// Đăng xuất (admin và người dùng đều dùng được)
+// Đăng xuất 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/dang-xuat', [AuthController::class, 'logout']);
+
+    Route::prefix('gio-hang')->group(function () {
+        Route::get('/', [GioHangController::class, 'index']);
+        Route::post('/', [GioHangController::class, 'store']);
+        Route::put('/{id}', [GioHangController::class, 'update']);
+        Route::delete('/{id}', [GioHangController::class, 'destroy']);
+    });
 });
 
-// ===== CÔNG KHAI: chỉ xem =====
 Route::apiResource('danh-muc', DanhMucController::class)->only(['index', 'show']);
 
 Route::get('/san-pham', [SanPhamController::class, 'index']);
@@ -34,7 +41,6 @@ Route::get('/san-pham/{id}', [SanPhamController::class, 'show'])->whereNumber('i
 Route::get('/thuong-hieu', [ThuongHieuController::class, 'index']);
 Route::get('/thuong-hieu/{id}', [ThuongHieuController::class, 'show'])->whereNumber('id');
 
-// ===== CHỈ ADMIN (có token): thêm, sửa, xóa =====
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {
 
     Route::apiResource('danh-muc', DanhMucController::class)->except(['index', 'show']);
@@ -58,4 +64,5 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
         Route::put('/{id}', [ThuongHieuController::class, 'update']);
         Route::delete('/{id}', [ThuongHieuController::class, 'destroy']);
     });
+
 });
