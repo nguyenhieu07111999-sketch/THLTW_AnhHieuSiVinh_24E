@@ -54,7 +54,7 @@ class SanPham extends Model
      */
     public function scopeHienThi($query)
     {
-        return $query->where('trang_thai', 'hien_thi'); // Hoặc 'hoat_dong' tùy enum/string trong CSDL của bạn
+        return $query->where('trang_thai', 'hien_thi'); 
     }
 
     /**
