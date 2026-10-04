@@ -1,6 +1,14 @@
+'use client';
+
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 export default function ChanTrang() {
+  const pathname = usePathname();
+
+  // Trang quản trị có giao diện riêng, ẩn footer của cửa hàng
+  if (pathname?.startsWith('/admin')) return null;
+
   return (
     <footer className="bg-emerald-900 text-white mt-16 border-t border-emerald-800">
       <div className="max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-3 gap-8">
