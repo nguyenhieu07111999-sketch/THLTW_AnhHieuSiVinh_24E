@@ -2,11 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 
 export default function ThanhDieuHuong() {
   const router = useRouter();
-  // Khởi tạo state trực tiếp từ localStorage bằng Lazy Initialization (không gây re-render dư thừa)
+  const pathname = usePathname();
+
   const [user, setUser] = useState(() => {
     if (typeof window !== 'undefined') {
       const userInfo = localStorage.getItem('user_info');
@@ -35,12 +36,10 @@ export default function ThanhDieuHuong() {
       }
     };
 
-    // Lắng nghe sự thay đổi của LocalStorage giữa các tab/sự kiện đăng nhập
     window.addEventListener('storage', handleStorageChange);
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
-  // Hàm Đăng xuất
   const handleLogout = () => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('user_info');
@@ -48,6 +47,9 @@ export default function ThanhDieuHuong() {
     alert('Đã đăng xuất tài khoản!');
     router.push('/dang-nhap');
   };
+
+  // Trang quản trị có thanh điều hướng riêng, ẩn header của cửa hàng
+  if (pathname?.startsWith('/admin')) return null;
 
   return (
     <header className="bg-white border-b border-emerald-100 sticky top-0 z-50 shadow-sm">
@@ -81,8 +83,8 @@ export default function ThanhDieuHuong() {
               </button>
             </div>
           ) : (
-            <Link 
-              href="/dang-nhap" 
+            <Link
+              href="/dang-nhap"
               className="text-sm font-semibold text-emerald-700 hover:text-emerald-800 px-3 py-1.5 rounded-lg hover:bg-emerald-50 transition-colors"
             >
               Đăng nhập
