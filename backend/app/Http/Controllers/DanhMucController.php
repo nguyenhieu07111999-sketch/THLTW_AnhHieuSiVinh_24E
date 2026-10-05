@@ -6,10 +6,12 @@ use App\Http\Requests\StoreDanhMucRequest;
 use App\Http\Requests\UpdateDanhMucRequest;
 use App\Http\Resources\DanhMucResource;
 use App\Models\DanhMuc;
+use App\Models\SanPham;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class DanhMucController extends Controller
@@ -65,8 +67,8 @@ class DanhMucController extends Controller
     public function store(StoreDanhMucRequest $request): JsonResponse
     {
         $validated = $request->validated();
-        $validated['duong_dan_dm'] = $validated['duong_dan_dm']
-            ?? $this->taoSlugDuyNhat($validated['ten_danh_muc']);
+        $gocSlug = !empty($validated['duong_dan_dm']) ? $validated['duong_dan_dm'] : $validated['ten_danh_muc'];
+        $validated['duong_dan_dm'] = $this->taoSlugDuyNhat($gocSlug);
 
         if (!Schema::hasColumn('danh_muc', 'parent_id')) {
             unset($validated['parent_id']);
@@ -91,8 +93,10 @@ class DanhMucController extends Controller
         }
 
         $validated = $request->validated();
-        $validated['duong_dan_dm'] = $validated['duong_dan_dm']
-            ?? $this->taoSlugDuyNhat($validated['ten_danh_muc'], $danhMuc->id);
+        if (isset($validated['ten_danh_muc'])) {
+            $gocSlug = !empty($validated['duong_dan_dm']) ? $validated['duong_dan_dm'] : $validated['ten_danh_muc'];
+            $validated['duong_dan_dm'] = $this->taoSlugDuyNhat($gocSlug, $danhMuc->id);
+        }
 
         if (!Schema::hasColumn('danh_muc', 'parent_id')) {
             unset($validated['parent_id']);
@@ -116,17 +120,116 @@ class DanhMucController extends Controller
             return response()->json(['success' => false, 'message' => 'Không tìm thấy danh mục'], 404);
         }
 
-        // Không cho xoá danh mục cha khi còn danh mục con (nếu bảng có parent_id)
-        if (Schema::hasColumn('danh_muc', 'parent_id') && $danhMuc->children()->exists()) {
+        DB::transaction(function () use ($danhMuc) {
+            $this->chuyenDanhMucConVaoThungRac($danhMuc);
+            $danhMuc->delete();
+        });
+
+        return response()->json(['success' => true, 'message' => 'Đã chuyển danh mục vào thùng rác']);
+    }
+
+    // GET /api/danh-muc/thung-rac
+    public function trashed(Request $request): AnonymousResourceCollection
+    {
+        $perPage = min(max((int) $request->input('per_page', 10), 1), 200);
+
+        return DanhMucResource::collection(
+            DanhMuc::onlyTrashed()
+                ->with(['parent' => fn ($query) => $query->withTrashed()])
+                ->orderByDesc('deleted_at')
+                ->paginate($perPage)
+        );
+    }
+
+    // POST /api/danh-muc/{id}/khoi-phuc
+    public function restore($id): JsonResponse
+    {
+        $danhMuc = DanhMuc::withTrashed()->find($id);
+
+        if (!$danhMuc || !$danhMuc->trashed()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Không thể xoá: danh mục còn danh mục con',
+                'message' => 'Danh mục không còn trong thùng rác. Danh sách sẽ được tải lại.',
+            ], 404);
+        }
+
+        if ($danhMuc->parent_id) {
+            $danhMucCha = DanhMuc::withTrashed()->find($danhMuc->parent_id);
+            if ($danhMucCha && $danhMucCha->trashed()) {
+                $danhMucCha->restore();
+            }
+        }
+
+        DB::transaction(function () use ($danhMuc) {
+            $danhMuc->restore();
+            $this->khoiPhucDanhMucCon($danhMuc);
+        });
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Khôi phục danh mục thành công',
+            'data' => new DanhMucResource($danhMuc),
+        ]);
+    }
+
+    // DELETE /api/danh-muc/{id}/xoa-vinh-vien
+    public function forceDelete($id): JsonResponse
+    {
+        $danhMuc = DanhMuc::withTrashed()->find($id);
+
+        if (!$danhMuc || !$danhMuc->trashed()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Danh mục không còn trong thùng rác. Danh sách sẽ được tải lại.',
+            ], 404);
+        }
+
+        $idsDanhMucCon = $this->layIdDanhMucCon($danhMuc);
+        $idsCanXoa = [$danhMuc->id, ...$idsDanhMucCon];
+
+        if (SanPham::withTrashed()->whereIn('danh_muc_id', $idsCanXoa)->exists()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không thể xóa vĩnh viễn vì danh mục vẫn có sản phẩm liên kết. Hãy chuyển sản phẩm sang danh mục khác trước.',
             ], 409);
         }
 
-        $danhMuc->delete();
+        DB::transaction(function () use ($danhMuc, $idsDanhMucCon) {
+            DanhMuc::withTrashed()->whereIn('id', $idsDanhMucCon)->forceDelete();
+            $danhMuc->forceDelete();
+        });
 
-        return response()->json(['success' => true, 'message' => 'Xoá danh mục thành công']);
+        return response()->json([
+            'success' => true,
+            'message' => 'Đã xóa vĩnh viễn danh mục',
+        ]);
+    }
+
+    private function chuyenDanhMucConVaoThungRac(DanhMuc $danhMuc): void
+    {
+        foreach ($danhMuc->children()->get() as $danhMucCon) {
+            $this->chuyenDanhMucConVaoThungRac($danhMucCon);
+            $danhMucCon->delete();
+        }
+    }
+
+    private function khoiPhucDanhMucCon(DanhMuc $danhMuc): void
+    {
+        foreach ($danhMuc->children()->onlyTrashed()->get() as $danhMucCon) {
+            $danhMucCon->restore();
+            $this->khoiPhucDanhMucCon($danhMucCon);
+        }
+    }
+
+    private function layIdDanhMucCon(DanhMuc $danhMuc): array
+    {
+        $ids = [];
+        foreach ($danhMuc->children()->withTrashed()->get() as $danhMucCon) {
+            $ids[] = $danhMucCon->id;
+            $ids = [...$ids, ...$this->layIdDanhMucCon($danhMucCon)];
+        }
+
+        return $ids;
     }
 
     // Tạo slug không trùng: thit-sach, thit-sach-2, thit-sach-3...

@@ -33,7 +33,9 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 });
 
-Route::apiResource('danh-muc', DanhMucController::class)->only(['index', 'show']);
+Route::apiResource('danh-muc', DanhMucController::class)
+    ->only(['index', 'show'])
+    ->whereNumber('danh_muc');
 
 Route::get('/san-pham', [SanPhamController::class, 'index']);
 Route::get('/san-pham/{id}', [SanPhamController::class, 'show'])->whereNumber('id');
@@ -43,6 +45,9 @@ Route::get('/thuong-hieu/{id}', [ThuongHieuController::class, 'show'])->whereNum
 
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {
 
+    Route::get('/danh-muc/thung-rac', [DanhMucController::class, 'trashed']);
+    Route::post('/danh-muc/{id}/khoi-phuc', [DanhMucController::class, 'restore'])->whereNumber('id');
+    Route::delete('/danh-muc/{id}/xoa-vinh-vien', [DanhMucController::class, 'forceDelete'])->whereNumber('id');
     Route::apiResource('danh-muc', DanhMucController::class)->except(['index', 'show']);
 
     Route::prefix('san-pham')->group(function () {

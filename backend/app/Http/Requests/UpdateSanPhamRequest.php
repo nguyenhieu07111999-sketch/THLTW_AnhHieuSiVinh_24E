@@ -22,7 +22,7 @@ class UpdateSanPhamRequest extends FormRequest
             'thuong_hieu_id'    => 'nullable|integer',
             'ten_san_pham'     => 'sometimes|required|string|max:255',
             'duong_dan_sp'     => ['nullable', 'string', Rule::unique('san_pham', 'duong_dan_sp')->ignore($sanPhamId)],
-            'hinh_anh'         => 'nullable|string|max:255',
+            'hinh_anh'         => 'sometimes|nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
             'gia_ban'          => 'sometimes|required|numeric|min:0',
             'gia_giam'         => 'nullable|numeric|min:0',
             'so_luong_ton_kho' => 'sometimes|required|integer|min:0',

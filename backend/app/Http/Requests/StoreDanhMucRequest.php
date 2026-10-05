@@ -22,8 +22,8 @@ class StoreDanhMucRequest extends FormRequest
                 Rule::exists('danh_muc', 'id')->whereNull('parent_id'),
             ],
             'ten_danh_muc' => 'required|string|max:255',
-            'duong_dan_dm' => 'nullable|string|max:255|unique:danh_muc,duong_dan_dm',
-            'hinh_anh' => 'nullable|string|max:255',
+            'duong_dan_dm' => 'nullable|string|max:255',
+            'hinh_anh' => 'nullable|string',
             'mo_ta' => 'nullable|string',
             'sp_noi_bat' => 'nullable|boolean',
         ];
