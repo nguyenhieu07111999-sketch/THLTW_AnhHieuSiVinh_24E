@@ -25,7 +25,7 @@ export default function QuanLySanPhamPage() {
   // TRẠNG THÁI PHÂN TRANG CƠ BẢN
   // -------------------------------------------------------------
   const [trangHienTai, setTrangHienTai] = useState(1);
-  const soItemMoiTrang = 5; // Cố định hiển thị 10 sản phẩm mỗi trang
+  const soItemMoiTrang = 10;
 
   // Giá trị khởi tạo Form
   const giaTriFormMacDinh = {
@@ -57,7 +57,7 @@ export default function QuanLySanPhamPage() {
     }
   };
 
-  // useEffect tự kích hoạt lấy dữ liệu chuẩn React & an toàn
+  // useEffect lấy dữ liệu
   useEffect(() => {
     let isMounted = true;
 
@@ -104,9 +104,7 @@ export default function QuanLySanPhamPage() {
     };
   }, [dangXemThungRac]);
 
-  // -------------------------------------------------------------
-  // TÍNH TOÁN DỮ LIỆU CẮT MẢNG PHÂN TRANG
-  // -------------------------------------------------------------
+  // Cắt mảng phân trang
   const tongSoTrang = Math.ceil(danhSachSanPham.length / soItemMoiTrang) || 1;
   const indexBatDau = (trangHienTai - 1) * soItemMoiTrang;
   const indexKetThuc = indexBatDau + soItemMoiTrang;
@@ -309,7 +307,6 @@ export default function QuanLySanPhamPage() {
                   <td className="p-4 text-center relative">
                     {!dangXemThungRac ? (
                       <div className="flex justify-center items-center gap-1.5">
-                        {/* Xem chi tiết */}
                         <button
                           onClick={() => {
                             setSanPhamChiTiet(sp);
@@ -321,7 +318,6 @@ export default function QuanLySanPhamPage() {
                           👁
                         </button>
 
-                        {/* Sửa */}
                         <button
                           onClick={() => {
                             setIdDangSua(sp.id);
@@ -335,7 +331,6 @@ export default function QuanLySanPhamPage() {
                           ✏️
                         </button>
 
-                        {/* Xem ngoài trang bán hàng */}
                         <a
                           href={`/san-pham/${sp.duong_dan_sp || sp.id}`}
                           target="_blank"
@@ -346,7 +341,6 @@ export default function QuanLySanPhamPage() {
                           ↗️
                         </a>
 
-                        {/* Menu thả xuống */}
                         <div className="relative inline-block text-left">
                           <button
                             onClick={() =>
@@ -380,7 +374,6 @@ export default function QuanLySanPhamPage() {
                         </div>
                       </div>
                     ) : (
-                      /* Thao tác Thùng Rác */
                       <div className="flex justify-center gap-2">
                         <button
                           onClick={() => xuLyKhoiPhuc(sp.id)}
@@ -403,9 +396,7 @@ export default function QuanLySanPhamPage() {
           </tbody>
         </table>
 
-        {/* ------------------------------------------------------------- */}
-        {/* THANH PHÂN TRANG CƠ BẢN (PAGINATION FOOTER)                   */}
-        {/* ------------------------------------------------------------- */}
+        {/* Thanh Phân Trang */}
         {!dangTai && danhSachSanPham.length > 0 && (
           <div className="flex items-center justify-between p-4 border-t bg-gray-50 text-sm text-gray-600">
             <div>
@@ -413,7 +404,6 @@ export default function QuanLySanPhamPage() {
             </div>
 
             <div className="flex items-center gap-1">
-              {/* Nút Trước */}
               <button
                 onClick={() => setTrangHienTai((prev) => Math.max(prev - 1, 1))}
                 disabled={trangHienTai === 1}
@@ -422,7 +412,6 @@ export default function QuanLySanPhamPage() {
                 ‹ Trước
               </button>
 
-              {/* Các nút số trang */}
               {Array.from({ length: tongSoTrang }, (_, index) => {
                 const pageNum = index + 1;
                 return (
@@ -440,7 +429,6 @@ export default function QuanLySanPhamPage() {
                 );
               })}
 
-              {/* Nút Sau */}
               <button
                 onClick={() => setTrangHienTai((prev) => Math.min(prev + 1, tongSoTrang))}
                 disabled={trangHienTai === tongSoTrang}
@@ -453,7 +441,7 @@ export default function QuanLySanPhamPage() {
         )}
       </div>
 
-      {/* Form Modal Thêm / Sửa */}
+      {/* Modal Thêm / Sửa */}
       <FormSanPhamModal
         isModalOpen={moModal}
         setIsModalOpen={setMoModal}
