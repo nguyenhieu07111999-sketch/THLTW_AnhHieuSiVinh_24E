@@ -87,15 +87,15 @@ export default function FormDanhMucModal({
                 className="flex-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 border-gray-300"
               />
               {formData.hinh_anh && (
-                <div className="w-10 h-10 rounded-lg border overflow-hidden flex-shrink-0 bg-gray-50 flex items-center justify-center">
-                  <img
+                <div className="w-10 h-10 rounded-lg border overflow-hidden  bg-gray-50 flex items-center justify-center">
+                  {/* <img
                     src={formData.hinh_anh}
                     alt="Xem trước"
                     className="w-full h-full object-cover"
                     onError={(e) => {
                       e.target.style.display = 'none';
                     }}
-                  />
+                  /> */}
                 </div>
               )}
             </div>
