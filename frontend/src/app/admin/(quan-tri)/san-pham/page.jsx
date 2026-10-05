@@ -21,6 +21,12 @@ export default function QuanLySanPhamPage() {
   const [dangXemThungRac, setDangXemThungRac] = useState(false);
   const [openDropdownId, setOpenDropdownId] = useState(null);
 
+  // -------------------------------------------------------------
+  // TRẠNG THÁI PHÂN TRANG CƠ BẢN
+  // -------------------------------------------------------------
+  const [trangHienTai, setTrangHienTai] = useState(1);
+  const soItemMoiTrang = 5; // Cố định hiển thị 10 sản phẩm mỗi trang
+
   // Giá trị khởi tạo Form
   const giaTriFormMacDinh = {
     danh_muc_id: '',
@@ -45,7 +51,7 @@ export default function QuanLySanPhamPage() {
       const res = dangXemThungRac
         ? await dichVuSanPham.layThungRac()
         : await dichVuSanPham.layDanhSach();
-      setDanhSachSanPham(res.data.data || res.data);
+      setDanhSachSanPham(res.data.data || res.data || []);
     } catch (err) {
       console.error('Lỗi khi tải danh sách sản phẩm:', err);
     }
@@ -63,16 +69,16 @@ export default function QuanLySanPhamPage() {
         const resSP = dangXemThungRac
           ? await dichVuSanPham.layThungRac()
           : await dichVuSanPham.layDanhSach();
-        if (isMounted) setDanhSachSanPham(resSP.data.data || resSP.data);
+        if (isMounted) setDanhSachSanPham(resSP.data.data || resSP.data || []);
       } catch (err) {
         console.error('Lỗi khi tải sản phẩm:', err);
       }
 
-      // 2. Tải danh mục (Bọc try-catch riêng để tránh lỗi 500 khi partner chưa làm xong)
+      // 2. Tải danh mục
       if (dichVuSanPham.layDanhMuc) {
         try {
           const resDM = await dichVuSanPham.layDanhMuc();
-          if (isMounted) setDanhSachDanhMuc(resDM.data.data || resDM.data);
+          if (isMounted) setDanhSachDanhMuc(resDM.data.data || resDM.data || []);
         } catch (err) {
           console.warn('API Danh mục chưa sẵn sàng:', err);
         }
@@ -82,7 +88,7 @@ export default function QuanLySanPhamPage() {
       if (dichVuSanPham.layThuongHieu) {
         try {
           const resTH = await dichVuSanPham.layThuongHieu();
-          if (isMounted) setDanhSachThuongHieu(resTH.data.data || resTH.data);
+          if (isMounted) setDanhSachThuongHieu(resTH.data.data || resTH.data || []);
         } catch (err) {
           console.warn('API Thương hiệu chưa sẵn sàng:', err);
         }
@@ -97,6 +103,14 @@ export default function QuanLySanPhamPage() {
       isMounted = false;
     };
   }, [dangXemThungRac]);
+
+  // -------------------------------------------------------------
+  // TÍNH TOÁN DỮ LIỆU CẮT MẢNG PHÂN TRANG
+  // -------------------------------------------------------------
+  const tongSoTrang = Math.ceil(danhSachSanPham.length / soItemMoiTrang) || 1;
+  const indexBatDau = (trangHienTai - 1) * soItemMoiTrang;
+  const indexKetThuc = indexBatDau + soItemMoiTrang;
+  const danhSachHienThi = danhSachSanPham.slice(indexBatDau, indexKetThuc);
 
   // Xử lý Thêm mới / Cập nhật sản phẩm
   const xuLyGuiForm = async (e) => {
@@ -195,7 +209,10 @@ export default function QuanLySanPhamPage() {
         </div>
         <div className="flex gap-2">
           <button
-            onClick={() => setDangXemThungRac(!dangXemThungRac)}
+            onClick={() => {
+              setTrangHienTai(1);
+              setDangXemThungRac(!dangXemThungRac);
+            }}
             className={`px-4 py-2 text-sm font-medium rounded-lg border transition ${
               dangXemThungRac
                 ? 'bg-amber-100 border-amber-300 text-amber-800'
@@ -240,14 +257,14 @@ export default function QuanLySanPhamPage() {
                   Đang tải dữ liệu...
                 </td>
               </tr>
-            ) : danhSachSanPham.length === 0 ? (
+            ) : danhSachHienThi.length === 0 ? (
               <tr>
                 <td colSpan="7" className="text-center p-8 text-gray-500">
                   Không có sản phẩm nào.
                 </td>
               </tr>
             ) : (
-              danhSachSanPham.map((sp) => (
+              danhSachHienThi.map((sp) => (
                 <tr key={sp.id} className="hover:bg-gray-50 transition">
                   <td className="p-4 font-mono text-gray-500">#{sp.id}</td>
                   <td className="p-4">
@@ -385,6 +402,55 @@ export default function QuanLySanPhamPage() {
             )}
           </tbody>
         </table>
+
+        {/* ------------------------------------------------------------- */}
+        {/* THANH PHÂN TRANG CƠ BẢN (PAGINATION FOOTER)                   */}
+        {/* ------------------------------------------------------------- */}
+        {!dangTai && danhSachSanPham.length > 0 && (
+          <div className="flex items-center justify-between p-4 border-t bg-gray-50 text-sm text-gray-600">
+            <div>
+              Hiển thị <strong>{danhSachHienThi.length}</strong> / <strong>{danhSachSanPham.length}</strong> sản phẩm
+            </div>
+
+            <div className="flex items-center gap-1">
+              {/* Nút Trước */}
+              <button
+                onClick={() => setTrangHienTai((prev) => Math.max(prev - 1, 1))}
+                disabled={trangHienTai === 1}
+                className="px-3 py-1 border rounded-lg bg-white hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition"
+              >
+                ‹ Trước
+              </button>
+
+              {/* Các nút số trang */}
+              {Array.from({ length: tongSoTrang }, (_, index) => {
+                const pageNum = index + 1;
+                return (
+                  <button
+                    key={pageNum}
+                    onClick={() => setTrangHienTai(pageNum)}
+                    className={`px-3 py-1 rounded-lg text-sm font-medium transition ${
+                      trangHienTai === pageNum
+                        ? 'bg-emerald-600 text-white'
+                        : 'bg-white border text-gray-700 hover:bg-gray-100'
+                    }`}
+                  >
+                    {pageNum}
+                  </button>
+                );
+              })}
+
+              {/* Nút Sau */}
+              <button
+                onClick={() => setTrangHienTai((prev) => Math.min(prev + 1, tongSoTrang))}
+                disabled={trangHienTai === tongSoTrang}
+                className="px-3 py-1 border rounded-lg bg-white hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition"
+              >
+                Sau ›
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Form Modal Thêm / Sửa */}

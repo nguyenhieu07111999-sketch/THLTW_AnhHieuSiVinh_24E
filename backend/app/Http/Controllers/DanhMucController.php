@@ -9,22 +9,36 @@ use App\Models\DanhMuc;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class DanhMucController extends Controller
 {
-    // GET /api/danh-muc?per_page=10&page=1        -> danh mục cha (kèm children)
-    // GET /api/danh-muc?parent_id=2               -> các danh mục con của id=2
+    // GET /api/danh-muc?per_page=10&page=1
+    // GET /api/danh-muc?search=rau
     public function index(Request $request): AnonymousResourceCollection
     {
         $perPage = $request->input('per_page', 10);
+        $hasParentCol = Schema::hasColumn('danh_muc', 'parent_id');
 
-        $query = DanhMuc::with('children')->orderBy('ngay_tao', 'desc');
+        $query = DanhMuc::query()->orderBy('ngay_tao', 'desc');
 
-        if ($request->filled('parent_id')) {
-            $query->where('parent_id', $request->input('parent_id'));
-        } else {
-            $query->whereNull('parent_id');
+        if ($hasParentCol) {
+            $query->with('children');
+            if ($request->filled('parent_id')) {
+                $query->where('parent_id', $request->input('parent_id'));
+            } else if (!$request->filled('all') && !$request->filled('search')) {
+                $query->whereNull('parent_id');
+            }
+        }
+
+        if ($request->filled('search')) {
+            $keyword = $request->input('search');
+            $query->where('ten_danh_muc', 'LIKE', "%{$keyword}%");
+        }
+
+        if ($request->boolean('all')) {
+            return DanhMucResource::collection($query->get());
         }
 
         return DanhMucResource::collection($query->paginate($perPage));
@@ -33,7 +47,12 @@ class DanhMucController extends Controller
     // GET /api/danh-muc/{id}
     public function show($id): JsonResponse
     {
-        $danhMuc = DanhMuc::with(['children', 'parent'])->find($id);
+        $hasParentCol = Schema::hasColumn('danh_muc', 'parent_id');
+        $query = DanhMuc::query();
+        if ($hasParentCol) {
+            $query->with(['children', 'parent']);
+        }
+        $danhMuc = $query->find($id);
 
         if (!$danhMuc) {
             return response()->json(['success' => false, 'message' => 'Không tìm thấy danh mục'], 404);
@@ -48,6 +67,10 @@ class DanhMucController extends Controller
         $validated = $request->validated();
         $validated['duong_dan_dm'] = $validated['duong_dan_dm']
             ?? $this->taoSlugDuyNhat($validated['ten_danh_muc']);
+
+        if (!Schema::hasColumn('danh_muc', 'parent_id')) {
+            unset($validated['parent_id']);
+        }
 
         $danhMuc = DanhMuc::create($validated);
 
@@ -71,6 +94,10 @@ class DanhMucController extends Controller
         $validated['duong_dan_dm'] = $validated['duong_dan_dm']
             ?? $this->taoSlugDuyNhat($validated['ten_danh_muc'], $danhMuc->id);
 
+        if (!Schema::hasColumn('danh_muc', 'parent_id')) {
+            unset($validated['parent_id']);
+        }
+
         $danhMuc->update($validated);
 
         return response()->json([
@@ -89,8 +116,8 @@ class DanhMucController extends Controller
             return response()->json(['success' => false, 'message' => 'Không tìm thấy danh mục'], 404);
         }
 
-        // Không cho xoá danh mục cha khi còn danh mục con
-        if ($danhMuc->children()->exists()) {
+        // Không cho xoá danh mục cha khi còn danh mục con (nếu bảng có parent_id)
+        if (Schema::hasColumn('danh_muc', 'parent_id') && $danhMuc->children()->exists()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Không thể xoá: danh mục còn danh mục con',
