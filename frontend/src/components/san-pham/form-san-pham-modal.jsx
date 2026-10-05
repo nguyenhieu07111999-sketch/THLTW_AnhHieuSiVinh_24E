@@ -13,6 +13,10 @@ export default function FormSanPhamModal({
   brands,
   errors,
   handleSubmit,
+  imageFile,
+  setImageFile,
+  imagePreview,
+  setImagePreview,
 }) {
   if (!isModalOpen) return null;
 
@@ -50,9 +54,12 @@ export default function FormSanPhamModal({
               >
                 <option value="">-- Chọn danh mục --</option>
                 {categories.map((c) => (
-                  <option key={c.id} value={c.id}>{c.ten_danh_muc || c.ten}</option>
+                  <option key={c.id} value={c.id}>
+                    {c.ten_hien_thi || c.ten_danh_muc || c.ten}
+                  </option>
                 ))}
               </select>
+              {errors.danh_muc_id && <p className="text-red-500 text-xs mt-1">{errors.danh_muc_id[0]}</p>}
             </div>
 
             <div>
@@ -67,6 +74,7 @@ export default function FormSanPhamModal({
                   <option key={b.id} value={b.id}>{b.ten_thuong_hieu || b.ten}</option>
                 ))}
               </select>
+              {errors.thuong_hieu_id && <p className="text-red-500 text-xs mt-1">{errors.thuong_hieu_id[0]}</p>}
             </div>
 
             <div>
@@ -78,6 +86,7 @@ export default function FormSanPhamModal({
                 onChange={(e) => setFormData({ ...formData, gia_ban: e.target.value })}
                 className="w-full px-3 py-2 border rounded-lg"
               />
+              {errors.gia_ban && <p className="text-red-500 text-xs mt-1">{errors.gia_ban[0]}</p>}
             </div>
 
             <div>
@@ -88,6 +97,7 @@ export default function FormSanPhamModal({
                 onChange={(e) => setFormData({ ...formData, gia_giam: e.target.value })}
                 className="w-full px-3 py-2 border rounded-lg"
               />
+              {errors.gia_giam && <p className="text-red-500 text-xs mt-1">{errors.gia_giam[0]}</p>}
             </div>
 
             <div>
@@ -99,15 +109,62 @@ export default function FormSanPhamModal({
                 onChange={(e) => setFormData({ ...formData, so_luong_ton_kho: e.target.value })}
                 className="w-full px-3 py-2 border rounded-lg"
               />
+              {errors.so_luong_ton_kho && <p className="text-red-500 text-xs mt-1">{errors.so_luong_ton_kho[0]}</p>}
             </div>
 
             <div>
               <label className="block font-medium mb-1">Đơn vị tính</label>
               <input
                 type="text"
-                value={formData.don_vi_tinh}
+                value={formData.don_vi_tinh || ''}
                 onChange={(e) => setFormData({ ...formData, don_vi_tinh: e.target.value })}
+                placeholder="Kg, Hộp, Gói, Chai..."
                 className="w-full px-3 py-2 border rounded-lg"
+              />
+            </div>
+
+            <div className="md:col-span-2">
+              <label className="block font-medium mb-1">Hình ảnh sản phẩm {!editingId && '*'}</label>
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                required={!editingId}
+                onChange={(e) => {
+                  const file = e.target.files?.[0] || null;
+                  setImageFile(file);
+                  if (!file) {
+                    setImagePreview(formData.hinh_anh || '');
+                    return;
+                  }
+                  const reader = new FileReader();
+                  reader.onload = () => setImagePreview(String(reader.result || ''));
+                  reader.readAsDataURL(file);
+                }}
+                className="w-full px-3 py-2 border rounded-lg file:mr-3 file:rounded file:border-0 file:bg-emerald-50 file:px-3 file:py-1 file:text-emerald-700"
+              />
+              <p className="text-xs text-gray-500 mt-1">Chọn ảnh JPG, PNG hoặc WEBP, dung lượng tối đa 5 MB.{editingId ? ' Để trống nếu muốn giữ ảnh hiện tại.' : ''}</p>
+              {errors.hinh_anh && <p className="text-red-500 text-xs mt-1">{errors.hinh_anh[0]}</p>}
+              {imageFile && <p className="text-xs text-gray-600 mt-1">Đã chọn: {imageFile.name}</p>}
+              {imagePreview && (
+                <div className="mt-2 flex items-center gap-3 p-2 bg-gray-50 border rounded-lg">
+                  <img
+                    src={imagePreview}
+                    alt="Xem trước hình ảnh"
+                    className="w-16 h-16 object-cover rounded-lg border bg-white"
+                  />
+                  <span className="text-xs text-gray-500">Xem trước hình ảnh sản phẩm</span>
+                </div>
+              )}
+            </div>
+
+            <div className="md:col-span-2">
+              <label className="block font-medium mb-1">Mô tả ngắn</label>
+              <textarea
+                rows={2}
+                value={formData.mo_ta_ngan || ''}
+                onChange={(e) => setFormData({ ...formData, mo_ta_ngan: e.target.value })}
+                placeholder="Mô tả ngắn về sản phẩm..."
+                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none resize-none"
               />
             </div>
           </div>

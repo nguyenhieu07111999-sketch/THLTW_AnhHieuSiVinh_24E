@@ -19,6 +19,7 @@ class DanhMucResource extends JsonResource
             'sp_noi_bat' => $this->sp_noi_bat,
             'ngay_tao' => $this->ngay_tao,
             'ngay_cap_nhat' => $this->ngay_cap_nhat,
+            'deleted_at' => $this->deleted_at,
             'children' => DanhMucResource::collection($this->whenLoaded('children')),
             'parent' => new DanhMucResource($this->whenLoaded('parent')),
         ];

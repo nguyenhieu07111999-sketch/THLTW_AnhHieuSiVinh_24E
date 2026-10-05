@@ -4,6 +4,8 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class SanPhamResource extends JsonResource
 {
@@ -20,7 +22,9 @@ class SanPhamResource extends JsonResource
             'thuong_hieu_id' => $this->thuong_hieu_id,
             'ten_san_pham' => $this->ten_san_pham,
             'duong_dan_sp' => $this->duong_dan_sp,
-            'hinh_anh' => $this->hinh_anh,
+            'hinh_anh' => $this->hinh_anh && Str::startsWith($this->hinh_anh, 'products/')
+                ? Storage::disk('public')->url($this->hinh_anh)
+                : $this->hinh_anh,
             'gia_ban' => (float) $this->gia_ban,
             'gia_giam' => (float) $this->gia_giam,
             'so_luong_ton_kho' => (int) $this->so_luong_ton_kho,

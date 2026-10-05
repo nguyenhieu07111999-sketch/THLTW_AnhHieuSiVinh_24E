@@ -7,6 +7,8 @@ use App\Http\Resources\SanPhamResource;
 use App\Http\Requests\StoreSanPhamRequest;
 use App\Http\Requests\UpdateSanPhamRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use RuntimeException;
 use Illuminate\Support\Str;
 
 class SanPhamController extends Controller
@@ -29,6 +31,11 @@ class SanPhamController extends Controller
     public function store(StoreSanPhamRequest $request)
     {
         $validated = $request->validated();
+        $imagePath = $request->file('hinh_anh')->store('products', 'public');
+        if (!$imagePath) {
+            throw new RuntimeException('Không thể lưu hình ảnh sản phẩm.');
+        }
+        $validated['hinh_anh'] = $imagePath;
 
         if (empty($validated['duong_dan_sp'])) {
             $validated['duong_dan_sp'] = Str::slug($validated['ten_san_pham']) . '-' . time();
@@ -52,12 +59,27 @@ class SanPhamController extends Controller
     {
         $sanPham = SanPham::findOrFail($id);
         $validated = $request->validated();
+        $oldImagePath = $sanPham->hinh_anh;
+
+        if ($request->hasFile('hinh_anh')) {
+            $imagePath = $request->file('hinh_anh')->store('products', 'public');
+            if (!$imagePath) {
+                throw new RuntimeException('Không thể lưu hình ảnh sản phẩm.');
+            }
+            $validated['hinh_anh'] = $imagePath;
+        } else {
+            unset($validated['hinh_anh']);
+        }
 
         if (isset($validated['ten_san_pham']) && empty($validated['duong_dan_sp'])) {
             $validated['duong_dan_sp'] = Str::slug($validated['ten_san_pham']) . '-' . $sanPham->id;
         }
 
         $sanPham->update($validated);
+
+        if ($request->hasFile('hinh_anh') && $oldImagePath && str_starts_with($oldImagePath, 'products/')) {
+            Storage::disk('public')->delete($oldImagePath);
+        }
 
         return (new SanPhamResource($sanPham))
             ->additional(['message' => 'Cập nhật sản phẩm thành công!']);
@@ -75,7 +97,7 @@ class SanPhamController extends Controller
 
     public function trashed()
     {
-        $sanPhams = SanPham::onlyTrashed()->latest('ngay_xoa')->paginate(10);
+        $sanPhams = SanPham::onlyTrashed()->latest('ngay_xoa')->paginate(8);
         return SanPhamResource::collection($sanPhams);
     }
 
