@@ -1,4 +1,3 @@
-// frontend/src/services/api.js
 import axios from 'axios';
 
 const api = axios.create({
@@ -9,7 +8,6 @@ const api = axios.create({
   },
 });
 
-// Tự động gắn Token xác thực nếu có lưu trong localStorage
 api.interceptors.request.use(
   (config) => {
     if (typeof window !== 'undefined') {

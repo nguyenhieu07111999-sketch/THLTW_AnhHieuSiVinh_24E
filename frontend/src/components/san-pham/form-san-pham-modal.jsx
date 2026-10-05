@@ -1,4 +1,3 @@
-// src/components/san-pham/form-san-pham-modal.jsx
 'use client';
 
 import React from 'react';
