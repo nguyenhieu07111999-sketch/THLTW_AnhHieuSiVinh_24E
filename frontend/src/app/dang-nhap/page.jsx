@@ -38,18 +38,16 @@ export default function TrangXacThuc() {
       // 1. Lưu Access Token
       localStorage.setItem('access_token', response.access_token);
       
-      // 2. Lưu thông tin User (chứa trường ho_ten từ DB)
-      // Lưu ý: response.data là dữ liệu trả về từ TaiKhoanNguoiDungResource
+      
       if (response.data) {
         localStorage.setItem('user_info', JSON.stringify(response.data));
       }
 
       alert(response.message || 'Đăng nhập thành công!');
       
-      // Bắn event để Header nhận biết trạng thái đăng nhập thay đổi lập tức
       window.dispatchEvent(new Event('storage'));
       
-      router.push('/'); // Điều hướng về trang chủ
+      router.push('/');
     } catch (err) {
       setErrorMessage(err.message || 'Đăng nhập thất bại. Vui lòng kiểm tra lại!');
     } finally {
