@@ -296,7 +296,7 @@ function HangDanhMuc({ dm, moModalSua, xuLyXoa, laDanhMucCon, tenDanhMucCha }) {
 // ─── Trang chính ─────────────────────────────────────────────────────────────
 export default function QuanLyDanhMucPage() {
   const [danhSach, setDanhSach] = useState([]);
-  const [dangTai, setDangTai] = useState(false);
+  const [dangTai, setDangTai] = useState(true);
   const [dangXemThungRac, setDangXemThungRac] = useState(false);
   const [trangHienTai, setTrangHienTai] = useState(1);
   const [boLocDanhMuc, setBoLocDanhMuc] = useState(null);
@@ -309,15 +309,14 @@ export default function QuanLyDanhMucPage() {
   const [thongBao, setThongBao] = useState('');
   const [loaiThongBao, setLoaiThongBao] = useState('success');
 
-  const hienThongBao = (msg, loai = 'success') => {
+  const hienThongBao = useCallback((msg, loai = 'success') => {
     setThongBao(msg);
     setLoaiThongBao(loai);
     setTimeout(() => setThongBao(''), 3000);
-  };
+  }, []);
 
   // Tải danh sách danh mục
   const taiDanhSach = useCallback(async () => {
-    setDangTai(true);
     try {
       const layTrang = dangXemThungRac
         ? dichVuDanhMuc.layThungRac
@@ -350,9 +349,11 @@ export default function QuanLyDanhMucPage() {
     } finally {
       setDangTai(false);
     }
-  }, [dangXemThungRac]);
+  }, [dangXemThungRac, hienThongBao]);
 
-  useEffect(() => { taiDanhSach(); }, [taiDanhSach]);
+  useEffect(() => {
+    taiDanhSach();
+  }, [taiDanhSach]);
 
   // Danh mục cha (cấp 1)
   const danhSachCha = useMemo(() => danhSach.filter((dm) => !dm.parent_id), [danhSach]);
@@ -445,7 +446,8 @@ export default function QuanLyDanhMucPage() {
         hienThongBao('Thêm danh mục thành công!', 'success');
       }
       setMoModal(false);
-      taiDanhSach();
+      setDangTai(true);
+      await taiDanhSach();
     } catch (err) {
       if (err.response?.status === 422) {
         setDanhSachLoi(err.response.data.errors ?? {});
@@ -462,13 +464,15 @@ export default function QuanLyDanhMucPage() {
 
   // Xóa danh mục
   const xuLyXoa = async (id, ten) => {
-    if (!confirm(`Chuyển danh mục "${ten}" vào thùng rác?`)) return;
+    if (!window.confirm(`Chuyển danh mục "${ten}" vào thùng rác?`)) return;
     try {
       await dichVuDanhMuc.xoa(id);
       hienThongBao(`Đã chuyển "${ten}" vào thùng rác!`, 'success');
+      setDangTai(true);
       await taiDanhSach();
     } catch (err) {
       if (err.response?.status === 404) {
+        setDangTai(true);
         await taiDanhSach();
       }
       const msg = err.response?.data?.message || 'Không thể xóa danh mục này!';
@@ -482,9 +486,11 @@ export default function QuanLyDanhMucPage() {
     try {
       await dichVuDanhMuc.khoiPhuc(danhMuc.id);
       hienThongBao(`Đã khôi phục "${danhMuc.ten_danh_muc}"!`, 'success');
+      setDangTai(true);
       await taiDanhSach();
     } catch (err) {
       if (err.response?.status === 404) {
+        setDangTai(true);
         await taiDanhSach();
       }
       hienThongBao(
@@ -506,9 +512,11 @@ export default function QuanLyDanhMucPage() {
     try {
       await dichVuDanhMuc.xoaVinhVien(danhMuc.id);
       hienThongBao(`Đã xóa vĩnh viễn "${danhMuc.ten_danh_muc}"!`, 'success');
+      setDangTai(true);
       await taiDanhSach();
     } catch (err) {
       if (err.response?.status === 404) {
+        setDangTai(true);
         await taiDanhSach();
       }
       hienThongBao(
@@ -523,6 +531,7 @@ export default function QuanLyDanhMucPage() {
   const doiCheDoThungRac = () => {
     setTrangHienTai(1);
     setBoLocDanhMuc(null);
+    setDangTai(true);
     setDangXemThungRac((dangXem) => !dangXem);
   };
 

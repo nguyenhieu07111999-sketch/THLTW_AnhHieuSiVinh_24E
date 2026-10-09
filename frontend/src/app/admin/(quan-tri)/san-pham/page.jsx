@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { dichVuSanPham } from '@/services/dich-vu-san-pham';
-import FormSanPhamModal from '@/components/san-pham/form-san-pham-modal';
+// import FormSanPhamModal from '@/components/san-pham/form-san-pham-modal';
 
 export default function QuanLySanPhamPage() {
   // Trạng thái dữ liệu
@@ -12,7 +12,7 @@ export default function QuanLySanPhamPage() {
   const [danhSachThuongHieu, setDanhSachThuongHieu] = useState([]);
 
   // Trạng thái điều khiển giao diện
-  const [dangTai, setDangTai] = useState(false);
+  const [dangTai, setDangTai] = useState(true);
   const [moModal, setMoModal] = useState(false);
   const [moModalChiTiet, setMoModalChiTiet] = useState(false);
   const [sanPhamChiTiet, setSanPhamChiTiet] = useState(null);
@@ -47,6 +47,7 @@ export default function QuanLySanPhamPage() {
 
   // Hàm tải lại danh sách sản phẩm
   const taiDanhSach = async () => {
+    setDangTai(true);
     try {
       const res = dangXemThungRac
         ? await dichVuSanPham.layThungRac()
@@ -54,6 +55,8 @@ export default function QuanLySanPhamPage() {
       setDanhSachSanPham(res.data.data || res.data || []);
     } catch (err) {
       console.error('Lỗi khi tải danh sách sản phẩm:', err);
+    } finally {
+      setDangTai(false);
     }
   };
 
@@ -62,8 +65,6 @@ export default function QuanLySanPhamPage() {
     let isMounted = true;
 
     const layDuLieu = async () => {
-      setDangTai(true);
-
       // 1. Tải danh sách sản phẩm
       try {
         const resSP = dangXemThungRac
@@ -209,6 +210,7 @@ export default function QuanLySanPhamPage() {
           <button
             onClick={() => {
               setTrangHienTai(1);
+              setDangTai(true);
               setDangXemThungRac(!dangXemThungRac);
             }}
             className={`px-4 py-2 text-sm font-medium rounded-lg border transition ${
@@ -442,7 +444,7 @@ export default function QuanLySanPhamPage() {
       </div>
 
       {/* Modal Thêm / Sửa */}
-      <FormSanPhamModal
+      {/* <FormSanPhamModal
         isModalOpen={moModal}
         setIsModalOpen={setMoModal}
         editingId={idDangSua}
@@ -452,7 +454,7 @@ export default function QuanLySanPhamPage() {
         brands={danhSachThuongHieu}
         errors={danhSachLoi}
         handleSubmit={xuLyGuiForm}
-      />
+      /> */}
 
       {/* Modal Xem Chi Tiết */}
       {moModalChiTiet && sanPhamChiTiet && (
