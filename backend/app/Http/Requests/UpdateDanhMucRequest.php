@@ -23,8 +23,18 @@ class UpdateDanhMucRequest extends FormRequest
                 'integer',
                 Rule::exists('danh_muc', 'id')->whereNull('parent_id'),
             ],
-            'ten_danh_muc' => 'required|string|max:255',
-            'duong_dan_dm' => 'nullable|string|max:255',
+            'ten_danh_muc' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('danh_muc', 'ten_danh_muc')->ignore($id),
+            ],
+            'duong_dan_dm' => [
+                'nullable',
+                'string',
+                'max:255',
+                Rule::unique('danh_muc', 'duong_dan_dm')->ignore($id),
+            ],
             'hinh_anh' => 'nullable|string',
             'mo_ta' => 'nullable|string',
             'sp_noi_bat' => 'nullable|boolean',
@@ -34,13 +44,13 @@ class UpdateDanhMucRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'ten_danh_muc.required' => 'Tên danh mục là bắt buộc',
-            'duong_dan_dm.unique' => 'Đường dẫn này đã tồn tại',
-            'parent_id.exists' => 'Danh mục cha không tồn tại hoặc không phải danh mục cấp 1',
+            'ten_danh_muc.required' => 'Tên danh mục là bắt buộc.',
+            'ten_danh_muc.unique' => 'Tên danh mục này đã tồn tại trong hệ thống.',
+            'duong_dan_dm.unique' => 'Đường dẫn danh mục này đã tồn tại.',
+            'parent_id.exists' => 'Danh mục cha không tồn tại hoặc không phải danh mục cấp 1.',
         ];
     }
 
-    // Các kiểm tra thêm để giữ đúng 2 cấp
     public function withValidator($validator): void
     {
         $validator->after(function ($v) {
@@ -52,11 +62,11 @@ class UpdateDanhMucRequest extends FormRequest
             }
 
             if ((int) $parentId === $id) {
-                $v->errors()->add('parent_id', 'Danh mục không thể là cha của chính nó');
+                $v->errors()->add('parent_id', 'Danh mục không thể là cha của chính nó.');
             }
 
             if (DanhMuc::where('parent_id', $id)->exists()) {
-                $v->errors()->add('parent_id', 'Danh mục đang có danh mục con nên không thể chuyển thành danh mục con');
+                $v->errors()->add('parent_id', 'Danh mục đang có danh mục con nên không thể chuyển thành danh mục con.');
             }
         });
     }
