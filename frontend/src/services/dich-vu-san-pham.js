@@ -1,33 +1,28 @@
-
-import axios from 'axios';
-
-
-const adminApi = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api',
-  headers: {
-    Accept: 'application/json',
-  },
-});
-
-adminApi.interceptors.request.use((config) => {
-  if (typeof window !== 'undefined') {
-    const token = localStorage.getItem('admin_token') || localStorage.getItem('token');
-    if (token) config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+import api from './api';
 
 export const dichVuSanPham = {
   layDanhSach: (params) => api.get('/san-pham', { params }),
-  layThungRac: (page = 1) => adminApi.get(`/san-pham/thung-rac?page=${page}`),
-  themMoi: (data) => adminApi.post('/san-pham', data),
+  
+  layThungRac: (page = 1) => api.get('/san-pham/thung-rac', { params: { page } }),
+  
+  themMoi: (data) => api.post('/san-pham', data),
+  
+  // Cập nhật sản phẩm
   capNhat: (id, data) => {
-    data.append('_method', 'PUT');
-    return adminApi.post(`/san-pham/${id}`, data);
+    
+    if (data instanceof FormData) {
+      data.append('_method', 'PUT');
+      return api.post(`/san-pham/${id}`, data);
+    }
+    return api.put(`/san-pham/${id}`, data);
   },
-  xoaTam: (id) => adminApi.delete(`/san-pham/${id}`),
-  khoiPhuc: (id) => adminApi.post(`/san-pham/${id}/khoi-phuc`),
-  xoaVinhVien: (id) => adminApi.delete(`/san-pham/${id}/xoa-vinh-vien`),
+  
+  xoaTam: (id) => api.delete(`/san-pham/${id}`),
+  
+  khoiPhuc: (id) => api.post(`/san-pham/${id}/khoi-phuc`),
+  
+  xoaVinhVien: (id) => api.delete(`/san-pham/${id}/xoa-vinh-vien`),
+  
   layDanhMuc: () => api.get('/danh-muc'),
   layThuongHieu: () => api.get('/thuong-hieu'),
 };

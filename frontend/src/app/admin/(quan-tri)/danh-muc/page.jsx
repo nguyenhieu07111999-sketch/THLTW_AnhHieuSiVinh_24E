@@ -10,7 +10,6 @@ import useDanhMucActions from '@/hooks/useDanhMucActions';
 import useDanhMucData from '@/hooks/useDanhMucData';
 
 export default function QuanLyDanhMucPage() {
-  // 1. State thông báo (Cái này để UI quản lý)
   const [thongBao, setThongBao] = useState('');
   const [loaiThongBao, setLoaiThongBao] = useState('success');
 
@@ -20,12 +19,10 @@ export default function QuanLyDanhMucPage() {
     setTimeout(() => setThongBao(''), 3000);
   }, []);
 
-  // 2. GỌI CÁC CUSTOM HOOKS (Não bộ của hệ thống)
   const data = useDanhMucData(hienThongBao);
   const modalData = useModalDanhMuc(data.taiDanhSach, hienThongBao, data.setDangTai);
   const actions = useDanhMucActions(data.taiDanhSach, data.setDangTai, hienThongBao);
 
-  // 3. Hàm tương tác UI nhanh
   const doiCheDoThungRac = () => {
     data.setTrangHienTai(1);
     data.setBoLocDanhMuc(null);
@@ -38,7 +35,6 @@ export default function QuanLyDanhMucPage() {
     data.setBoLocDanhMuc((prev) => prev === boLoc ? null : boLoc);
   };
 
-  // 4. HIỂN THỊ GIAO DIỆN (UI)
   return (
     <div className="p-6 font-sans">
       <Toast thongBao={thongBao} loai={loaiThongBao} />
