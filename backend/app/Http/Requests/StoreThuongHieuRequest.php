@@ -17,7 +17,7 @@ class StoreThuongHieuRequest extends FormRequest
         return [
             'ten_thuong_hieu' => 'required|string|max:255',
             'duong_dan_th'    => 'nullable|string|max:255|unique:thuong_hieu,duong_dan_th',
-            'logo'            => 'nullable|string|max:255',
+            'logo'            => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'mo_ta'           => 'nullable|string',
             'trang_thai'      => ['nullable', Rule::in(['hien_thi', 'an'])],
         ];

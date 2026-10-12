@@ -19,7 +19,7 @@ class UpdateThuongHieuRequest extends FormRequest
         return [
             'ten_thuong_hieu' => 'sometimes|required|string|max:255',
             'duong_dan_th'    => ['nullable', 'string', 'max:255', Rule::unique('thuong_hieu', 'duong_dan_th')->ignore($thuongHieuId)],
-            'logo'            => 'nullable|string|max:255',
+            'logo'            => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'mo_ta'           => 'nullable|string',
             'trang_thai'      => ['nullable', Rule::in(['hien_thi', 'an'])],
         ];

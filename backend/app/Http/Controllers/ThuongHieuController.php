@@ -31,6 +31,11 @@ class ThuongHieuController extends Controller
             $validated['duong_dan_th'] = Str::slug($validated['ten_thuong_hieu']) . '-' . time();
         }
 
+        if ($request->hasFile('logo')) {
+            $path = $request->file('logo')->store('brands', 'public');
+            $validated['logo'] = $path; 
+        }
+
         $thuongHieu = ThuongHieu::create($validated);
 
         return (new ThuongHieuResource($thuongHieu))
@@ -52,6 +57,11 @@ class ThuongHieuController extends Controller
 
         if (isset($validated['ten_thuong_hieu']) && empty($validated['duong_dan_th'])) {
             $validated['duong_dan_th'] = Str::slug($validated['ten_thuong_hieu']) . '-' . $thuongHieu->id;
+        }
+
+        if ($request->hasFile('logo')) {
+            $path = $request->file('logo')->store('brands', 'public');
+            $validated['logo'] = $path;
         }
 
         $thuongHieu->update($validated);
