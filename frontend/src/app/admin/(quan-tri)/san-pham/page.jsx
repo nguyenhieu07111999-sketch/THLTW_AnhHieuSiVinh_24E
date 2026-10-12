@@ -62,7 +62,7 @@ export default function QuanLySanPhamPage() {
           <thead className="border-b bg-gray-50 text-xs font-semibold uppercase text-gray-600">
             <tr>
               <th className="p-4">ID</th><th className="p-4">Hình ảnh</th><th className="p-4">Tên sản phẩm</th>
-              <th className="p-4">Giá bán</th><th className="p-4">Số lượng tồn</th><th className="p-4 text-center">Trạng thái</th>
+              <th className="p-4">Giá bán</th><th className="p-4">Giá giảm</th><th className="p-4">Số lượng tồn</th><th className="p-4 text-center">Trạng thái</th>
               <th className="p-4 text-center">Thao tác</th>
             </tr>
           </thead>

@@ -14,6 +14,7 @@ export default function ChiTietSanPhamModal({ moModalChiTiet, setMoModalChiTiet,
           <p><strong>Tên sản phẩm:</strong> {sanPhamChiTiet.ten_san_pham}</p>
           <p><strong>Đường dẫn (Slug):</strong> {sanPhamChiTiet.duong_dan_sp || 'Chưa thiết lập'}</p>
           <p><strong>Giá bán:</strong> <span className="text-emerald-600 font-semibold">{Number(sanPhamChiTiet.gia_ban).toLocaleString('vi-VN')} đ</span></p>
+          <p><strong>Giá giảm:</strong> {sanPhamChiTiet.gia_giam ? `${Number(sanPhamChiTiet.gia_giam).toLocaleString('vi-VN')} đ` : 'Không có'}</p>
           <p><strong>Tồn kho:</strong> {sanPhamChiTiet.so_luong_ton_kho} {sanPhamChiTiet.don_vi_tinh}</p>
           <p><strong>Mô tả ngắn:</strong> {sanPhamChiTiet.mo_ta_ngan || 'Không có mô tả'}</p>
         </div>
