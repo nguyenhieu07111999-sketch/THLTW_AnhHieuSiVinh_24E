@@ -1,4 +1,5 @@
-﻿import api from './api';
+
+import api from './api';
 
 export const dichVuDanhMuc = {
   // GET /api/danh-muc?per_page=200  -> trả về danh mục cha kèm children
@@ -22,3 +23,5 @@ export const dichVuDanhMuc = {
   
   xoaVinhVien: (id) => api.delete(`/danh-muc/${id}/xoa-vinh-vien`),
 };
+
+

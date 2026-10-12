@@ -1,10 +1,6 @@
 "use client";
-import { useEffect, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
-
-const API = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
-const VAI_TRO_HOP_LE = ["super_admin", "admin"];
 
 const MENU = [
     { href: "/admin", label: "Dashboard", icon: "📊" },
@@ -14,56 +10,10 @@ const MENU = [
 ];
 
 export default function AdminLayout({ children }) {
-    const router = useRouter();
     const pathname = usePathname();
-    const [ready, setReady] = useState(false);
-    const [admin, setAdmin] = useState(null);
-
-    function clearAndRedirect() {
-        localStorage.removeItem("admin_token");
-        localStorage.removeItem("admin_user");
-        router.replace("/admin/dang-nhap");
-    }
-
-    useEffect(() => {
-        const token = localStorage.getItem("admin_token");
-        const user = JSON.parse(localStorage.getItem("admin_user") || "null");
-
-        if (!token || !VAI_TRO_HOP_LE.includes(user?.vai_tro)) {
-            clearAndRedirect();
-            return;
-        }
-
-        fetch(`${API}/api/user`, {
-            headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
-        })
-            .then((res) => {
-                if (!res.ok) clearAndRedirect();
-                else {
-                    setAdmin(user);
-                    setReady(true);
-                }
-            })
-            .catch(clearAndRedirect);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    async function logout() {
-        const token = localStorage.getItem("admin_token");
-        try {
-            await fetch(`${API}/api/dang-xuat`, {
-                method: "POST",
-                headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
-            });
-        } finally {
-            clearAndRedirect();
-        }
-    }
 
     const isActive = (href) =>
         href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
-
-    if (!ready) return null;
 
     return (
         <div className="min-h-screen flex bg-gray-50">
@@ -80,8 +30,8 @@ export default function AdminLayout({ children }) {
                             key={item.href}
                             href={item.href}
                             className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${isActive(item.href)
-                                    ? "bg-green-600 text-white"
-                                    : "text-green-100 hover:bg-green-800"
+                                ? "bg-green-600 text-white"
+                                : "text-green-100 hover:bg-green-800"
                                 }`}
                         >
                             <span>{item.icon}</span>
@@ -97,12 +47,6 @@ export default function AdminLayout({ children }) {
                     >
                         <span>🏠</span> Xem cửa hàng
                     </Link>
-                    <button
-                        onClick={logout}
-                        className="w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-red-300 hover:bg-green-800"
-                    >
-                        <span>🚪</span> Đăng xuất
-                    </button>
                 </div>
             </aside>
 
@@ -114,11 +58,11 @@ export default function AdminLayout({ children }) {
                     </h1>
                     <div className="flex items-center gap-3">
                         <div className="text-right">
-                            <div className="text-sm font-medium text-gray-900">{admin?.ho_ten}</div>
-                            <div className="text-xs text-gray-500">{admin?.vai_tro}</div>
+                            <div className="text-sm font-medium text-gray-900">Quản trị viên</div>
+                            <div className="text-xs text-gray-500">Không cần đăng nhập</div>
                         </div>
                         <div className="w-9 h-9 rounded-full bg-green-600 text-white flex items-center justify-center font-semibold">
-                            {admin?.ho_ten?.charAt(0)?.toUpperCase() || "A"}
+                            A
                         </div>
                     </div>
                 </header>

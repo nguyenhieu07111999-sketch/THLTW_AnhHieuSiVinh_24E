@@ -57,9 +57,9 @@ export default function QuanLySanPhamPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow border overflow-visible">
-        <table className="w-full text-left border-collapse">
-          <thead className="bg-gray-50 border-b text-xs uppercase text-gray-600 font-semibold">
+      <div className="overflow-visible rounded-xl border bg-white shadow">
+        <table className="w-full border-collapse text-left">
+          <thead className="border-b bg-gray-50 text-xs font-semibold uppercase text-gray-600">
             <tr>
               <th className="p-4">ID</th><th className="p-4">Hình ảnh</th><th className="p-4">Tên sản phẩm</th>
               <th className="p-4">Giá bán</th><th className="p-4">Số lượng tồn</th><th className="p-4 text-center">Trạng thái</th>
@@ -86,13 +86,13 @@ export default function QuanLySanPhamPage() {
 
         {!data.dangTai && data.danhSachSanPham.length > 0 && (
           <PhanTrang
-                      trangHienTai={data.trangHienTai}
-                      tongSoTrang={data.tongSoTrang}
-                      setTrangHienTai={data.setTrangHienTai}
-                      tongSoItem={data.tongSoItem}
-                      soItemMoiTrang={data.soMucMoiTrang}
-                      tenLoaiItem={data.dangXemThungRac ? 'sản phẩm' : 'sản phẩm'}
-                    />
+                    trangHienTai={data.trangHienTai}
+                    tongSoTrang={data.tongSoTrang}
+                    setTrangHienTai={data.setTrangHienTai}
+                    tongSoItem={data.tongSoItem}
+                    soItemMoiTrang={data.soMucMoiTrang}
+                    tenLoaiItem={data.dangXemThungRac ? 'sản phẩm' : 'sản phẩm'}
+                  />
         )}
       </div>
 
