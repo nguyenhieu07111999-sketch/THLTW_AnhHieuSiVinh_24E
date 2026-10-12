@@ -7,6 +7,8 @@ use App\Http\Controllers\DanhMucController;
 use App\Http\Controllers\SanPhamController;
 use App\Http\Controllers\ThuongHieuController;
 use App\Http\Controllers\GioHangController;
+use App\Http\Controllers\NguoiDungController;
+use App\Http\Controllers\BaiVietController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -21,7 +23,7 @@ Route::post('/dang-ky', [AuthController::class, 'register']);
 Route::post('/dang-nhap', [AuthController::class, 'login']);
 Route::post('/admin/dang-nhap', [AuthController::class, 'adminLogin']);
 
-// Đăng xuất 
+// Đăng xuất
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/dang-xuat', [AuthController::class, 'logout']);
 
@@ -68,6 +70,26 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
         Route::post('/', [ThuongHieuController::class, 'store']);
         Route::put('/{id}', [ThuongHieuController::class, 'update']);
         Route::delete('/{id}', [ThuongHieuController::class, 'destroy']);
+    });
+
+    Route::prefix('nguoi-dung')->group(function () {
+        Route::get('/', [NguoiDungController::class, 'index']);
+        Route::get('/thung-rac', [NguoiDungController::class, 'thungRac']);
+        Route::post('/', [NguoiDungController::class, 'store']);
+        Route::put('/{id}', [NguoiDungController::class, 'update']);
+        Route::patch('/{id}/khoa', [NguoiDungController::class, 'doiTrangThai']);
+        Route::delete('/{id}', [NguoiDungController::class, 'destroy']);
+        Route::post('/{id}/khoi-phuc', [NguoiDungController::class, 'khoiPhuc']);
+        Route::delete('/{id}/xoa-vinh-vien', [NguoiDungController::class, 'xoaVinhVien']);
+    });
+
+    Route::prefix('bai-viet')->group(function () {
+        Route::get('/', [BaiVietController::class, 'index']);
+        Route::get('/chu-de', [BaiVietController::class, 'chuDe']); // Đặt ở đây
+        Route::post('/', [BaiVietController::class, 'store']);
+        Route::put('/{id}', [BaiVietController::class, 'update']);
+        Route::patch('/{id}/trang-thai', [BaiVietController::class, 'doiTrangThai']);
+        Route::delete('/{id}', [BaiVietController::class, 'destroy']);
     });
 
 });
