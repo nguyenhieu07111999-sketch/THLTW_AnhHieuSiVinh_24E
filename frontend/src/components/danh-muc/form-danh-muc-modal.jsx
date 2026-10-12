@@ -163,7 +163,7 @@ export default function ModalFormDanhMuc({ moModal, dongModal, idDangSua, duLieu
           </button>
           <button type="submit" onClick={xuLyGuiForm} disabled={dangLuu}
             className="px-5 py-2 rounded-lg text-sm font-medium bg-green-600 hover:bg-green-700 text-white transition disabled:opacity-60 disabled:cursor-not-allowed">
-            {dangLuu ? 'Đang lưu...' : idDangSua ? '💾 Cập nhật' : '✅ Thêm mới'}
+            {dangLuu ? 'Đang lưu...' : idDangSua ? 'Cập nhật' : 'Thêm mới'}
           </button>
         </div>
       </div>

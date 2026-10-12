@@ -3,8 +3,6 @@ import axios from 'axios';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api';
 
-// Tạo axios instance riêng cho admin danh mục
-// Dùng admin_token (lưu bởi layout admin) thay vì token người dùng
 const adminApi = axios.create({
   baseURL: BASE_URL,
   headers: {
@@ -16,7 +14,6 @@ const adminApi = axios.create({
 adminApi.interceptors.request.use(
   (config) => {
     if (typeof window !== 'undefined') {
-      // Ưu tiên admin_token, fallback sang token nếu cần
       const token = localStorage.getItem('admin_token') || localStorage.getItem('token');
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
