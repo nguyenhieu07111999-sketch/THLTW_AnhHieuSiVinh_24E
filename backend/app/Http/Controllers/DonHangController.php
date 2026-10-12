@@ -14,11 +14,11 @@ class DonHangController extends Controller
     {
         $query = DonHang::with(['nguoiDung', 'chiTiet.sanPham']);
 
-        if ($request->has('trang_thai') && $request->trang_thai !== '') {
+        if ($request->filled('trang_thai')) {
             $query->where('trang_thai_don_hang', $request->trang_thai);
         }
 
-        if ($request->has('search') && $request->search !== '') {
+        if ($request->filled('search')) {
             $query->timKiem($request->search);
         }
 
