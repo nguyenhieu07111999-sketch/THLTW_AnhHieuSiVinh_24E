@@ -35,13 +35,11 @@ class DonHang extends Model
         return $this->hasMany(ChiTietDonHang::class, 'don_hang_id');
     }
 
-    // Mối quan hệ: Đơn hàng thuộc về một người dùng (khách hàng)
     public function nguoiDung()
     {
-        return $this->belongsTo(NguoiDung::class, 'nguoi_dung_id');
+        return $this->belongsTo(TaiKhoanNguoiDung::class, 'nguoi_dung_id');
     }
 
-    // Scope lọc theo trạng thái đơn hàng
     public function scopeTrangThai($query, $trangThai)
     {
         if (!empty($trangThai)) {
