@@ -10,6 +10,7 @@ export default function TrangDanhMuc() {
   const [danhMucList, setDanhMucList] = useState([]);
   const [sanPhamList, setSanPhamList] = useState([]);
   const [danhMucChon, setDanhMucChon] = useState('tat-ca');
+  const [tieuChiChon, setTieuChiChon] = useState('tat-ca');
   const [dangTai, setDangTai] = useState(true);
 
   // State phân trang
@@ -43,78 +44,115 @@ export default function TrangDanhMuc() {
   }, []);
 
   useEffect(() => {
-      const taiSanPham = async () => {
-        setDangTai(true);
-        try {
-          const params = {
-            page: trangHienTai,
-            per_page: soItemMoiTrang,
-            ...(danhMucChon !== 'tat-ca' && { danh_muc_id: danhMucChon }),
-          };
-          const res = await dichVuSanPham.layDanhSach(params);
-          
-          const ketQua = res.data;
-          
-          const danhSach = ketQua.data || [];
-          const meta = ketQua.meta || ketQua;
+    const taiSanPham = async () => {
+      setDangTai(true);
+      try {
+        const params = {
+          page: trangHienTai,
+          per_page: soItemMoiTrang,
+          ...(danhMucChon !== 'tat-ca' && { danh_muc_id: danhMucChon }),
+          ...(tieuChiChon !== 'tat-ca' && { tieu_chi: tieuChiChon }), 
+        };
+        const res = await dichVuSanPham.layDanhSach(params);
+        
+        const ketQua = res.data;
+        const danhSach = ketQua.data || [];
+        const meta = ketQua.meta || ketQua;
 
-          setSanPhamList(danhSach);
-          setTongSoTrang(meta.last_page || 1);
-          setTongSoItem(meta.total || danhSach.length);
-        } catch (error) {
-          console.error('Lỗi tải sản phẩm:', error);
-        } finally {
-          setDangTai(false);
-        }
-      };
-      taiSanPham();
-    }, [danhMucChon, trangHienTai]);
+        setSanPhamList(danhSach);
+        setTongSoTrang(meta.last_page || 1);
+        setTongSoItem(meta.total || danhSach.length);
+      } catch (error) {
+        console.error('Lỗi tải sản phẩm:', error);
+      } finally {
+        setDangTai(false);
+      }
+    };
+    taiSanPham();
+  }, [danhMucChon, tieuChiChon, trangHienTai]);
 
   const handleChonDanhMuc = (id) => {
     setDanhMucChon(id);
     setTrangHienTai(1); 
   };
 
+  const handleChonTieuChi = (id) => {
+    setTieuChiChon(id);
+    setTrangHienTai(1);
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-4 gap-8">
-      <aside className="bg-white p-5 rounded-2xl border border-emerald-100 h-fit space-y-2 shadow-sm">
-        <h3 className="font-bold text-lg mb-4 text-emerald-950">Danh Mục Thực Phẩm</h3>
-        
-        <button
-          onClick={() => handleChonDanhMuc('tat-ca')}
-          className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-            danhMucChon === 'tat-ca' 
-              ? 'bg-emerald-600 text-white font-bold shadow-md' 
-              : 'text-gray-600 hover:bg-emerald-50'
-          }`}
-        >
-          <span className="text-lg">🧺</span>
-          <span>Tất cả nông sản</span>
-        </button>
-
-        {danhMucList.map((item) => (
+      {/* Cột trái: Danh mục & Tiêu chí lọc */}
+      <div className="space-y-6">
+        {/* Khung 1: Danh mục thực phẩm */}
+        <aside className="bg-white p-5 rounded-2xl border border-emerald-100 h-fit space-y-2 shadow-sm">
+          <h3 className="font-bold text-lg mb-4 text-emerald-950">Danh Mục Thực Phẩm</h3>
+          
           <button
-            key={item.id}
-            onClick={() => handleChonDanhMuc(item.id)}
+            onClick={() => handleChonDanhMuc('tat-ca')}
             className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-              danhMucChon === item.id 
+              danhMucChon === 'tat-ca' 
                 ? 'bg-emerald-600 text-white font-bold shadow-md' 
                 : 'text-gray-600 hover:bg-emerald-50'
             }`}
           >
-            <span className="text-lg">{layIconDanhMuc(item.ten_danh_muc)}</span>
-            <span className="text-left line-clamp-1">{item.ten_danh_muc}</span>
+            <span className="text-lg">🧺</span>
+            <span>Tất cả nông sản</span>
           </button>
-        ))}
-      </aside>
 
+          {danhMucList.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => handleChonDanhMuc(item.id)}
+              className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                danhMucChon === item.id 
+                  ? 'bg-emerald-600 text-white font-bold shadow-md' 
+                  : 'text-gray-600 hover:bg-emerald-50'
+              }`}
+            >
+              <span className="text-lg">{layIconDanhMuc(item.ten_danh_muc)}</span>
+              <span className="text-left line-clamp-1">{item.ten_danh_muc}</span>
+            </button>
+          ))}
+        </aside>
+
+        {/* Khung 2: Tiêu chí nổi bật (Lấp đầy khoảng trống bên dưới) */}
+        <aside className="bg-white p-5 rounded-2xl border border-emerald-100 h-fit space-y-2 shadow-sm">
+          <h3 className="font-bold text-base mb-3 text-emerald-950 flex items-center gap-2">
+            <span>⚡</span> Tiêu Chí Nổi Bật
+          </h3>
+
+          {[
+            { id: 'tat-ca', ten: 'Tất cả sản phẩm', icon: '✨' },
+            { id: 'khuyen-mai', ten: 'Đang khuyến mãi', icon: '🔥' },
+            { id: 'noi-bat', ten: 'Sản phẩm nổi bật', icon: '⭐' },
+            { id: 'ban-chay', ten: 'Bán chạy nhất', icon: '🏆' },
+          ].map((item) => (
+            <button
+              key={item.id}
+              onClick={() => handleChonTieuChi(item.id)}
+              className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                tieuChiChon === item.id 
+                  ? 'bg-emerald-600 text-white font-bold shadow-md' 
+                  : 'text-gray-600 hover:bg-emerald-50'
+              }`}
+            >
+              <span className="text-lg">{item.icon}</span>
+              <span className="text-left">{item.ten}</span>
+            </button>
+          ))}
+        </aside>
+      </div>
+
+      {/* Cột phải: Lưới sản phẩm và phân trang */}
       <main className="md:col-span-3 space-y-6 flex flex-col justify-between">
         <div>
           {dangTai ? (
             <div className="text-center py-16 text-gray-500">Đang tải sản phẩm...</div>
           ) : sanPhamList.length === 0 ? (
             <div className="text-center py-16 text-gray-400 bg-white rounded-2xl border border-emerald-100">
-              Chưa có sản phẩm nào trong danh mục này.
+              Chưa có sản phẩm nào phù hợp với tiêu chí này.
             </div>
           ) : (
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
@@ -127,7 +165,7 @@ export default function TrangDanhMuc() {
 
         {/* Thanh phân trang */}
         {!dangTai && tongSoTrang > 1 && (
-          <div className="flex justify-end mt-4"> {/* Dùng justify-end để đẩy sang góc phải giống mẫu, hoặc justify-center nếu muốn nằm giữa */}
+          <div className="flex justify-center mt-4"> 
             <div className="bg-white rounded-xl overflow-hidden border border-emerald-100 shadow-sm inline-block">
               <PhanTrang
                 trangHienTai={trangHienTai}
