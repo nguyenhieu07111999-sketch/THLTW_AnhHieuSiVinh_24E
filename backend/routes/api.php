@@ -7,6 +7,7 @@ use App\Http\Controllers\DanhMucController;
 use App\Http\Controllers\SanPhamController;
 use App\Http\Controllers\ThuongHieuController;
 use App\Http\Controllers\GioHangController;
+use App\Http\Controllers\DonHangController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -69,5 +70,9 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
         Route::put('/{id}', [ThuongHieuController::class, 'update']);
         Route::delete('/{id}', [ThuongHieuController::class, 'destroy']);
     });
+
+    Route::apiResource('don-hang', DonHangController::class)->except(['store']);
+
+    
 
 });
