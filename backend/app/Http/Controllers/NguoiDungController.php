@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\TaiKhoanNguoiDung;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 class NguoiDungController extends Controller
@@ -11,7 +12,7 @@ class NguoiDungController extends Controller
     public function index(Request $request)
     {
         return response()->json(
-            TaiKhoanNguoiDung::orderByDesc('id')->paginate($request->get('per_page', 10))
+            TaiKhoanNguoiDung::orderBy('id')->paginate($request->get('per_page', 10))
         );
     }
 
@@ -20,6 +21,28 @@ class NguoiDungController extends Controller
         return response()->json(
             TaiKhoanNguoiDung::onlyTrashed()->orderByDesc('deleted_at')->paginate($request->get('per_page', 10))
         );
+    }
+
+    public function donHang($id)
+    {
+        $user = TaiKhoanNguoiDung::withTrashed()->findOrFail($id);
+
+        $donHang = DB::table('don_hang')
+            ->where('nguoi_dung_id', $user->id)
+            ->orderByDesc('created_at')
+            ->get();
+
+        $chiTiet = DB::table('chi_tiet_don_hang')
+            ->whereIn('don_hang_id', $donHang->pluck('id'))
+            ->get()
+            ->groupBy('don_hang_id');
+
+        $donHang = $donHang->map(function ($d) use ($chiTiet) {
+            $d->chi_tiet = $chiTiet->get($d->id, collect())->values();
+            return $d;
+        });
+
+        return response()->json(['data' => $donHang]);
     }
 
     public function store(Request $request)
