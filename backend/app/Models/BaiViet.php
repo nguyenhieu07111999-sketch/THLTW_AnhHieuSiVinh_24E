@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class BaiViet extends Model
 {
-    use SoftDeletes;
+    // use SoftDeletes;
 
     protected $table = 'bai_viet';
 
