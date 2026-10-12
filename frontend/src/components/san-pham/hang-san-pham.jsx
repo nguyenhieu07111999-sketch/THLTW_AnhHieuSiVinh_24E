@@ -9,6 +9,9 @@ export default function HangSanPham({ sp, dangXemThungRac, openDropdownId, setOp
       </td>
       <td className="p-4 font-medium text-gray-800">{sp.ten_san_pham}</td>
       <td className="p-4 text-emerald-600 font-medium">{Number(sp.gia_ban).toLocaleString('vi-VN')} đ</td>
+      <td className="p-4 font-medium text-amber-600">
+        {sp.gia_giam ? `${Number(sp.gia_giam).toLocaleString('vi-VN')} đ` : <span className="text-gray-300">—</span>}
+      </td>
       <td className="p-4">{sp.so_luong_ton_kho} <span className="text-xs text-gray-400">{sp.don_vi_tinh}</span></td>
       
       <td className="p-4 text-center">

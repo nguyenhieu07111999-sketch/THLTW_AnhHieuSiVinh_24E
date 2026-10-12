@@ -12,7 +12,6 @@ export default function FormSanPhamModal({ moModal, dongModal, idDangSua, duLieu
     const { name, value, type, checked } = e.target;
     setDuLieuForm((prev) => {
       const updated = { ...prev, [name]: type === 'checkbox' ? checked : value };
-      // Tự động tạo slug khi nhập tên sản phẩm mới
       if (name === 'ten_san_pham' && !idDangSua && !prev.duong_dan_sp) {
         updated.duong_dan_sp = taoSlug(value);
       }
@@ -117,6 +116,20 @@ export default function FormSanPhamModal({ moModal, dongModal, idDangSua, duLieu
                   <input type="number" name="gia_ban" value={duLieuForm.gia_ban} onChange={doiGiaTri} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
                   {danhSachLoi?.gia_ban && <p className="text-red-500 text-xs mt-1">{danhSachLoi.gia_ban[0]}</p>}
                 </div>
+                <div>
+                <label htmlFor="gia_giam" className="mb-1 block text-sm font-medium text-gray-700">Giá giảm</label>
+                <input
+                  id="gia_giam"
+                  name="gia_giam"
+                  type="number"
+                  min="0"
+                  step="1"
+                  value={duLieuForm.gia_giam || ''}
+                  onChange={doiGiaTri}
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+                {danhSachLoi?.gia_giam && <p className="text-red-500 text-xs mt-1">{danhSachLoi.gia_giam[0]}</p>}
+              </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Tồn kho <span className="text-red-500">*</span></label>
                   <input type="number" name="so_luong_ton_kho" value={duLieuForm.so_luong_ton_kho} onChange={doiGiaTri} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
