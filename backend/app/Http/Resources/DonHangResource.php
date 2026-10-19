@@ -58,8 +58,8 @@ class DonHangResource extends JsonResource
             }),
 
             // Thời gian
-            'ngay_tao' => $this->created_at ? $this->created_at->format('Y-m-d H:i:s') : null,
-            'ngay_cap_nhat' => $this->updated_at ? $this->updated_at->format('Y-m-d H:i:s') : null,
+            'ngay_tao'      => $this->created_at?->toIso8601String(),
+            'ngay_cap_nhat' => $this->updated_at?->toIso8601String(),
         ];
     }
 }

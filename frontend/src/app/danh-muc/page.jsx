@@ -117,7 +117,7 @@ export default function TrangDanhMuc() {
           ))}
         </aside>
 
-        {/* Khung 2: Tiêu chí nổi bật (Lấp đầy khoảng trống bên dưới) */}
+        {/* Khung 2: Tiêu chí nổi bật  */}
         <aside className="bg-white p-5 rounded-2xl border border-emerald-100 h-fit space-y-2 shadow-sm">
           <h3 className="font-bold text-base mb-3 text-emerald-950 flex items-center gap-2">
             <span>⚡</span> Tiêu Chí Nổi Bật

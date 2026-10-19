@@ -10,6 +10,7 @@ use App\Http\Controllers\GioHangController;
 use App\Http\Controllers\NguoiDungController;
 use App\Http\Controllers\BaiVietController;
 use App\Http\Controllers\DonHangController;
+use App\Http\Controllers\TaiKhoanController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -20,13 +21,20 @@ Route::get('/ping', function () {
 });
 
 // Đăng ký / đăng nhập
-Route::post('/dang-ky', [AuthController::class, 'register']);
-Route::post('/dang-nhap', [AuthController::class, 'login']);
-Route::post('/admin/dang-nhap', [AuthController::class, 'adminLogin']);
+Route::post('/dang-ky', [AuthController::class, 'register'])->middleware('throttle:10,1');
+Route::post('/dang-nhap', [AuthController::class, 'login'])->middleware('throttle:5,1');
+Route::post('/admin/dang-nhap', [AuthController::class, 'adminLogin'])->middleware('throttle:5,1');
 
 // Đăng xuất
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/dang-xuat', [AuthController::class, 'logout']);
+
+    Route::prefix('tai-khoan')->group(function () {
+        Route::get('/', [TaiKhoanController::class, 'hoSo']);
+        Route::get('/don-hang', [TaiKhoanController::class, 'danhSachDonHang']);
+        Route::post('/cap-nhat', [TaiKhoanController::class, 'capNhatHoSo']);
+        Route::get('/don-hang/{id}', [TaiKhoanController::class, 'chiTietDonHang'])->whereNumber('id');
+    });
 
     Route::prefix('gio-hang')->group(function () {
         Route::get('/', [GioHangController::class, 'index']);
