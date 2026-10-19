@@ -9,32 +9,28 @@ import { tinhTongTien, dinhDangTienVND } from '@/utils/tinh-toan';
 
 export default function TrangChiTietSanPham({ params }) {
   const router = useRouter();
-  const { id } = React.use(params); // Lấy id sản phẩm từ URL
+  const { id } = React.use(params); 
 
   const [sanPham, setSanPham] = useState(null);
   const [sanPhamLienQuan, setSanPhamLienQuan] = useState([]);
   const [soLuong, setSoLuong] = useState(1);
   const [dangTai, setDangTai] = useState(true);
 
-  // 1. Gọi API lấy thông tin chi tiết sản phẩm và sản phẩm liên quan
   useEffect(() => {
     const taiChiTietVaLienQuan = async () => {
       setDangTai(true);
       try {
-        // Lấy chi tiết sản phẩm hiện tại
         const resChiTiet = await dichVuSanPham.layChiTiet(id);
         const dataSanPham = resChiTiet.data.data || resChiTiet.data;
         setSanPham(dataSanPham);
 
-        // Nếu sản phẩm có danh mục, gọi tiếp danh sách sản phẩm cùng danh mục làm sản phẩm liên quan
         if (dataSanPham && dataSanPham.danh_muc_id) {
           const resLienQuan = await dichVuSanPham.layDanhSach({
             danh_muc_id: dataSanPham.danh_muc_id,
-            per_page: 5, // Lấy dư ra một chút để loại trừ sản phẩm hiện tại
+            per_page: 5, 
           });
           const danhSachLienQuan = resLienQuan.data.data || resLienQuan.data;
           
-          // Lọc bỏ sản phẩm hiện tại ra khỏi danh sách liên quan
           const daLoc = danhSachLienQuan.filter(sp => sp.id !== Number(id)).slice(0, 4);
           setSanPhamLienQuan(daLoc);
         }
@@ -47,15 +43,13 @@ export default function TrangChiTietSanPham({ params }) {
 
     if (id) {
       taiChiTietVaLienQuan();
-      window.scrollTo(0, 0); // Cuộn lên đầu trang khi đổi sản phẩm
-      setSoLuong(1); // Reset số lượng về 1 khi chuyển sản phẩm mới
+      window.scrollTo(0, 0); 
+      setSoLuong(1); 
     }
   }, [id]);
 
-  // Lấy số lượng tồn kho từ database (mặc định tối đa 99 nếu chưa có thuộc tính)
   const tonKho = sanPham?.so_luong_ton_kho !== undefined ? Number(sanPham.so_luong_ton_kho) : 99;
 
-  // Xử lý tăng số lượng không vượt quá tồn kho
   const handleTangSoLuong = () => {
     if (soLuong < tonKho) {
       setSoLuong(prev => prev + 1);
@@ -90,7 +84,6 @@ export default function TrangChiTietSanPham({ params }) {
     );
   }
 
-  // Tính toán tiền sử dụng hàm utils
   const donGiaHienTai = Number(sanPham.gia_giam > 0 ? sanPham.gia_giam : sanPham.gia_ban);
   const tongTienTamTinh = tinhTongTien(sanPham.gia_ban, sanPham.gia_giam, soLuong);
 
@@ -131,7 +124,6 @@ export default function TrangChiTietSanPham({ params }) {
 
           <h1 className="text-2xl font-bold text-gray-800">{sanPham.ten_san_pham}</h1>
           
-          {/* Hiển thị giá và tổng tiền tự động nhân theo số lượng */}
           <div className="space-y-1">
             <div className="flex items-baseline space-x-3">
               <p className="text-2xl font-extrabold text-emerald-700">
@@ -154,7 +146,6 @@ export default function TrangChiTietSanPham({ params }) {
           </p>
 
           <div className="flex items-center space-x-4 pt-4">
-            {/* Bộ tăng giảm số lượng có giới hạn tồn kho */}
             <div className="flex items-center border border-gray-200 rounded-lg bg-gray-50">
               <button 
                 onClick={handleGiamSoLuong}
@@ -171,7 +162,6 @@ export default function TrangChiTietSanPham({ params }) {
               </button>
             </div>
 
-            {/* Nút thêm vào giỏ hàng */}
             <button
               onClick={handleThemVaoGio}
               className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-6 rounded-xl transition-all shadow-md shadow-emerald-100"
@@ -187,14 +177,13 @@ export default function TrangChiTietSanPham({ params }) {
         <section className="space-y-6 pt-6 border-t border-emerald-100">
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
-              <span>🌾</span> Sản Phẩm Cùng Danh Mục
+              <span>🌾</span> Sản Phẩm Liên Quan
             </h2>
             <Link href="/danh-muc" className="text-sm font-semibold text-emerald-700 hover:underline">
               Xem tất cả &rarr;
             </Link>
           </div>
 
-          {/* Lưới sản phẩm liên quan đồng bộ kích thước */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {sanPhamLienQuan.map((sp) => (
               <TheSanPham key={sp.id} sp={sp} type="normal" />

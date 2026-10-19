@@ -1,4 +1,5 @@
 import './globals.css';
+import { XacThucProvider } from '@/context/xac-thuc-context';
 import ThanhDieuHuong from '@/components/dieu-huong/thanh-dieu-huong';
 import ChanTrang from '@/components/dieu-huong/chan-trang';
 
@@ -11,9 +12,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="vi">
       <body className="bg-emerald-50/20 text-gray-800 flex flex-col min-h-screen">
-        <ThanhDieuHuong />
-        <main className="flex-grow">{children}</main>
-        <ChanTrang />
+        <XacThucProvider>
+          <ThanhDieuHuong />
+          <main className="flex-grow">{children}</main>
+          <ChanTrang />
+        </XacThucProvider>
       </body>
     </html>
   );

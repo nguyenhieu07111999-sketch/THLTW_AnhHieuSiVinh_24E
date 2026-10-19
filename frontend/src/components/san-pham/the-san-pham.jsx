@@ -5,12 +5,10 @@ import { useRouter } from 'next/navigation';
 export default function TheSanPham({ sp, type = 'normal' }) {
   const router = useRouter();
 
-  // Kiểm tra điều kiện giảm giá an toàn
   const giaGiamNum = Number(sp.gia_giam);
   const giaBanNum = Number(sp.gia_ban);
   const coGiamGia = sp.gia_giam !== null && sp.gia_giam !== '' && giaGiamNum > 0 && giaGiamNum < giaBanNum;
 
-  // Cấu hình giao diện linh hoạt theo loại card
   const isPromotion = type === 'promotion';
   const borderColor = isPromotion ? 'border-rose-100' : 'border-emerald-100';
   const btnBg = isPromotion ? 'bg-rose-600 hover:bg-rose-700' : 'bg-emerald-600 hover:bg-emerald-700';

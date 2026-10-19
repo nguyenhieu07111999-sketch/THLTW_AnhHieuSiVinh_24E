@@ -1,48 +1,28 @@
-const API_URL = 'http://localhost:8000/api';
+import api from './api';
 
 export const dichVuXacThuc = {
-  // Hàm Đăng ký
+  // Hàm Đăng ký (dùng chung Axios instance)
   async dangKy(payload) {
-    const res = await fetch(`${API_URL}/dang-ky`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    });
-    const data = await res.json();
-    if (!res.ok) throw data;
-    return data;
+    const res = await api.post('/dang-ky', payload);
+    return res.data;
   },
 
-  // Hàm Đăng nhập
+  // Hàm Đăng nhập (dùng chung Axios instance)
   async dangNhap(payload) {
-    const res = await fetch(`${API_URL}/dang-nhap`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    });
-    const data = await res.json();
-    if (!res.ok) throw data;
-    return data;
+    const res = await api.post('/dang-nhap', payload);
+    return res.data;
   },
 
   // Hàm Đăng xuất
   async dangXuat() {
-    const token = localStorage.getItem('access_token');
-    const res = await fetch(`${API_URL}/dang-xuat`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/json',
-      },
-    });
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('user_info');
-    return await res.json();
+    try {
+      await api.post('/dang-xuat');
+    } catch (e) {
+      // Bỏ qua lỗi nếu token đã hết hạn trên server
+    } finally {
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('user_info');
+      localStorage.removeItem('admin_token'); // Dọn dẹp sạch sẽ token admin tránh xung đột
+    }
   }
 };

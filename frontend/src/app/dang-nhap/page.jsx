@@ -3,12 +3,19 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { dichVuXacThuc } from '@/services/dich-vu-xac-thuc';
+import { useXacThuc } from '@/context/xac-thuc-context';
 
 export default function TrangXacThuc() {
   const router = useRouter();
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const { dangNhap } = useXacThuc();
+
+  const diChuyenSauDangNhap = () => {
+    const r = new URLSearchParams(window.location.search).get('redirect');
+    router.replace(r && r.startsWith('/') && !r.startsWith('//') ? r : '/');
+  };
 
   // Form Đăng nhập
   const [loginData, setLoginData] = useState({
@@ -28,74 +35,56 @@ export default function TrangXacThuc() {
 
   // Xử lý Submit Đăng Nhập
   const handleLoginSubmit = async (e) => {
-    e.preventDefault();
-    setErrorMessage('');
-    setLoading(true);
+  e.preventDefault();
+  setErrorMessage('');
+  setLoading(true);
 
-    try {
-      const response = await dichVuXacThuc.dangNhap(loginData);
-      
-      // 1. Lưu Access Token
-      localStorage.setItem('access_token', response.access_token);
-      
-      
-      if (response.data) {
-        localStorage.setItem('user_info', JSON.stringify(response.data));
-      }
+  try {
+    const response = await dichVuXacThuc.dangNhap(loginData);
+    dangNhap(response.access_token, response.data); // lưu token + user, navbar cập nhật ngay
+    diChuyenSauDangNhap();
+  } catch (err) {
+    const dau = err.errors ? Object.values(err.errors)[0]?.[0] : null;
+    setErrorMessage(dau || err.message || 'Đăng nhập thất bại. Vui lòng kiểm tra lại!');
+  } finally {
+    setLoading(false);
+  }
+};
 
-      alert(response.message || 'Đăng nhập thành công!');
-      
-      window.dispatchEvent(new Event('storage'));
-      
-      router.push('/');
-    } catch (err) {
-      setErrorMessage(err.message || 'Đăng nhập thất bại. Vui lòng kiểm tra lại!');
-    } finally {
-      setLoading(false);
-    }
+const handleRegisterSubmit = async (e) => {
+  e.preventDefault();
+  setErrorMessage('');
+
+  if (registerData.mat_khau !== registerData.xac_nhan_mat_khau) {
+    setErrorMessage('Mật khẩu xác nhận không trùng khớp!');
+    return;
+  }
+
+  setLoading(true);
+
+  const payload = {
+    ho_ten: registerData.ho_ten,
+    email: registerData.email,
+    so_dien_thoai: registerData.so_dien_thoai,
+    dia_chi: registerData.dia_chi,
+    mat_khau: registerData.mat_khau,
   };
 
-  // Xử lý Submit Đăng Ký
-  const handleRegisterSubmit = async (e) => {
-    e.preventDefault();
-    setErrorMessage('');
-
-    if (registerData.mat_khau !== registerData.xac_nhan_mat_khau) {
-      setErrorMessage('Mật khẩu xác nhận không trùng khớp!');
-      return;
+  try {
+    const response = await dichVuXacThuc.dangKy(payload);
+    // API đăng ký đã trả sẵn token + user nên đăng nhập luôn
+    dangNhap(response.access_token, response.data);
+    diChuyenSauDangNhap();
+  } catch (err) {
+    if (err.errors) {
+      setErrorMessage(Object.values(err.errors)[0][0]);
+    } else {
+      setErrorMessage(err.message || 'Đăng ký thất bại!');
     }
-
-    setLoading(true);
-
-    // Payload gửi sang Laravel
-    const payload = {
-      ho_ten: registerData.ho_ten,
-      email: registerData.email,
-      so_dien_thoai: registerData.so_dien_thoai,
-      dia_chi: registerData.dia_chi,
-      mat_khau: registerData.mat_khau,
-    };
-
-    try {
-      const response = await dichVuXacThuc.dangKy(payload);
-      
-      // Lưu Token sau khi Đăng ký thành công
-      localStorage.setItem('access_token', response.access_token);
-      
-      alert(response.message || 'Đăng ký tài khoản thành công!');
-      setIsLogin(true); // Chuyển về tab Đăng nhập
-    } catch (err) {
-      // Xử lý lỗi validation từ Request Laravel (RegisterNguoiDungRequest)
-      if (err.errors) {
-        const firstError = Object.values(err.errors)[0][0];
-        setErrorMessage(firstError);
-      } else {
-        setErrorMessage(err.message || 'Đăng ký thất bại!');
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-12 bg-slate-50">
