@@ -17,8 +17,9 @@ class BaiVietRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'chu_de_id'  => 'nullable|integer',
             'tieu_de'    => 'required|string|max:255',
-            'anh_bia'    => 'nullable|string|max:500',
+            'anh_bia'    => 'nullable', 
             'mo_ta_ngan' => 'nullable|string|max:500',
             'noi_dung'   => 'required|string',
             'trang_thai' => ['required', Rule::in(['nhap', 'dang'])],
@@ -29,11 +30,9 @@ class BaiVietRequest extends FormRequest
     {
         return [
             'tieu_de.required'    => 'Vui lòng nhập tiêu đề bài viết.',
-            'tieu_de.max'         => 'Tiêu đề bài viết không được vượt quá 255 ký tự.',
-            'mo_ta_ngan.max'      => 'Mô tả ngắn không được vượt quá 500 ký tự.',
             'noi_dung.required'   => 'Vui lòng nhập nội dung bài viết.',
             'trang_thai.required' => 'Vui lòng chọn trạng thái bài viết.',
-            'trang_thai.in'       => 'Trạng thái bài viết chỉ có thể là "nhap" hoặc "dang".',
+            'trang_thai.in'       => 'Trạng thái bài viết không hợp lệ.',
         ];
     }
 
