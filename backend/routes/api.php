@@ -54,6 +54,10 @@ Route::get('/san-pham/{id}', [SanPhamController::class, 'show'])->whereNumber('i
 Route::get('/thuong-hieu', [ThuongHieuController::class, 'index']);
 Route::get('/thuong-hieu/{id}', [ThuongHieuController::class, 'show'])->whereNumber('id');
 
+Route::get('/bai-viet', [BaiVietController::class, 'index']);
+Route::get('/bai-viet/chu-de', [BaiVietController::class, 'chuDe']);
+Route::get('/bai-viet/{id}', [BaiVietController::class, 'show'])->whereNumber('id');
+
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {
 
     Route::get('/danh-muc/thung-rac', [DanhMucController::class, 'trashed']);
@@ -94,8 +98,6 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     });
 
     Route::prefix('bai-viet')->group(function () {
-        Route::get('/', [BaiVietController::class, 'index']);
-        Route::get('/chu-de', [BaiVietController::class, 'chuDe']);
         Route::post('/', [BaiVietController::class, 'store']);
         Route::put('/{id}', [BaiVietController::class, 'update']);
         Route::patch('/{id}/trang-thai', [BaiVietController::class, 'doiTrangThai']);
@@ -103,4 +105,6 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     });
 
     Route::apiResource('don-hang', DonHangController::class)->except(['store']);
+
+   
 });

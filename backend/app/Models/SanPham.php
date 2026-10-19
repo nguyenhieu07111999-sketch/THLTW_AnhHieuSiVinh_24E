@@ -110,22 +110,15 @@ class SanPham extends Model
      */
     public function scopeTheoKhoangGia($query, $min = null, $max = null)
     {
-        if ($min !== null) {
-            $query->where(function ($q) use ($min) {
-                $q->where('gia_giam', '>=', $min)
-                  ->orWhere(function ($sub) use ($min) {
-                      $sub->whereNull('gia_giam')->where('gia_ban', '>=', $min);
-                  });
-            });
+        // Biểu thức lấy giá thực tế: nếu gia_giam > 0 thì lấy gia_giam, ngược lại lấy gia_ban
+        $bieuThucGia = 'COALESCE(NULLIF(gia_giam, 0), gia_ban)';
+
+        if ($min !== null && $min !== '') {
+            $query->whereRaw("{$bieuThucGia} >= ?", [(float) $min]);
         }
 
-        if ($max !== null) {
-            $query->where(function ($q) use ($max) {
-                $q->where('gia_giam', '<=', $max)
-                  ->orWhere(function ($sub) use ($max) {
-                      $sub->whereNull('gia_giam')->where('gia_ban', '<=', $max);
-                  });
-            });
+        if ($max !== null && $max !== '') {
+            $query->whereRaw("{$bieuThucGia} <= ?", [(float) $max]);
         }
 
         return $query;
@@ -142,5 +135,28 @@ class SanPham extends Model
             'oldest'   => $query->orderBy('ngay_tao', 'asc'),
             default    => $query->orderBy('ngay_tao', 'desc'),
         };
+    }
+
+    public function scopeTheoTieuChi($query, $tieuChi = null, $sort = 'moi_nhat')
+    {
+        if ($tieuChi === 'khuyen-mai') {
+            // Lọc sản phẩm có giảm giá hợp lệ
+            return $query->whereNotNull('gia_giam')
+                         ->where('gia_giam', '>', 0)
+                         ->whereColumn('gia_giam', '<', 'gia_ban');
+        }
+
+        if ($tieuChi === 'noi-bat') {
+            // Sắp xếp sản phẩm nổi bật theo giá bán cao nhất
+            return $query->orderBy('gia_ban', 'desc');
+        }
+
+        if ($tieuChi === 'ban-chay') {
+            // Tạm thời sắp xếp theo ID mới nhất
+            return $query->orderBy('id', 'desc');
+        }
+
+        // Mặc định gọi scope sapXep đã có sẵn trong model
+        return $query->sapXep($sort);
     }
 }

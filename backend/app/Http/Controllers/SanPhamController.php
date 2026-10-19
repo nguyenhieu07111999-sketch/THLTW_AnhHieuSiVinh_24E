@@ -16,29 +16,16 @@ class SanPhamController extends Controller
    
     public function index(Request $request)
     {
+        $giaMin = $request->input('gia_toi_thieu', $request->input('gia_min'));
+        $giaMax = $request->input('gia_toi_da', $request->input('gia_max'));
+
         $query = SanPham::query()
             ->hienThi()
             ->timKiem($request->input('search'))
             ->theoDanhMuc($request->input('danh_muc_id'))
             ->theoThuongHieu($request->input('thuong_hieu_id'))
-            ->theoKhoangGia($request->input('gia_min'), $request->input('gia_max'));
-
-        $tieuChi = $request->input('tieu_chi');
-
-        if ($tieuChi === 'khuyen-mai') {
-            // Lọc sản phẩm có giảm giá
-            $query->whereNotNull('gia_giam')
-                  ->where('gia_giam', '>', 0)
-                  ->whereColumn('gia_giam', '<', 'gia_ban');
-        } elseif ($tieuChi === 'noi-bat') {
-            // Lọc sản phẩm nổi bật (ví dụ: các sản phẩm có giá trị cao hoặc sắp xếp ngẫu nhiên/ưu tiên)
-            $query->orderBy('gia_ban', 'desc');
-        } elseif ($tieuChi === 'ban-chay') {
-            // Tạm thời sắp xếp theo ID mới nhất hoặc thay bằng logic bán chạy nếu sau này bạn thêm cột da_ban
-            $query->orderBy('id', 'desc');
-        } else {
-            $query->sapXep($request->input('sort', 'moi_nhat'));
-        }
+            ->theoKhoangGia($giaMin, $giaMax)
+            ->theoTieuChi($request->input('tieu_chi'), $request->input('sort', 'moi_nhat'));
 
         $sanPhams = $query->paginate($request->get('per_page', 10));
 
