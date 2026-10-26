@@ -20,12 +20,7 @@ export default function ThanhDieuHuong() {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-<<<<<<< HEAD
   // Đóng dropdown khi click ra ngoài hoặc nhấn Esc
-=======
-  const [user, setUser] = useState(null);
-
->>>>>>> DuongSiVinh
   useEffect(() => {
     if (!isOpen) return;
     const onPointerDown = (e) => {
@@ -42,7 +37,6 @@ export default function ThanhDieuHuong() {
     };
   }, [isOpen]);
 
-<<<<<<< HEAD
   const handleLogout = async () => {
     setIsOpen(false);
     try {
@@ -51,18 +45,6 @@ export default function ThanhDieuHuong() {
       // Token lỗi/hết hạn thì bỏ qua, vẫn tiến hành xóa session ở trình duyệt
     }
     dangXuat();
-=======
-    handleStorageChange();
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('user_info');
-    setUser(null);
->>>>>>> DuongSiVinh
-    alert('Đã đăng xuất tài khoản!');
     router.push('/dang-nhap');
   };
 
@@ -87,9 +69,8 @@ export default function ThanhDieuHuong() {
             <Link
               key={m.href}
               href={m.href}
-              className={`hover:text-emerald-600 transition-colors ${
-                pathname === m.href ? 'text-emerald-700 font-semibold' : ''
-              }`}
+              className={`hover:text-emerald-600 transition-colors ${pathname === m.href ? 'text-emerald-700 font-semibold' : ''
+                }`}
             >
               {m.nhan}
             </Link>
@@ -123,17 +104,17 @@ export default function ThanhDieuHuong() {
                     <p className="text-xs text-gray-500 truncate">{user.email}</p>
                   </div>
 
-                  <Link 
-                    href="/ho-so" 
-                    role="menuitem" 
+                  <Link
+                    href="/ho-so"
+                    role="menuitem"
                     className={itemCls}
                     onClick={() => setIsOpen(false)}
                   >
                     ⚙️ Hồ sơ của tôi
                   </Link>
-                  <Link 
-                    href="/don-hang" 
-                    role="menuitem" 
+                  <Link
+                    href="/don-hang"
+                    role="menuitem"
                     className={itemCls}
                     onClick={() => setIsOpen(false)}
                   >
@@ -161,7 +142,10 @@ export default function ThanhDieuHuong() {
             </Link>
           )}
 
-          <Link href="/gio-hang" className="flex items-center bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-all shadow-sm">
+          <Link
+            href="/gio-hang"
+            className="flex items-center bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-all shadow-sm"
+          >
             <span>🛒 Giỏ hàng</span>
           </Link>
         </div>
