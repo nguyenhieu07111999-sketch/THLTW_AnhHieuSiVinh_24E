@@ -21,6 +21,19 @@ Laravel is a web application framework with expressive, elegant syntax. We belie
 
 Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
+## Cấu hình thanh toán VNPAY Sandbox
+
+Thêm các biến sau vào `.env` backend và điền mã Terminal/Secret Key do VNPAY cấp:
+
+```dotenv
+VNPAY_TMN_CODE=
+VNPAY_HASH_SECRET=
+VNPAY_URL=https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+FRONTEND_URL=http://localhost:3000
+```
+
+URL IPN cần gửi cho VNPAY là `https://<domain-backend-cong-khai>/api/thanh-toan/vnpay/ipn`. Backend cần có HTTPS và truy cập được từ Internet để VNPAY gửi IPN; `APP_URL` phải trỏ đến domain backend công khai đó để tạo URL trả kết quả. Chỉ dùng tài khoản/thẻ Sandbox để kiểm thử, không dùng khóa Sandbox cho thanh toán thật.
+
 ## Learning Laravel
 
 Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.

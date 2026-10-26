@@ -20,7 +20,12 @@ export default function ThanhDieuHuong() {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
+<<<<<<< HEAD
   // Đóng dropdown khi click ra ngoài hoặc nhấn Esc
+=======
+  const [user, setUser] = useState(null);
+
+>>>>>>> DuongSiVinh
   useEffect(() => {
     if (!isOpen) return;
     const onPointerDown = (e) => {
@@ -37,6 +42,7 @@ export default function ThanhDieuHuong() {
     };
   }, [isOpen]);
 
+<<<<<<< HEAD
   const handleLogout = async () => {
     setIsOpen(false);
     try {
@@ -45,6 +51,17 @@ export default function ThanhDieuHuong() {
       // Token lỗi/hết hạn thì bỏ qua, vẫn tiến hành xóa session ở trình duyệt
     }
     dangXuat();
+=======
+    handleStorageChange();
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('user_info');
+    setUser(null);
+>>>>>>> DuongSiVinh
     alert('Đã đăng xuất tài khoản!');
     router.push('/dang-nhap');
   };

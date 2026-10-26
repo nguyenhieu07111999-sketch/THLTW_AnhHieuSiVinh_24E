@@ -29,9 +29,15 @@ Route::post('/admin/dang-nhap', [AuthController::class, 'adminLogin'])->middlewa
 
 Route::get('/san-pham/{id}/danh-gia', [DanhGiaController::class, 'index'])->whereNumber('id');
 
+Route::get('/thanh-toan/vnpay/ket-qua', [DonHangController::class, 'vnpayReturn'])
+    ->name('vnpay.return');
+Route::get('/thanh-toan/vnpay/ipn', [DonHangController::class, 'vnpayIpn'])
+    ->name('vnpay.ipn');
+
 // Đăng xuất
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/dang-xuat', [AuthController::class, 'logout']);
+    Route::post('/don-hang', [DonHangController::class, 'store']);
 
     Route::prefix('tai-khoan')->group(function () {
         Route::get('/', [TaiKhoanController::class, 'hoSo']);
@@ -41,6 +47,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::prefix('gio-hang')->group(function () {
+        Route::post('/don-hang', [DonHangController::class, 'store']);
         Route::get('/', [GioHangController::class, 'index']);
         Route::post('/', [GioHangController::class, 'store']);
         Route::put('/{id}', [GioHangController::class, 'update']);

@@ -15,7 +15,7 @@ class GioHangResource extends JsonResource
     public function toArray(Request $request): array
     {
         $tongTien = $this->chiTiets ? $this->chiTiets->sum(function ($item) {
-            $giaBan = $item->sanPham->gia_khuyen_mai ?? $item->sanPham->gia ?? 0;
+            $giaBan = $this->giaHienTai($item->sanPham);
             return $item->so_luong * $giaBan;
         }) : 0;
 
@@ -23,7 +23,7 @@ class GioHangResource extends JsonResource
             'id'            => $this->id,
             'nguoi_dung_id' => $this->nguoi_dung_id,
             'chi_tiet'      => $this->chiTiets ? $this->chiTiets->map(function ($item) {
-                $giaBan = $item->sanPham->gia_khuyen_mai ?? $item->sanPham->gia ?? 0;
+                $giaBan = $this->giaHienTai($item->sanPham);
                 return [
                     'id'           => $item->id,
                     'san_pham_id'  => $item->san_pham_id,
@@ -38,5 +38,17 @@ class GioHangResource extends JsonResource
             'ngay_tao'      => $this->ngay_tao ? $this->ngay_tao->format('Y-m-d H:i:s') : null,
             'ngay_cap_nhat' => $this->ngay_cap_nhat ? $this->ngay_cap_nhat->format('Y-m-d H:i:s') : null,
         ];
+    }
+
+    private function giaHienTai($sanPham): float
+    {
+        if (!$sanPham) {
+            return 0;
+        }
+
+        $giaGiam = (float) ($sanPham->gia_giam ?? 0);
+        return $giaGiam > 0 && $giaGiam < (float) $sanPham->gia_ban
+            ? $giaGiam
+            : (float) $sanPham->gia_ban;
     }
 }

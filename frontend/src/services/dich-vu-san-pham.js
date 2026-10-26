@@ -2,6 +2,7 @@ import api from './api';
 
 export const dichVuSanPham = {
   layDanhSach: (params) => api.get('/san-pham', { params }),
+  layChiTiet: (id) => api.get(`/san-pham/${id}`),
   
   layChiTiet: (id) => api.get(`/san-pham/${id}`),
   
