@@ -112,6 +112,15 @@ export default function ThanhDieuHuong() {
                   >
                     ⚙️ Hồ sơ của tôi
                   </Link>
+
+                  <Link
+                    href="/tai-khoan/doi-mat-khau"
+                    className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 transition-colors"
+                  >
+                    <span className="text-base leading-none">🔑</span>
+                    <span>Đổi mật khẩu</span>
+                  </Link>
+
                   <Link
                     href="/don-hang"
                     role="menuitem"
