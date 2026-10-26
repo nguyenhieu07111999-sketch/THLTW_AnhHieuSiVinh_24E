@@ -10,6 +10,7 @@ const MENU = [
     { href: "/admin/nguoi-dung", label: "Người dùng", icon: "👥" },
     { href: "/admin/bai-viet", label: "Bài viết", icon: "📝" },
     { href: "/admin/don-hang", label: "Đơn hàng", icon: "📦" },
+    { href: "/admin/danh-gia", label: "Đánh giá", icon: "📦" },
 ];
 
 export default function AdminLayout({ children }) {

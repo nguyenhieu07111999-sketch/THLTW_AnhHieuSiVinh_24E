@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { dichVuSanPham } from '@/services/dich-vu-san-pham';
 import TheSanPham from '@/components/san-pham/the-san-pham';
+import BinhLuanDanhGia from '@/components/san-pham/binh-luan-danh-gia';
 import { tinhTongTien, dinhDangTienVND } from '@/utils/tinh-toan';
 
 export default function TrangChiTietSanPham({ params }) {
@@ -191,6 +192,11 @@ export default function TrangChiTietSanPham({ params }) {
           </div>
         </section>
       )}
+
+      {/* PHẦN ĐÁNH GIÁ & BÌNH LUẬN (ẢNH / VIDEO / RATING) */}
+      <section className="pt-6 border-t border-emerald-100">
+        <BinhLuanDanhGia sanPhamId={sanPham.id} />
+      </section>
     </div>
   );
 }
