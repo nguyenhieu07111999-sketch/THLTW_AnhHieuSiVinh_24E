@@ -8,19 +8,7 @@ export default function ThanhDieuHuong() {
   const router = useRouter();
   const pathname = usePathname();
 
-  const [user, setUser] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const userInfo = localStorage.getItem('user_info');
-      if (userInfo) {
-        try {
-          return JSON.parse(userInfo);
-        } catch (e) {
-          return null;
-        }
-      }
-    }
-    return null;
-  });
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     const handleStorageChange = () => {
@@ -36,6 +24,7 @@ export default function ThanhDieuHuong() {
       }
     };
 
+    handleStorageChange();
     window.addEventListener('storage', handleStorageChange);
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);

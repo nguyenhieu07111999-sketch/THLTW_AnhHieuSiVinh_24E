@@ -3,12 +3,15 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { dichVuSanPham } from '@/services/dich-vu-san-pham';
 
 export default function TrangChu() {
   const router = useRouter();
 
   // 1. Quản lý trạng thái Banner tự chuyển
   const [currentBanner, setCurrentBanner] = useState(0);
+  const [sanPhamTuBackend, setSanPhamTuBackend] = useState([]);
+  const [loiTaiSanPham, setLoiTaiSanPham] = useState('');
 
   const banners = [
     {
@@ -45,27 +48,40 @@ export default function TrangChu() {
     return () => clearInterval(timer);
   }, [banners.length]);
 
-  // 2. Danh sách dữ liệu mẫu
-  const sanPhamNoiBat = [
-    { id: 1, ten: 'Cà Rốt Hữu Cơ Đà Lạt', gia: '27.000đ', icon: '🥕' },
-    { id: 2, ten: 'Cà Chua Cherry Đỏ', gia: '32.000đ', icon: '🍅' },
-    { id: 3, ten: 'Rau Cải Thảo VietGAP', gia: '35.000đ', icon: '🥬' },
-    { id: 4, ten: 'Bông Cải Xanh Tươi', gia: '45.000đ', icon: '🥦' },
-  ];
+  useEffect(() => {
+    let conHieuLuc = true;
+    dichVuSanPham.layDanhSach({ per_page: 12 })
+      .then((response) => {
+        if (conHieuLuc) setSanPhamTuBackend(response.data.data || []);
+      })
+      .catch((error) => {
+        if (conHieuLuc) {
+          setLoiTaiSanPham(error.response?.data?.message || 'Không tải được danh sách sản phẩm.');
+        }
+      });
 
-  const sanPhamKhuyenMai = [
-    { id: 5, ten: 'Dâu Tây Đà Lạt Giống Mỹ', gia: '85.000đ', giaGoc: '110.000đ', giamGia: '22%', icon: '🍓' },
-    { id: 6, ten: 'Cam Sành Mới Hái', gia: '29.000đ', giaGoc: '40.000đ', giamGia: '27%', icon: '🍊' },
-    { id: 7, ten: 'Nấm Đùi Gà Tươi', gia: '38.000đ', giaGoc: '50.000đ', giamGia: '24%', icon: '🍄' },
-    { id: 8, ten: 'Bơ Tắm Bò Sáp XL', gia: '62.000đ', giaGoc: '80.000đ', giamGia: '22%', icon: '🥑' },
-  ];
+    return () => {
+      conHieuLuc = false;
+    };
+  }, []);
 
-  const sanPhamBanChay = [
-    { id: 9, ten: 'Chuối Laba Đà Lạt', gia: '30.000đ', daBan: '1.2k', icon: '🍌' },
-    { id: 10, ten: 'Táo Mật Envy', gia: '89.000đ', daBan: '980', icon: '🍎' },
-    { id: 11, ten: 'Rau Muống Hữu Cơ', gia: '18.000đ', daBan: '2.5k', icon: '🌱' },
-    { id: 12, ten: 'Khoai Lang Mật Da Lạt', gia: '35.000đ', daBan: '850', icon: '🍠' },
-  ];
+  const dinhDangSanPham = (sanPham) => {
+    const giaBan = Number(sanPham.gia_ban);
+    const giaGiam = Number(sanPham.gia_giam);
+    const dangGiamGia = giaGiam > 0 && giaGiam < giaBan;
+    return {
+      id: sanPham.id,
+      ten: sanPham.ten_san_pham,
+      gia: `${(dangGiamGia ? giaGiam : giaBan).toLocaleString('vi-VN')}đ`,
+      giaGoc: dangGiamGia ? `${giaBan.toLocaleString('vi-VN')}đ` : null,
+      giamGia: dangGiamGia ? `${Math.round((giaBan - giaGiam) / giaBan * 100)}%` : null,
+      icon: '🥬',
+    };
+  };
+  const sanPhamHienThi = sanPhamTuBackend.map(dinhDangSanPham);
+  const sanPhamNoiBat = sanPhamHienThi.slice(0, 4);
+  const sanPhamKhuyenMai = sanPhamHienThi.filter((sanPham) => sanPham.giamGia).slice(0, 4);
+  const sanPhamBanChay = sanPhamHienThi.slice(4, 8);
 
   // 3. Danh sách tin tức / bài viết mới nhất
   const tinTucMoitNhat = [
@@ -136,8 +152,12 @@ export default function TrangChu() {
         </div>
       </section>
 
+      {loiTaiSanPham && (
+        <p className="mx-auto max-w-7xl px-4 text-red-700">{loiTaiSanPham}</p>
+      )}
+
       {/* 2. SẢN PHẨM KHUYẾN MÃI */}
-      <section className="max-w-7xl mx-auto px-4">
+      {sanPhamKhuyenMai.length > 0 && <section className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
             <span>🔥</span> Sản Phẩm Khuyến Mãi
@@ -168,16 +188,16 @@ export default function TrangChu() {
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  router.push('/gio-hang');
+                  router.push(`/danh-muc/${sp.id}`);
                 }}
                 className="w-full mt-3 bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold py-2 rounded-lg transition-colors"
               >
-                Săn ngay
+                Xem và mua
               </button>
             </div>
           ))}
         </div>
-      </section>
+      </section>}
 
       {/* 3. SẢN PHẨM NỔI BẬT */}
       <section className="max-w-7xl mx-auto px-4">
@@ -205,11 +225,11 @@ export default function TrangChu() {
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  router.push('/gio-hang');
+                  router.push(`/danh-muc/${sp.id}`);
                 }}
                 className="w-full mt-3 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold py-2 rounded-lg transition-colors"
               >
-                Thêm vào giỏ
+                Xem và mua
               </button>
             </div>
           ))}
@@ -245,11 +265,11 @@ export default function TrangChu() {
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  router.push('/gio-hang');
+                  router.push(`/danh-muc/${sp.id}`);
                 }}
                 className="w-full mt-3 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold py-2 rounded-lg transition-colors"
               >
-                Thêm vào giỏ
+                Xem và mua
               </button>
             </div>
           ))}
