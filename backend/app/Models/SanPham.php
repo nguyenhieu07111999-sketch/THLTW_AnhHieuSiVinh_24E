@@ -47,6 +47,11 @@ class SanPham extends Model
         return $this->belongsTo(ThuongHieu::class, 'thuong_hieu_id');
     }
 
+    public function danhGias()
+    {
+        return $this->hasMany(\App\Models\DanhGiaSanPham::class, 'san_pham_id', 'id');
+    }
+    
     // ==================== LOCAL SCOPES ====================
 
     /**
@@ -158,5 +163,14 @@ class SanPham extends Model
 
         // Mặc định gọi scope sapXep đã có sẵn trong model
         return $query->sapXep($sort);
+    }
+
+    public function scopeCoDanhGiaVaThongKe($query, $tuKhoa = null)
+    {
+        return $query->has('danhGias')
+            ->withCount('danhGias')
+            ->withAvg('danhGias as diem_trung_binh', 'so_sao')
+            ->when($tuKhoa, fn($q) => $q->where('ten_san_pham', 'like', '%' . trim($tuKhoa) . '%'))
+            ->orderByDesc('danh_gias_count');
     }
 }

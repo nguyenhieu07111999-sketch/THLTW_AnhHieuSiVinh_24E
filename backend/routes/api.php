@@ -11,6 +11,8 @@ use App\Http\Controllers\NguoiDungController;
 use App\Http\Controllers\BaiVietController;
 use App\Http\Controllers\DonHangController;
 use App\Http\Controllers\TaiKhoanController;
+use App\Http\Controllers\DanhGiaController;
+use App\Http\Controllers\AdminDanhGiaController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -24,6 +26,8 @@ Route::get('/ping', function () {
 Route::post('/dang-ky', [AuthController::class, 'register'])->middleware('throttle:10,1');
 Route::post('/dang-nhap', [AuthController::class, 'login'])->middleware('throttle:5,1');
 Route::post('/admin/dang-nhap', [AuthController::class, 'adminLogin'])->middleware('throttle:5,1');
+
+Route::get('/san-pham/{id}/danh-gia', [DanhGiaController::class, 'index'])->whereNumber('id');
 
 // Đăng xuất
 Route::middleware('auth:sanctum')->group(function () {
@@ -42,6 +46,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/{id}', [GioHangController::class, 'update']);
         Route::delete('/{id}', [GioHangController::class, 'destroy']);
     });
+
+    Route::post('/san-pham/{id}/danh-gia', [DanhGiaController::class, 'store'])->whereNumber('id');
 });
 
 Route::apiResource('danh-muc', DanhMucController::class)
@@ -57,6 +63,15 @@ Route::get('/thuong-hieu/{id}', [ThuongHieuController::class, 'show'])->whereNum
 Route::get('/bai-viet', [BaiVietController::class, 'index']);
 Route::get('/bai-viet/chu-de', [BaiVietController::class, 'chuDe']);
 Route::get('/bai-viet/{id}', [BaiVietController::class, 'show'])->whereNumber('id');
+
+Route::prefix('admin/danh-gia')->group(function () {
+    Route::get('/san-pham', [AdminDanhGiaController::class, 'danhSachSanPhamReview']);
+    Route::get('/san-pham/{sanPhamId}', [AdminDanhGiaController::class, 'chiTietReviewSanPham'])->whereNumber('sanPhamId');
+    Route::patch('/{id}/trang-thai', [AdminDanhGiaController::class, 'doiTrangThai'])->whereNumber('id');
+    Route::delete('/{id}', [AdminDanhGiaController::class, 'destroy'])->whereNumber('id');
+    Route::get('/rules', [AdminDanhGiaController::class, 'layRules']);
+    Route::post('/rules', [AdminDanhGiaController::class, 'luuRules']);
+});
 
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {
 
@@ -103,6 +118,7 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
         Route::patch('/{id}/trang-thai', [BaiVietController::class, 'doiTrangThai']);
         Route::delete('/{id}', [BaiVietController::class, 'destroy']);
     });
+
 
     Route::apiResource('don-hang', DonHangController::class)->except(['store']);
 
