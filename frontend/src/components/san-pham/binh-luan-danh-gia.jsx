@@ -49,7 +49,6 @@ export default function BinhLuanDanhGia({ sanPhamId }) {
         <span>⭐</span> Đánh Giá & Nhận Xét
       </h2>
 
-      {/* 1. THỐNG KÊ RATING & BỘ LỌC SAO */}
       <div className="bg-emerald-50/50 rounded-2xl p-6 border border-emerald-100/80 flex flex-col md:flex-row items-center gap-6 mb-8">
         <div className="text-center md:border-r border-emerald-200/60 md:pr-8 min-w-[150px]">
           <div className="text-4xl md:text-5xl font-black text-emerald-800">
@@ -96,7 +95,6 @@ export default function BinhLuanDanhGia({ sanPhamId }) {
       <form onSubmit={handleSubmit} className="bg-gray-50/70 rounded-2xl p-5 border mb-8 space-y-4">
         <h3 className="text-sm font-bold text-gray-800">Viết nhận xét của bạn</h3>
 
-        {/* Rating tương tác */}
         <div className="flex items-center gap-3">
           <span className="text-xs font-medium text-gray-600">Đánh giá chung:</span>
           <div className="flex text-2xl cursor-pointer">
