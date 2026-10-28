@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { dichVuSanPham } from '@/services/dich-vu-san-pham';
+import { themVaoGio } from '@/services/dich-vu-gio-hang';
 import TheSanPham from '@/components/san-pham/the-san-pham';
 import BinhLuanDanhGia from '@/components/san-pham/binh-luan-danh-gia';
 import { tinhTongTien, dinhDangTienVND } from '@/utils/tinh-toan';
@@ -16,6 +17,8 @@ export default function TrangChiTietSanPham({ params }) {
   const [sanPhamLienQuan, setSanPhamLienQuan] = useState([]);
   const [soLuong, setSoLuong] = useState(1);
   const [dangTai, setDangTai] = useState(true);
+  const [dangThemVaoGio, setDangThemVaoGio] = useState(false);
+  const [loiThemVaoGio, setLoiThemVaoGio] = useState('');
 
   useEffect(() => {
     const taiChiTietVaLienQuan = async () => {
@@ -63,14 +66,33 @@ export default function TrangChiTietSanPham({ params }) {
     setSoLuong(prev => Math.max(1, prev - 1));
   };
 
-  const handleThemVaoGio = () => {
+  const handleThemVaoGio = async () => {
+    setLoiThemVaoGio('');
+
     if (soLuong > tonKho) {
       alert('Số lượng vượt quá tồn kho cho phép!');
       return;
     }
-    const tongTien = tinhTongTien(sanPham.gia_ban, sanPham.gia_giam, soLuong);
-    alert(`Đã thêm ${soLuong} sản phẩm "${sanPham?.ten_san_pham}" vào giỏ hàng! Tổng tiền: ${dinhDangTienVND(tongTien)}`);
-    router.push('/gio-hang');
+
+    if (!localStorage.getItem('access_token')) {
+      router.push(`/dang-nhap?redirect=${encodeURIComponent(`/danh-muc/${sanPham.id}`)}`);
+      return;
+    }
+
+    setDangThemVaoGio(true);
+    try {
+      await themVaoGio(sanPham.id, soLuong);
+      router.push('/gio-hang');
+    } catch (error) {
+      const errors = error.response?.data?.errors;
+      setLoiThemVaoGio(
+        errors
+          ? Object.values(errors).flat().join(' | ')
+          : error.response?.data?.message || 'Không thể thêm sản phẩm vào giỏ. Vui lòng thử lại.'
+      );
+    } finally {
+      setDangThemVaoGio(false);
+    }
   };
 
   if (dangTai) {
@@ -165,11 +187,13 @@ export default function TrangChiTietSanPham({ params }) {
 
             <button
               onClick={handleThemVaoGio}
-              className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-6 rounded-xl transition-all shadow-md shadow-emerald-100"
+              disabled={dangThemVaoGio}
+              className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-6 rounded-xl transition-all shadow-md shadow-emerald-100 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              🛒 Thêm Vào Giỏ Hàng
+              {dangThemVaoGio ? 'Đang thêm...' : '🛒 Thêm Vào Giỏ Hàng'}
             </button>
           </div>
+          {loiThemVaoGio && <p className="text-sm text-red-600" role="alert">{loiThemVaoGio}</p>}
         </div>
       </div>
 

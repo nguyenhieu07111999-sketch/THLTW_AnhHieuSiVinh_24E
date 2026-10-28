@@ -24,5 +24,14 @@ export const dichVuXacThuc = {
       localStorage.removeItem('user_info');
       localStorage.removeItem('admin_token'); // Dọn dẹp sạch sẽ token admin tránh xung đột
     }
+  },
+
+  async dangXuatAdmin() {
+    try {
+      await api.post('/dang-xuat');
+    } finally {
+      localStorage.removeItem('admin_token');
+      localStorage.removeItem('admin_info');
+    }
   }
 };
