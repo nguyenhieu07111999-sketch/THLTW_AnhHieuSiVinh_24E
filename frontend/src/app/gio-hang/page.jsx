@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { capNhatSoLuongGio, layGioHang } from '@/services/dich-vu-gio-hang';
+import { capNhatSoLuongGio, layGioHang, xoaSanPhamKhoiGio } from '@/services/dich-vu-gio-hang';
 
 const dinhDangTien = (soTien) => `${Number(soTien || 0).toLocaleString('vi-VN')}đ`;
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api';
@@ -22,8 +22,9 @@ export default function TrangGioHang() {
   const [dangTai, setDangTai] = useState(true);
   const [daDangNhap, setDaDangNhap] = useState(false);
   const [loi, setLoi] = useState('');
-  const [chiTietDangCapNhat, setChiTietDangCapNhat] = useState([]);
-  const cacChiTietDangCapNhat = useRef(new Set());
+  const [thongBaoThanhCong, setThongBaoThanhCong] = useState('');
+  const [chiTietDangXuLy, setChiTietDangXuLy] = useState([]);
+  const cacChiTietDangXuLy = useRef(new Set());
 
   useEffect(() => {
     const khoiTao = async () => {
@@ -61,11 +62,12 @@ export default function TrangGioHang() {
   };
 
   const capNhatSoLuong = async (item, soLuongMoi) => {
-    if (soLuongMoi < 1 || cacChiTietDangCapNhat.current.has(item.id)) return;
+    if (soLuongMoi < 1 || cacChiTietDangXuLy.current.has(item.id)) return;
 
-    cacChiTietDangCapNhat.current.add(item.id);
-    setChiTietDangCapNhat((cacId) => [...cacId, item.id]);
+    cacChiTietDangXuLy.current.add(item.id);
+    setChiTietDangXuLy((cacId) => [...cacId, item.id]);
     setLoi('');
+    setThongBaoThanhCong('');
     setGioHang((hienTai) => capNhatGioHangTamThoi(hienTai, item.id, soLuongMoi));
 
     try {
@@ -79,8 +81,27 @@ export default function TrangGioHang() {
           : error.response?.data?.message || 'Không thể cập nhật số lượng. Vui lòng thử lại.'
       );
     } finally {
-      cacChiTietDangCapNhat.current.delete(item.id);
-      setChiTietDangCapNhat((cacId) => cacId.filter((id) => id !== item.id));
+      cacChiTietDangXuLy.current.delete(item.id);
+      setChiTietDangXuLy((cacId) => cacId.filter((id) => id !== item.id));
+    }
+  };
+
+  const xoaSanPham = async (item) => {
+    if (cacChiTietDangXuLy.current.has(item.id)) return;
+
+    cacChiTietDangXuLy.current.add(item.id);
+    setChiTietDangXuLy((cacId) => [...cacId, item.id]);
+    setLoi('');
+    setThongBaoThanhCong('');
+
+    try {
+      setGioHang(await xoaSanPhamKhoiGio(item.id));
+      setThongBaoThanhCong('Đã xóa sản phẩm khỏi giỏ hàng.');
+    } catch (error) {
+      setLoi(error.response?.data?.message || 'Không thể xóa sản phẩm. Vui lòng thử lại.');
+    } finally {
+      cacChiTietDangXuLy.current.delete(item.id);
+      setChiTietDangXuLy((cacId) => cacId.filter((id) => id !== item.id));
     }
   };
 
@@ -96,6 +117,11 @@ export default function TrangGioHang() {
         </div>
 
         {loi && <p className="mb-5 rounded-xl border border-red-100 bg-red-50 p-4 text-sm text-red-700" role="alert">{loi}</p>}
+        {thongBaoThanhCong && (
+          <p className="mb-5 rounded-xl border border-emerald-100 bg-emerald-50 p-4 text-sm text-emerald-700" role="status">
+            {thongBaoThanhCong}
+          </p>
+        )}
 
         {dangTai ? (
           <div className="rounded-2xl border border-emerald-100 bg-white p-8 text-center text-gray-500 shadow-sm">
@@ -151,7 +177,7 @@ export default function TrangGioHang() {
                           <button
                             type="button"
                             onClick={() => void capNhatSoLuong(item, item.so_luong - 1)}
-                            disabled={item.so_luong <= 1 || chiTietDangCapNhat.includes(item.id)}
+                            disabled={item.so_luong <= 1 || chiTietDangXuLy.includes(item.id)}
                             aria-label={`Giảm số lượng ${item.ten_san_pham}`}
                             className="flex h-9 w-9 items-center justify-center rounded-l-lg text-lg font-semibold text-gray-600 transition hover:bg-emerald-50 hover:text-emerald-700 disabled:cursor-not-allowed disabled:opacity-40"
                           >
@@ -163,13 +189,24 @@ export default function TrangGioHang() {
                           <button
                             type="button"
                             onClick={() => void capNhatSoLuong(item, item.so_luong + 1)}
-                            disabled={chiTietDangCapNhat.includes(item.id)}
+                            disabled={chiTietDangXuLy.includes(item.id)}
                             aria-label={`Tăng số lượng ${item.ten_san_pham}`}
                             className="flex h-9 w-9 items-center justify-center rounded-r-lg text-lg font-semibold text-gray-600 transition hover:bg-emerald-50 hover:text-emerald-700 disabled:cursor-not-allowed disabled:opacity-40"
                           >
                             +
                           </button>
                         </div>
+                        <button
+                          type="button"
+                          onClick={() => void xoaSanPham(item)}
+                          disabled={chiTietDangXuLy.includes(item.id)}
+                          className="ml-3 inline-flex items-center gap-1.5 text-sm font-semibold text-red-600 transition hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-4 w-4">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M3 6h18m-2 0-.9 14H5.9L5 6m4 0V4h6v2m-5 4v6m4-6v6" />
+                          </svg>
+                          {chiTietDangXuLy.includes(item.id) ? 'Đang xóa...' : 'Xóa khỏi giỏ'}
+                        </button>
                       </div>
                       <p className="shrink-0 text-right font-extrabold text-gray-900">
                         {dinhDangTien(item.thanh_tien)}

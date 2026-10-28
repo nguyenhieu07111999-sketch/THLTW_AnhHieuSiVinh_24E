@@ -9,4 +9,8 @@ export const capNhatSoLuongGio = (chiTietId, soLuong) =>
   api.put(`/gio-hang/${chiTietId}`, { so_luong: soLuong })
     .then((response) => response.data.data ?? response.data);
 
+export const xoaSanPhamKhoiGio = (chiTietId) =>
+  api.delete(`/gio-hang/${chiTietId}`)
+    .then((response) => response.data.data ?? response.data);
+
 export const taoDonHang = (payload) => api.post('/don-hang', payload).then((response) => response.data);
