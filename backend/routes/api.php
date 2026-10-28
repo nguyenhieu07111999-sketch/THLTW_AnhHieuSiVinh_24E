@@ -14,6 +14,7 @@ use App\Http\Controllers\TaiKhoanController;
 use App\Http\Controllers\DanhGiaController;
 use App\Http\Controllers\AdminDanhGiaController;
 
+
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
@@ -44,6 +45,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/don-hang', [TaiKhoanController::class, 'danhSachDonHang']);
         Route::post('/cap-nhat', [TaiKhoanController::class, 'capNhatHoSo']);
         Route::get('/don-hang/{id}', [TaiKhoanController::class, 'chiTietDonHang'])->whereNumber('id');
+        Route::post('/gui-otp-doi-mk', [TaiKhoanController::class, 'guiOtpDoiMatKhau']);
+        Route::post('/doi-mat-khau', [TaiKhoanController::class, 'xacNhanDoiMatKhau']);
     });
 
     Route::prefix('gio-hang')->group(function () {

@@ -5,6 +5,7 @@ use App\Models\DanhGiaSanPham;
 use App\Http\Requests\DanhGiaRequest;
 use App\Http\Resources\DanhGiaResource;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class DanhGiaController extends Controller
 {
@@ -28,30 +29,72 @@ class DanhGiaController extends Controller
         ], 200);
     }
 
-    public function store(DanhGiaRequest $request, $sanPhamId)
+    public function store(Request $request, $id)
     {
-        $data = $request->validated();
-        $user = $request->user();
+        // 1. Validate dữ liệu đầu vào
+        $request->validate([
+            'so_sao'   => 'required|integer|between:1,5',
+            'noi_dung' => 'required|string|max:1000',
+            'tep_tin'  => 'nullable|array',
+        ]);
 
-        $danhSachTep = [];
-        if ($request->hasFile('tep_tin')) {
-            foreach ($request->file('tep_tin') as $file) {
-                $danhSachTep[] = $file->store('reviews', 'public');
+        // 2. Lấy cấu hình rules do Admin đã lưu
+        $rulesConfig = Cache::get('review_moderation_rules', [
+            'tu_cam'              => 'lua dao, hang gia, kem chat luong, rac, me kiep, cut, cho chet',
+            'xu_ly_tu_cam'        => 'an_danh_gia',
+            'tu_dong_an_duoi_sao' => 0,
+        ]);
+
+        $noiDung = $request->input('noi_dung');
+        $trangThai = 'hien_thi';
+
+        // 3. Xử lý kiểm tra từ nhạy cảm
+        if (!empty($rulesConfig['tu_cam'])) {
+            // Tách chuỗi từ cấm thành mảng (loại bỏ khoảng trắng thừa)
+            $dsTuCam = array_filter(array_map('trim', explode(',', mb_strtolower($rulesConfig['tu_cam'], 'UTF-8'))));
+            
+            $noiDungThuong = mb_strtolower($noiDung, 'UTF-8');
+            $chuaTuCam = false;
+
+            foreach ($dsTuCam as $tu) {
+                if ($tu !== '' && str_contains($noiDungThuong, $tu)) {
+                    $chuaTuCam = true;
+                    
+                    // Nếu cấu hình thay thế bằng dấu sao ***
+                    if (($rulesConfig['xu_ly_tu_cam'] ?? '') === 'thay_the_sao') {
+                        $pattern = '/' . preg_quote($tu, '/') . '/iu';
+                        $noiDung = preg_replace($pattern, '***', $noiDung);
+                    }
+                }
+            }
+
+            // Nếu chứa từ nhạy cảm, tự động gắn trạng thái 'an' (chờ Admin duyệt)
+            if ($chuaTuCam && ($rulesConfig['xu_ly_tu_cam'] ?? 'an_danh_gia') === 'an_danh_gia') {
+                $trangThai = 'an';
             }
         }
 
+        // 4. Kiểm tra quy tắc tự động ẩn theo số sao
+        $mucSaoToiThieu = (int)($rulesConfig['tu_dong_an_duoi_sao'] ?? 0);
+        if ($mucSaoToiThieu > 0 && (int)$request->so_sao <= $mucSaoToiThieu) {
+            $trangThai = 'an';
+        }
+
+        // 5. Lưu vào Database
         $danhGia = DanhGiaSanPham::create([
-            'san_pham_id'   => $sanPhamId,
-            'nguoi_dung_id' => $user->id,
-            'so_sao'        => $data['so_sao'],
-            'noi_dung'      => $data['noi_dung'],
-            'tep_dinh_kem'  => $danhSachTep,
-            'trang_thai'    => 'hien_thi',
+            'san_pham_id'   => $id,
+            'nguoi_dung_id' => auth()->id(),
+            'so_sao'        => $request->so_sao,
+            'noi_dung'      => $noiDung,
+            'tep_dinh_kem'  => $request->tep_dinh_kem ?? [],
+            'trang_thai'    => $trangThai,
         ]);
 
         return response()->json([
-            'message' => 'Gửi đánh giá thành công!',
-            'data'    => new DanhGiaResource($danhGia->load('nguoiDung')),
+            'message' => $trangThai === 'an' 
+                ? 'Đánh giá của bạn đã được gửi và đang chờ quản trị viên kiểm duyệt!' 
+                : 'Đánh giá thành công!',
+            'data'    => $danhGia,
         ], 201);
     }
 

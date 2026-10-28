@@ -68,6 +68,7 @@ const handleRegisterSubmit = async (e) => {
     so_dien_thoai: registerData.so_dien_thoai,
     dia_chi: registerData.dia_chi,
     mat_khau: registerData.mat_khau,
+    mat_khau_confirmation: registerData.xac_nhan_mat_khau,
   };
 
   try {
