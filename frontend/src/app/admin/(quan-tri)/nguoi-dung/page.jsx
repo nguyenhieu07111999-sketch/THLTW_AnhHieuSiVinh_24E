@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState, useCallback } from 'react';
 import * as dichVu from '@/services/dich-vu-nguoi-dung';
 
 const PER_PAGE = 10;
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api';
+const BACKEND_URL = API_URL.replace(/\/api\/?$/, '');
 const FORM_RONG = {
     ho_ten: '',
     email: '',
@@ -16,6 +18,14 @@ const FORM_RONG = {
 const toMang = (r) => (Array.isArray(r) ? r : r?.data ?? []);
 const tien = (n) => Number(n || 0).toLocaleString('vi-VN') + 'đ';
 const ngayGio = (d) => (d ? new Date(d).toLocaleString('vi-VN') : '');
+const urlAnhSanPham = (duongDan) => {
+    if (!duongDan) return '';
+    if (/^(https?:|data:)/i.test(duongDan)) return duongDan;
+    const duongDanSach = duongDan.replace(/^\/+/, '');
+    return duongDanSach.startsWith('storage/')
+        ? `${BACKEND_URL}/${duongDanSach}`
+        : `${BACKEND_URL}/storage/${duongDanSach}`;
+};
 
 const NHAN_DON = {
     cho_xac_nhan: 'Chờ xác nhận',
@@ -167,11 +177,16 @@ function ModalDonHang({ nguoiDung, onClose }) {
                                         <td className="p-2">
                                             <div className="flex items-center gap-2">
                                                 {c.hinh_anh && (
-                                                    <img
-                                                        src={c.hinh_anh}
-                                                        alt={c.ten_san_pham}
-                                                        className="w-12 h-12 object-cover rounded"
-                                                    />
+                                                    <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg border border-gray-200 bg-emerald-50">
+                                                        <span className="absolute inset-0 flex items-center justify-center text-2xl" aria-hidden="true">🥬</span>
+                                                        <img
+                                                            src={urlAnhSanPham(c.hinh_anh)}
+                                                            alt={c.ten_san_pham || 'Hình ảnh sản phẩm'}
+                                                            loading="lazy"
+                                                            className="absolute inset-0 h-full w-full object-cover"
+                                                            onError={(event) => { event.currentTarget.style.display = 'none'; }}
+                                                        />
+                                                    </div>
                                                 )}
                                                 <span>{c.ten_san_pham}</span>
                                             </div>

@@ -46,6 +46,25 @@ export default function useModalSanPham(taiDanhSach, hienThongBao, setDangTai) {
     setMoModal(true);
   };
 
+  // Sao chép: mở form THÊM MỚI với dữ liệu lấy từ sản phẩm đã chọn
+  const xuLySaoChep = (sp) => {
+    const banSao = {};
+    Object.keys(GIA_TRI_MAC_DINH).forEach((key) => {
+      banSao[key] = sp[key] ?? GIA_TRI_MAC_DINH[key];
+    });
+
+    setIdDangSua(null); // null để khi lưu sẽ gọi themMoi, không phải capNhat
+    setDuLieuForm({
+      ...banSao,
+      ten_san_pham: `${sp.ten_san_pham} (bản sao)`,
+      duong_dan_sp: '', // để trống vì đường dẫn phải khác sản phẩm gốc
+      hinh_anh_preview: '',
+      hinh_anh_file: null,
+    });
+    setDanhSachLoi({});
+    setMoModal(true);
+  };
+
   const dongModal = () => {
     if (!dangLuu) setMoModal(false);
   };
@@ -60,7 +79,7 @@ export default function useModalSanPham(taiDanhSach, hienThongBao, setDangTai) {
     // 1. Đưa toàn bộ các trường text vào formData (LOẠI BỎ TRIỆT ĐỂ mọi biến liên quan đến hinh_anh)
     Object.keys(duLieuForm).forEach((key) => {
       if (['hinh_anh', 'hinh_anh_preview', 'hinh_anh_file'].includes(key)) return;
-      
+
       if (duLieuForm[key] !== null && duLieuForm[key] !== undefined && duLieuForm[key] !== '') {
         formData.append(key, duLieuForm[key]);
       }
@@ -82,11 +101,10 @@ export default function useModalSanPham(taiDanhSach, hienThongBao, setDangTai) {
         await dichVuSanPham.themMoi(formData);
         hienThongBao('Thêm sản phẩm thành công!', 'success');
       }
-      
+
       setMoModal(false);
       if (setDangTai) setDangTai(true);
       await taiDanhSach();
-      
     } catch (err) {
       console.error('Lỗi khi gửi form:', err.response?.data);
       if (err.response?.status === 422) {
@@ -100,5 +118,17 @@ export default function useModalSanPham(taiDanhSach, hienThongBao, setDangTai) {
     }
   };
 
-  return { moModal, idDangSua, duLieuForm, setDuLieuForm, danhSachLoi, dangLuu, moModalThem, moModalSua, dongModal, xuLyGuiForm };
+  return {
+    moModal,
+    idDangSua,
+    duLieuForm,
+    setDuLieuForm,
+    danhSachLoi,
+    dangLuu,
+    moModalThem,
+    moModalSua,
+    xuLySaoChep,
+    dongModal,
+    xuLyGuiForm,
+  };
 }

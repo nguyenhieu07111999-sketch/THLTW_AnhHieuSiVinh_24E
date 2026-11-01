@@ -143,19 +143,20 @@ export default function TrangThanhToan() {
 
                     {/* Phương thức thanh toán */}
                     <section className="rounded-2xl border border-emerald-100 bg-white p-6 shadow-sm">
-                        <h2 className="mb-4 flex items-center gap-2 text-lg font-bold text-emerald-950">
-                            <span>💳</span> Phương thức thanh toán
+                        <h2 className="mb-1 flex items-center gap-2 text-lg font-bold text-emerald-950">
+                            <span aria-hidden="true">💳</span> Phương thức thanh toán
                         </h2>
+                        <p className="mb-5 text-sm text-gray-500">Chọn cách thanh toán phù hợp với bạn.</p>
                         <div className="space-y-3">
                             {[
-                                { value: 'VNPAY', icon: '🏦', ten: 'Thanh toán trực tuyến qua VNPAY', moTa: 'Thanh toán an toàn bằng thẻ ATM nội địa, thẻ quốc tế hoặc QR ngân hàng.' },
-                                { value: 'COD', icon: '💵', ten: 'Thanh toán tiền mặt khi nhận hàng (COD)', moTa: 'Trả tiền mặt cho nhân viên giao hàng khi nhận được đơn.' },
+                                { value: 'VNPAY', ten: 'Thanh toán trực tuyến qua VNPAY', moTa: 'Thanh toán bằng thẻ ATM, thẻ quốc tế hoặc quét mã QR ngân hàng.' },
+                                { value: 'COD', ten: 'Thanh toán tiền mặt khi nhận hàng (COD)', moTa: 'Thanh toán trực tiếp cho nhân viên giao hàng khi nhận đơn.' },
                             ].map((pt) => {
                                 const chon = form.phuong_thuc_thanh_toan === pt.value;
                                 return (
                                     <label
                                         key={pt.value}
-                                        className={`flex cursor-pointer items-center gap-4 rounded-xl border-2 p-4 transition ${chon ? 'border-emerald-600 bg-emerald-50' : 'border-gray-200 hover:border-emerald-300'
+                                        className={`flex cursor-pointer items-center gap-4 rounded-2xl border p-4 transition-colors ${chon ? 'border-emerald-500 bg-emerald-50/80 shadow-sm' : 'border-gray-200 bg-white hover:border-emerald-300 hover:bg-emerald-50/30'
                                             }`}
                                     >
                                         <input
@@ -166,10 +167,29 @@ export default function TrangThanhToan() {
                                             onChange={capNhatForm}
                                             className="h-4 w-4 accent-emerald-600"
                                         />
-                                        <span className="text-3xl">{pt.icon}</span>
-                                        <span className="flex-1">
-                                            <strong className="block text-emerald-950">{pt.ten}</strong>
-                                            <span className="text-sm text-gray-600">{pt.moTa}</span>
+                                        {pt.value === 'VNPAY' ? (
+                                            <span className="flex h-12 w-[5.25rem] shrink-0 items-center justify-center rounded-xl border border-gray-100 bg-white px-2 shadow-sm" aria-label="VNPAY">
+                                                <svg viewBox="0 0 116 34" role="img" aria-labelledby="vnpay-logo-title" className="h-auto w-full">
+                                                    <title id="vnpay-logo-title">VNPAY</title>
+                                                    <path d="M5 5h12l8 24H13L5 5Z" fill="#e21b23" />
+                                                    <path d="M20 5h11l-8 24H12l8-24Z" fill="#1769aa" />
+                                                    <text x="34" y="24" fill="#1769aa" fontFamily="Arial, sans-serif" fontSize="18" fontWeight="700" letterSpacing=".4">VNPAY</text>
+                                                </svg>
+                                            </span>
+                                        ) : (
+                                            <span className="flex h-12 w-[5.25rem] shrink-0 items-center justify-center rounded-xl border border-gray-100 bg-white text-2xl shadow-sm" aria-hidden="true">
+                                                💵
+                                            </span>
+                                        )}
+                                        <span className="min-w-0 flex-1">
+                                            <strong className="block text-sm font-bold text-emerald-950">{pt.ten}</strong>
+                                            <span className="mt-1 block text-xs leading-5 text-gray-500 sm:text-sm">{pt.moTa}</span>
+                                            {pt.value === 'VNPAY' && (
+                                                <span className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold text-emerald-700 ring-1 ring-emerald-100">
+                                                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden="true" />
+                                                    Thanh toán trực tuyến an toàn
+                                                </span>
+                                            )}
                                         </span>
                                     </label>
                                 );

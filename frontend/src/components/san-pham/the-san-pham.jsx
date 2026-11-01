@@ -1,9 +1,13 @@
 'use client';
 
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { themVaoGio } from '@/services/dich-vu-gio-hang';
 
 export default function TheSanPham({ sp, type = 'normal' }) {
   const router = useRouter();
+  const [dangThemVaoGio, setDangThemVaoGio] = useState(false);
+  const [loiThemVaoGio, setLoiThemVaoGio] = useState('');
 
   const giaGiamNum = Number(sp.gia_giam);
   const giaBanNum = Number(sp.gia_ban);
@@ -12,6 +16,31 @@ export default function TheSanPham({ sp, type = 'normal' }) {
   const isPromotion = type === 'promotion';
   const borderColor = isPromotion ? 'border-rose-100' : 'border-emerald-100';
   const btnBg = isPromotion ? 'bg-rose-600 hover:bg-rose-700' : 'bg-emerald-600 hover:bg-emerald-700';
+
+  const handleThemVaoGio = async (e) => {
+    e.stopPropagation();
+    setLoiThemVaoGio('');
+
+    if (!localStorage.getItem('access_token')) {
+      router.push(`/dang-nhap?redirect=${encodeURIComponent(`/danh-muc/${sp.id}`)}`);
+      return;
+    }
+
+    setDangThemVaoGio(true);
+    try {
+      await themVaoGio(sp.id);
+      router.push('/gio-hang');
+    } catch (error) {
+      const errors = error.response?.data?.errors;
+      setLoiThemVaoGio(
+        errors
+          ? Object.values(errors).flat().join(' | ')
+          : error.response?.data?.message || 'Không thể thêm sản phẩm vào giỏ. Vui lòng thử lại.'
+      );
+    } finally {
+      setDangThemVaoGio(false);
+    }
+  };
 
   return (
     <div
@@ -54,14 +83,13 @@ export default function TheSanPham({ sp, type = 'normal' }) {
       </div>
 
       <button
-        onClick={(e) => {
-          e.stopPropagation();
-          router.push('/gio-hang');
-        }}
-        className={`w-full mt-3 ${btnBg} text-white text-xs font-semibold py-2 rounded-lg transition-colors`}
+        onClick={handleThemVaoGio}
+        disabled={dangThemVaoGio}
+        className={`w-full mt-3 ${btnBg} text-white text-xs font-semibold py-2 rounded-lg transition-colors disabled:cursor-not-allowed disabled:opacity-60`}
       >
-        {isPromotion ? 'Săn ngay' : 'Thêm vào giỏ'}
+        {dangThemVaoGio ? 'Đang thêm...' : isPromotion ? 'Săn ngay' : 'Thêm vào giỏ'}
       </button>
+      {loiThemVaoGio && <p className="mt-2 text-xs text-red-600" role="alert">{loiThemVaoGio}</p>}
     </div>
   );
 }

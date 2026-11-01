@@ -70,8 +70,15 @@ class AuthController extends Controller
         ]);
 
         $admin = TaiKhoanQuanTri::where('email', $credentials['email'])->first();
+        $matKhauDaHash = $admin && is_string($admin->mat_khau)
+            && Hash::isHashed($admin->mat_khau);
+        $matKhauHopLe = $admin && (
+            $matKhauDaHash
+                ? Hash::check($credentials['mat_khau'], $admin->mat_khau)
+                : hash_equals((string) $admin->mat_khau, $credentials['mat_khau'])
+        );
 
-        if (!$admin || !Hash::check($credentials['mat_khau'], $admin->mat_khau)) {
+        if (!$matKhauHopLe) {
             return response()->json([
                 'message' => 'Email hoặc mật khẩu không chính xác.'
             ], 401);
@@ -81,6 +88,11 @@ class AuthController extends Controller
             return response()->json([
                 'message' => 'Tài khoản quản trị đã bị khóa.'
             ], 403);
+        }
+
+        if (!$matKhauDaHash) {
+            $admin->mat_khau = Hash::make($credentials['mat_khau']);
+            $admin->save();
         }
 
         $token = $admin->createToken('admin_token')->plainTextToken;

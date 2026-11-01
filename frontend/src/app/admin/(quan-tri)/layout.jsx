@@ -1,6 +1,8 @@
 "use client";
-import { usePathname } from "next/navigation";
+import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
+import { dichVuXacThuc } from "@/services/dich-vu-xac-thuc";
 
 const MENU = [
     { href: "/admin", label: "Dashboard", icon: "📊" },
@@ -15,9 +17,24 @@ const MENU = [
 
 export default function AdminLayout({ children }) {
     const pathname = usePathname();
+    const router = useRouter();
+    const [dangXuat, setDangXuat] = useState(false);
 
     const isActive = (href) =>
         href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
+
+    const xuLyDangXuat = async () => {
+        setDangXuat(true);
+        try {
+            await dichVuXacThuc.dangXuatAdmin();
+        } catch (error) {
+            console.error("Không thể thu hồi token admin trên máy chủ:", error);
+        } finally {
+            localStorage.removeItem("admin_token");
+            localStorage.removeItem("admin_info");
+            router.replace("/admin/dang-nhap");
+        }
+    };
 
     return (
         <div className="min-h-screen flex bg-gray-50">
@@ -63,11 +80,19 @@ export default function AdminLayout({ children }) {
                     <div className="flex items-center gap-3">
                         <div className="text-right">
                             <div className="text-sm font-medium text-gray-900">Quản trị viên</div>
-                            <div className="text-xs text-gray-500">Không cần đăng nhập</div>
+                            <div className="text-xs text-gray-500">Tài khoản quản trị</div>
                         </div>
                         <div className="w-9 h-9 rounded-full bg-green-600 text-white flex items-center justify-center font-semibold">
                             A
                         </div>
+                        <button
+                            type="button"
+                            onClick={xuLyDangXuat}
+                            disabled={dangXuat}
+                            className="rounded-lg border border-red-200 px-3 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-50 disabled:cursor-wait disabled:opacity-60"
+                        >
+                            {dangXuat ? "Đang thoát..." : "Đăng xuất"}
+                        </button>
                     </div>
                 </header>
 

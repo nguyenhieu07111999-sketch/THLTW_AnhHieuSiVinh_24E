@@ -145,7 +145,6 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
         Route::delete('/{id}', [BaiVietController::class, 'destroy']);
     });
 
-
     Route::apiResource('don-hang', DonHangController::class)->except(['store']);
 
     // Route::prefix('menus')->group(function () {
@@ -160,4 +159,5 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     // });
 
    
+
 });
