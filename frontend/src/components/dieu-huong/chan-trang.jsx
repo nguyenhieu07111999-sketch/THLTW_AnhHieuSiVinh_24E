@@ -1,10 +1,34 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { dichVuMenu } from '@/services/dichVuMenu';
+
+const FOOTER_MAC_DINH = [
+  { url: '/', ten: 'Trang chủ' },
+  { url: '/danh-muc', ten: 'Danh mục sản phẩm' },
+  { url: '/gioi-thieu', ten: 'Giới thiệu cửa hàng' },
+  { url: '/bai-viet', ten: 'Bài viết & Tin tức' },
+];
 
 export default function ChanTrang() {
   const pathname = usePathname();
+  const [links, setLinks] = useState(FOOTER_MAC_DINH);
+
+  useEffect(() => {
+    dichVuMenu
+      .layMenuPublic?.('footer_lien_ket')
+      .then((res) => {
+        const data = res.data?.data || res.data;
+        if (Array.isArray(data) && data.length > 0) {
+          setLinks(data);
+        }
+      })
+      .catch(() => {
+        // Giữ fallback FOOTER_MAC_DINH
+      });
+  }, []);
 
   // Trang quản trị có giao diện riêng, ẩn footer của cửa hàng
   if (pathname?.startsWith('/admin')) return null;
@@ -27,10 +51,17 @@ export default function ChanTrang() {
         <div>
           <h3 className="font-bold text-lg mb-3 text-emerald-200">Liên Kết Nhanh</h3>
           <ul className="space-y-2 text-sm text-emerald-100">
-            <li><Link href="/" className="hover:underline">Trang chủ</Link></li>
-            <li><Link href="/danh-muc" className="hover:underline">Danh mục sản phẩm</Link></li>
-            <li><Link href="/gioi-thieu" className="hover:underline">Giới thiệu cửa hàng</Link></li>
-            <li><Link href="/bai-viet" className="hover:underline">Bài viết & Tin tức</Link></li>
+            {links.map((item) => (
+              <li key={item.id || item.url}>
+                <Link
+                  href={item.url || item.duong_dan_tuy_chinh || '#'}
+                  target={item.target || '_self'}
+                  className="hover:underline hover:text-white transition-colors"
+                >
+                  {item.ten}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
 

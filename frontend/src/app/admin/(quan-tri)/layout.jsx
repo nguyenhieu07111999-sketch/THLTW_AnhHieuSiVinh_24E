@@ -9,8 +9,8 @@ const MENU = [
     { href: "/admin/thuong-hieu", label: "Thương hiệu", icon: "🏷️" },
     { href: "/admin/nguoi-dung", label: "Người dùng", icon: "👥" },
     { href: "/admin/bai-viet", label: "Bài viết", icon: "📝" },
-    { href: "/admin/don-hang", label: "Đơn hàng", icon: "📦" },
-    { href: "/admin/danh-gia", label: "Đánh giá", icon: "📦" },
+    { href: "/admin/danh-gia", label: "Đánh giá", icon: "⭐" },
+    { href: "/admin/menu", label: "Quản lý Menu", icon: "🧭" },
 ];
 
 export default function AdminLayout({ children }) {

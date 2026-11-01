@@ -13,6 +13,8 @@ use App\Http\Controllers\DonHangController;
 use App\Http\Controllers\TaiKhoanController;
 use App\Http\Controllers\DanhGiaController;
 use App\Http\Controllers\AdminDanhGiaController;
+use App\Http\Controllers\MenuController;
+use App\Http\Controllers\AdminMenuController;
 
 
 Route::get('/user', function (Request $request) {
@@ -74,6 +76,20 @@ Route::get('/bai-viet', [BaiVietController::class, 'index']);
 Route::get('/bai-viet/chu-de', [BaiVietController::class, 'chuDe']);
 Route::get('/bai-viet/{id}', [BaiVietController::class, 'show'])->whereNumber('id');
 
+
+Route::prefix('menus')->group(function () {
+    Route::get('/nguon-lien-ket', [AdminMenuController::class, 'danhSachNguonLienKet']);
+    Route::post('/cap-nhat-thu-tu', [AdminMenuController::class, 'capNhatThuTu']);
+    
+    Route::get('/', [AdminMenuController::class, 'index']);
+    Route::post('/', [AdminMenuController::class, 'store']);
+    Route::get('/{id}', [AdminMenuController::class, 'show'])->whereNumber('id');
+    Route::put('/{id}', [AdminMenuController::class, 'update'])->whereNumber('id');
+    Route::delete('/{id}', [AdminMenuController::class, 'destroy'])->whereNumber('id');
+});
+Route::get('/menus/{viTri}', [MenuController::class, 'layTheoViTri']);
+
+
 Route::prefix('admin/danh-gia')->group(function () {
     Route::get('/san-pham', [AdminDanhGiaController::class, 'danhSachSanPhamReview']);
     Route::get('/san-pham/{sanPhamId}', [AdminDanhGiaController::class, 'chiTietReviewSanPham'])->whereNumber('sanPhamId');
@@ -131,6 +147,17 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
 
 
     Route::apiResource('don-hang', DonHangController::class)->except(['store']);
+
+    // Route::prefix('menus')->group(function () {
+    //     Route::get('/nguon-lien-ket', [AdminMenuController::class, 'danhSachNguonLienKet']);
+    //     Route::post('/cap-nhat-thu-tu', [AdminMenuController::class, 'capNhatThuTu']);
+        
+    //     Route::get('/', [AdminMenuController::class, 'index']);
+    //     Route::post('/', [AdminMenuController::class, 'store']);
+    //     Route::get('/{id}', [AdminMenuController::class, 'show'])->whereNumber('id');
+    //     Route::put('/{id}', [AdminMenuController::class, 'update'])->whereNumber('id');
+    //     Route::delete('/{id}', [AdminMenuController::class, 'destroy'])->whereNumber('id');
+    // });
 
    
 });
