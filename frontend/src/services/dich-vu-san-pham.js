@@ -10,7 +10,6 @@ export const dichVuSanPham = {
   
   themMoi: (data) => api.post('/san-pham', data),
   
-  // Cập nhật sản phẩm
   capNhat: (id, data) => {
     
     if (data instanceof FormData) {

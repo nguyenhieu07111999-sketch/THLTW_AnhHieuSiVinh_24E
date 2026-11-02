@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api';
 const GOC_BACKEND = API.replace(/\/api\/?$/, '');
 
-// Hàm chuẩn hóa URL ảnh từ backend storage
 const layUrlAnh = (p) => {
   if (!p) return '/placeholder.png';
   if (/^(https?:|data:)/.test(p)) return p;
@@ -19,13 +18,10 @@ const layUrlAnh = (p) => {
 export default function TheTinTuc({ baiViet }) {
   const router = useRouter();
 
-  // Đồng bộ trường ảnh đại diện
   const duongDanAnh = baiViet?.anh_dai_dien || baiViet?.hinh_anh || baiViet?.anh_bia;
   
-  // Đồng bộ trường tóm tắt / mô tả
   const moTa = baiViet?.tom_tat || baiViet?.mo_ta_ngan;
 
-  // Đồng bộ trường thời gian tạo
   const thoiGianTao = baiViet?.ngay_tao || baiViet?.created_at;
 
   return (

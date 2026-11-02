@@ -29,7 +29,6 @@ class ChiTietGioHang extends Model
         return $this->belongsTo(SanPham::class, 'san_pham_id');
     }
 
-    // --- LOCAL SCOPES ---
 
     public function scopeTheoSanPham(Builder $query, int $gioHangId, int $sanPhamId): Builder
     {

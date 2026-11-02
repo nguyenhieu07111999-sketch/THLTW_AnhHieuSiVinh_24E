@@ -6,17 +6,12 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class DoiMatKhauOtpRequest extends FormRequest
 {
-    /**
-     * Xác định người dùng có quyền thực hiện request này hay không.
-     */
+    
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Các quy tắc xác thực (Validation Rules).
-     */
     public function rules(): array
     {
         return [
@@ -26,9 +21,6 @@ class DoiMatKhauOtpRequest extends FormRequest
         ];
     }
 
-    /**
-     * Tùy chỉnh thông báo lỗi trả về cho Frontend.
-     */
     public function messages(): array
     {
         return [

@@ -24,12 +24,10 @@ export function useAdminMenu() {
   const [dangLuu, setDangLuu] = useState(false);
   const [locViTri, setLocViTri] = useState('all'); 
 
-  // Modal State
   const [moModal, setMoModal] = useState(false);
   const [formData, setFormData] = useState(FORM_MAC_DINH);
   const [thongBaoLoi, setThongBaoLoi] = useState(null);
 
-  // Nạp dữ liệu ban đầu
   const taiDuLieu = useCallback(async () => {
     setDangTai(true);
     try {
@@ -52,7 +50,6 @@ export function useAdminMenu() {
     taiDuLieu();
   }, [taiDuLieu]);
 
-  // Mở modal thêm mới
   const handleMoThemMoi = (parentId = null, viTriMacDinh = 'header') => {
     setFormData({
       ...FORM_MAC_DINH,
@@ -63,7 +60,6 @@ export function useAdminMenu() {
     setMoModal(true);
   };
 
-  // Mở modal chỉnh sửa
   const handleMoChinhSua = (item) => {
     setFormData({
       id: item.id,
@@ -82,7 +78,6 @@ export function useAdminMenu() {
     setMoModal(true);
   };
 
-  // Lưu (Thêm hoặc Cập nhật)
   const handleLuu = async (e) => {
     e.preventDefault();
     setDangLuu(true);
@@ -111,7 +106,6 @@ export function useAdminMenu() {
     }
   };
 
-  // Xóa menu
   const handleXoa = async (id, ten) => {
     if (!confirm(`Bạn có chắc chắn muốn xóa mục menu "${ten}"? Nếu có menu con, các mục con cũng sẽ bị xóa!`)) {
       return;
@@ -124,7 +118,6 @@ export function useAdminMenu() {
     }
   };
 
-  // Lọc theo vị trí
   const danhSachLoc = locViTri === 'all'
     ? danhSachMenu
     : danhSachMenu.filter((m) => m.vi_tri === locViTri);

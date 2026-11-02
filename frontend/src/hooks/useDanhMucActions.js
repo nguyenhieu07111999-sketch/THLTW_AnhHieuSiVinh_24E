@@ -4,7 +4,6 @@ import { dichVuDanhMuc } from '@/services/dich-vu-danh-muc';
 export default function useDanhMucActions(taiDanhSach, setDangTai, hienThongBao) {
   const [idDangThaoTacThungRac, setIdDangThaoTacThungRac] = useState(null);
 
-  // 1. Xử lý chuyển vào thùng rác (Soft Delete)
   const xuLyXoa = async (id, ten) => {
     if (!window.confirm(`Chuyển danh mục "${ten}" vào thùng rác?`)) return;
     try {
@@ -21,7 +20,6 @@ export default function useDanhMucActions(taiDanhSach, setDangTai, hienThongBao)
     }
   };
 
-  // 2. Xử lý khôi phục từ thùng rác
   const xuLyKhoiPhuc = async (danhMuc) => {
     if (idDangThaoTacThungRac !== null) return;
     setIdDangThaoTacThungRac(danhMuc.id);
@@ -41,7 +39,6 @@ export default function useDanhMucActions(taiDanhSach, setDangTai, hienThongBao)
     }
   };
 
-  // 3. Xử lý xóa vĩnh viễn khỏi Database
   const xuLyXoaVinhVien = async (danhMuc) => {
     if (idDangThaoTacThungRac !== null) return;
     if (!window.confirm(`Xóa vĩnh viễn danh mục "${danhMuc.ten_danh_muc}"? Thao tác này không thể hoàn tác.`)) return;

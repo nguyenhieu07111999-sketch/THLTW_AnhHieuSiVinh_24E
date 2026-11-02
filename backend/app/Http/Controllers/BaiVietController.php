@@ -54,7 +54,6 @@ class BaiVietController extends Controller
             'trang_thai'   => 'required|in:nhap,xuat_ban',
         ]);
 
-        // Upload file ảnh vào storage/app/public/posts
         if ($request->hasFile('anh_dai_dien')) {
             $data['anh_dai_dien'] = $request->file('anh_dai_dien')->store('posts', 'public');
         }
@@ -83,14 +82,12 @@ class BaiVietController extends Controller
             'trang_thai'   => 'required|in:nhap,xuat_ban',
         ]);
 
-        // Nếu người dùng chọn file ảnh mới
         if ($request->hasFile('anh_dai_dien')) {
             if ($baiViet->anh_dai_dien && Storage::disk('public')->exists($baiViet->anh_dai_dien)) {
                 Storage::disk('public')->delete($baiViet->anh_dai_dien);
             }
             $data['anh_dai_dien'] = $request->file('anh_dai_dien')->store('posts', 'public');
         } else {
-            // Không gửi ảnh mới thì không ghi đè giá trị cũ
             unset($data['anh_dai_dien']);
         }
 
@@ -136,10 +133,8 @@ class BaiVietController extends Controller
     public function show($id)
     {
         try {
-            // Tìm bài viết kèm thông tin chủ đề
             $baiViet = BaiViet::with('chuDe')->findOrFail($id);
 
-            // Tự động tăng 1 lượt xem khi có người đọc bài
             $baiViet->increment('luot_xem');
 
             return response()->json([

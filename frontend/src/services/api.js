@@ -16,7 +16,6 @@ api.interceptors.request.use(
       const url = config.url || '';
       const method = (config.method || 'get').toLowerCase();
 
-      // Danh sách các tiền tố endpoint công khai (chỉ áp dụng với GET)
       const publicEndpoints = ['/san-pham', '/danh-muc', '/thuong-hieu', '/bai-viet'];
       const laApiCongKhai = method === 'get' && publicEndpoints.some((ep) => url.startsWith(ep));
 
@@ -26,7 +25,6 @@ api.interceptors.request.use(
           config.headers.Authorization = `Bearer ${token}`;
         }
       } else {
-        // Chắc chắn xóa header Authorization ở các API công khai
         delete config.headers.Authorization;
         delete config.headers.authorization;
       }

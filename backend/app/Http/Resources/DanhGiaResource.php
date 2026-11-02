@@ -9,7 +9,6 @@ class DanhGiaResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-        // Xử lý gắn URL đầy đủ cho mảng ảnh / video
         $danhSachMediaUrl = [];
         if (!empty($this->tep_dinh_kem) && is_array($this->tep_dinh_kem)) {
             $danhSachMediaUrl = array_map(function ($path) {

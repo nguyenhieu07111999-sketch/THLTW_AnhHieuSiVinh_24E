@@ -1,0 +1,815 @@
+<html xmlns:o='urn:schemas-microsoft-com:office:office' 
+xmlns:w='urn:schemas-microsoft-com:office:word' 
+xmlns='http://www.w3.org/TR/REC-html40'>
+<head>
+<meta charset="utf-8">
+<title>Báo Cáo Tổng Hợp Dự Án - FE & BE</title>
+<!--[if gte mso 9]>
+<xml>
+<w:WordDocument>
+  <w:View>Print</w:View>
+  <w:Zoom>100</w:Zoom>
+  <w:DoNotOptimizeForBrowser/>
+</w:WordDocument>
+</xml>
+<![endif]-->
+<style>
+  @page Section1 {
+    size: 21.0cm 29.7cm; /* A4 */
+    margin: 2.0cm 2.0cm 2.0cm 2.0cm;
+    mso-header-margin: 1.0cm;
+    mso-footer-margin: 1.0cm;
+    mso-paper-source: 0;
+  }
+  div.Section1 { page: Section1; }
+  body {
+    font-family: 'Times New Roman', 'Segoe UI', Tahoma, serif;
+    font-size: 11.5pt;
+    line-height: 1.6;
+    color: #1f2937;
+  }
+  h1 {
+    font-size: 20pt;
+    color: #065f46;
+    text-align: center;
+    margin-top: 15pt;
+    margin-bottom: 12pt;
+    font-weight: bold;
+    border-bottom: 2pt solid #059669;
+    padding-bottom: 8pt;
+  }
+  h2 {
+    font-size: 15pt;
+    color: #047857;
+    margin-top: 20pt;
+    margin-bottom: 10pt;
+    font-weight: bold;
+    border-bottom: 1pt solid #cbd5e1;
+    padding-bottom: 4pt;
+    page-break-after: avoid;
+  }
+  h3 {
+    font-size: 13pt;
+    color: #0f766e;
+    margin-top: 14pt;
+    margin-bottom: 6pt;
+    font-weight: bold;
+    page-break-after: avoid;
+  }
+  h4 {
+    font-size: 11.5pt;
+    color: #1e293b;
+    margin-top: 10pt;
+    margin-bottom: 4pt;
+    font-weight: bold;
+  }
+  p {
+    margin-top: 4pt;
+    margin-bottom: 6pt;
+    text-align: justify;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 10pt;
+    margin-bottom: 12pt;
+    font-size: 10pt;
+  }
+  th {
+    background-color: #ecfdf5;
+    color: #065f46;
+    font-weight: bold;
+    border: 1pt solid #94a3b8;
+    padding: 6pt 8pt;
+    text-align: left;
+  }
+  td {
+    border: 1pt solid #cbd5e1;
+    padding: 5pt 8pt;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td {
+    background-color: #f8fafc;
+  }
+  pre {
+    background-color: #f1f5f9;
+    border: 1pt solid #cbd5e1;
+    border-radius: 4pt;
+    padding: 8pt 10pt;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 9.5pt;
+    line-height: 1.4;
+    margin-top: 6pt;
+    margin-bottom: 10pt;
+  }
+  code {
+    font-family: 'Consolas', 'Courier New', monospace;
+    background-color: #f1f5f9;
+    padding: 1pt 3pt;
+    border-radius: 3pt;
+    font-size: 9.5pt;
+    color: #0f766e;
+    font-weight: 600;
+  }
+  ul, ol {
+    margin-top: 4pt;
+    margin-bottom: 6pt;
+    padding-left: 20pt;
+  }
+  li {
+    margin-bottom: 3pt;
+  }
+  hr {
+    border: 0;
+    border-top: 1pt solid #cbd5e1;
+    margin: 18pt 0;
+  }
+</style>
+</head>
+<body>
+<div class="Section1">
+<h1>BÁO CÁO PHÂN TÍCH TOÀN BỘ CHỨC NĂNG &amp; LUỒNG MÃ NGUỒN (FE &amp; BE)</h1>
+<p><b>Dự án</b>: Website Thương Mại Điện Tử Nông Sản Tươi (<code>THLTW_AnhHieuSiVinh_24E</code>)</p>
+<p><b>Công nghệ</b>: Next.js 16 (React 19, Tailwind CSS v4) + Laravel 12 (PHP 8.2+, Sanctum, MySQL, VNPay, Mail OTP)</p>
+<hr/>
+<h2>MỤC LỤC TỔNG QUAN HỆ THỐNG</h2>
+<ol>
+<li><b>Kiến Trúc &amp; Tầng Dịch Vụ Cốt Lõi (Core API &amp; Auth Layer)</b></li>
+<li><b>Module 1: Xác Thực &amp; Phân Quyền (Authentication &amp; RBAC)</b></li>
+<li><b>Module 2: Quản Lý &amp; Trình Bày Sản Phẩm (Products Catalog &amp; Admin)</b></li>
+<li><b>Module 3: Quản Lý Danh Mục Nông Sản (Categories Management)</b></li>
+<li><b>Module 4: Quản Lý Thương Hiệu (Brands Management)</b></li>
+<li><b>Module 5: Giỏ Hàng Trực Tuyến (Shopping Cart)</b></li>
+<li><b>Module 6: Đơn Hàng &amp; Cổng Thanh Toán Trực Tuyến VNPay (Orders &amp; Payment Gateway)</b></li>
+<li><b>Module 7: Đánh Giá Sản Phẩm &amp; Kiểm Duyệt Tự Động (Reviews &amp; Moderation Rules)</b></li>
+<li><b>Module 8: Quản Lý Khách Hàng, Hồ Sơ &amp; Đổi Mật Khẩu OTP (Profile &amp; Security)</b></li>
+<li><b>Module 9: Quản Lý Tin Tức &amp; Cẩm Nang Nông Nghiệp (Articles &amp; Topics)</b></li>
+<li><b>Module 10: Quản Lý Menu Đa Cấp Động (Dynamic Multi-level Navigation)</b></li>
+<li><b>Trang Chủ Động (Dynamic Landing Page with Promise.allSettled)</b></li>
+</ol>
+<hr/>
+<h2>1. TẦNG DỊCH VỤ CỐT LÕI (CORE API &amp; AUTH LAYER)</h2>
+<pre><code>sequenceDiagram
+    autonumber
+    actor User as Khách hàng / Quản trị viên
+    participant FE as Frontend (Next.js / Axios)
+    participant Interceptor as Axios Interceptor
+    participant Route as Laravel Route (api.php)
+    participant MW as Middleware (Sanctum / Admin)
+    participant Controller as Laravel Controller
+    participant DB as MySQL Database
+
+    User-&gt;&gt;FE: Thao tác giao diện (Xem, Thêm, Sửa, Xóa)
+    FE-&gt;&gt;Interceptor: Gọi hàm từ services/*.js
+    Interceptor-&gt;&gt;Interceptor: Trích xuất token từ localStorage (admin_token -&gt; access_token -&gt; token)
+    Interceptor-&gt;&gt;Route: Gửi HTTP Request kèm Header [Authorization: Bearer ...]
+    Route-&gt;&gt;MW: Kiểm tra tính hợp lệ của Token &amp; Role
+    MW-&gt;&gt;Controller: Chuyển tiếp Request đã xác thực
+    Controller-&gt;&gt;DB: Thực thi Eloquent ORM / Query Builder
+    DB--&gt;&gt;Controller: Trả về kết quả
+    Controller--&gt;&gt;FE: Trả về HTTP JSON Response (200, 201, 422, 403, 500)
+    FE-&gt;&gt;FE: Cập nhật State React (Optimistic UI / Re-render)
+    FE--&gt;&gt;User: Hiển thị giao diện &amp; thông báo Toast</code></pre>
+<h3>Mã nguồn tệp cấu hình API phía Frontend</h3>
+<ul>
+<li><b>Tệp</b>: <code>frontend/src/services/api.js</code></li>
+<li><b>Đoạn code &amp; Vai trò</b>:</li>
+</ul>
+<pre><code>  const api = axios.create({
+    baseURL: process.env.NEXT_PUBLIC_API_URL || &#x27;http://127.0.0.1:8000/api&#x27;,
+    headers: { &#x27;Content-Type&#x27;: &#x27;application/json&#x27;, &#x27;Accept&#x27;: &#x27;application/json&#x27; },
+  });
+
+  api.interceptors.request.use(
+    (config) =&gt; {
+      if (typeof window !== &#x27;undefined&#x27;) {
+        const token =
+          localStorage.getItem(&#x27;admin_token&#x27;) ||
+          localStorage.getItem(&#x27;access_token&#x27;) ||
+          localStorage.getItem(&#x27;token&#x27;);
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
+      }
+      return config;
+    },
+    (error) =&gt; Promise.reject(error)
+  );</code></pre>
+<ul>
+<li><b>Hướng đi/Luồng code</b>:</li>
+<li>Khởi tạo phiên bản Axios dùng chung cho toàn bộ Frontend với tiền tố <code>/api</code>.</li>
+<li>Thiết lập Interceptor trước khi bắn request: Kiểm tra môi trường Client (<code>window !== undefined</code>). Ưu tiên lấy token Quản trị (<code>admin_token</code>), nếu không có thì lấy token Khách hàng (<code>access_token</code>). Gắn vào header <code>Authorization: Bearer &lt;token&gt;</code>, giúp mọi hàm gọi sau không cần tự đính kèm token thủ công.</li>
+</ul>
+<hr/>
+<h2>2. MODULE 1: XÁC THỰC &amp; PHÂN QUYỀN (AUTH &amp; RBAC)</h2>
+<h3>2.1. Phía Backend (Laravel)</h3>
+<ul>
+<li><b>Tệp</b>:</li>
+<li><code>backend/app/Http/Controllers/AuthController.php</code></li>
+<li><code>backend/app/Http/Middleware/AdminMiddleware.php</code></li>
+<li><code>backend/app/Models/TaiKhoanNguoiDung.php</code></li>
+<li><code>backend/app/Models/TaiKhoanQuanTri.php</code></li>
+</ul>
+<h4>Chi tiết các hàm trong <code>AuthController.php</code>:</h4>
+<ol>
+<li><code>register(RegisterNguoiDungRequest $request)</code>:</li>
+</ol>
+<ul>
+<li><b>Nhiệm vụ</b>: Đăng ký khách hàng mới.</li>
+<li><b>Luồng code</b>:</li>
+<li>Lấy dữ liệu qua <code>RegisterNguoiDungRequest</code> (đã validate <code>email</code> unique, mật khẩu tối thiểu 6 ký tự, xác nhận <code>mat_khau_confirmation</code>).</li>
+<li>Mã hóa mật khẩu: <code>Hash::make($validated[&#x27;mat_khau&#x27;])</code>.</li>
+<li>Gán trạng thái mặc định: <code>hoat_dong</code>.</li>
+<li>Lưu bản ghi vào bảng <code>tai_khoan_nguoi_dung</code>.</li>
+<li>Cấp token truy cập: <code>$user&#8594;createToken(&#x27;user_token&#x27;)&#8594;plainTextToken</code>.</li>
+<li>Trả về mã HTTP 201 kèm token và thông tin user ẩn mật khẩu qua <code>TaiKhoanNguoiDungResource</code>.</li>
+</ul>
+<ol>
+<li><code>login(LoginNguoiDungRequest $request)</code>:</li>
+</ol>
+<ul>
+<li><b>Nhiệm vụ</b>: Đăng nhập tài khoản khách hàng.</li>
+<li><b>Luồng code</b>:</li>
+<li>Tìm user theo <code>email</code>.</li>
+<li>So khớp mật khẩu: <code>Hash::check($credentials[&#x27;mat_khau&#x27;], $user&#8594;mat_khau)</code>. Nếu sai trả HTTP 401.</li>
+<li>Kiểm tra nếu <code>$user&#8594;trang_thai === &#x27;khoa&#x27;</code> &#8594; Trả về HTTP 403 từ chối đăng nhập.</li>
+<li>Tạo token Sanctum mới <code>user_token</code> và trả về Client.</li>
+</ul>
+<ol>
+<li><code>adminLogin(Request $request)</code>:</li>
+</ol>
+<ul>
+<li><b>Nhiệm vụ</b>: Cửa ngõ đăng nhập riêng biệt cho ban quản trị.</li>
+<li><b>Luồng code</b>:</li>
+<li>Xác thực email và mật khẩu trong bảng <code>tai_khoan_quan_tri</code>.</li>
+<li>Kiểm tra vai trò (<code>vai_tro</code> thuộc <code>super_admin</code> hoặc <code>admin</code>).</li>
+<li>Nếu bị khóa (<code>trang_thai === &#x27;khoa&#x27;</code>) &#8594; chặn HTTP 403.</li>
+<li>Cấp token riêng: <code>$admin&#8594;createToken(&#x27;admin_token&#x27;)&#8594;plainTextToken</code>.</li>
+</ul>
+<ol>
+<li><code>logout(Request $request)</code>:</li>
+</ol>
+<ul>
+<li><b>Nhiệm vụ</b>: Đăng xuất an toàn.</li>
+<li><b>Luồng code</b>:</li>
+<li>Lấy token đang kích hoạt: <code>$request&#8594;user()&#8594;currentAccessToken()&#8594;delete()</code>.</li>
+<li>Hủy token trên DB, ngăn chặn token bị tái sử dụng.</li>
+</ul>
+<h4>Chi tiết trong <code>AdminMiddleware.php</code>:</h4>
+<pre><code>public function handle(Request $request, Closure $next) {
+    $admin = $request-&gt;user();
+    if (!($admin instanceof TaiKhoanQuanTri) ||
+        $admin-&gt;trang_thai !== &#x27;hoat_dong&#x27; ||
+        !in_array($admin-&gt;vai_tro, [&#x27;super_admin&#x27;, &#x27;admin&#x27;])) {
+        return response()-&gt;json([&#x27;message&#x27; =&gt; &#x27;Bạn không có quyền thực hiện thao tác này.&#x27;], 403);
+    }
+    return $next($request);
+}</code></pre>
+<ul>
+<li><b>Luồng code</b>: Bất cứ request nào vào nhóm route Admin (<code>Route::middleware([&#x27;auth:sanctum&#x27;, &#x27;admin&#x27;])</code>) đều phải chứng minh danh tính là đối tượng <code>TaiKhoanQuanTri</code>, trạng thái đang hoạt động và có quyền hợp lệ.</li>
+</ul>
+<h3>2.2. Phía Frontend (Next.js)</h3>
+<ul>
+<li><b>Tệp</b>:</li>
+<li><code>frontend/src/services/dich-vu-xac-thuc.js</code>: Cung cấp các hàm <code>dangKy()</code>, <code>dangNhap()</code>, <code>dangXuat()</code>.</li>
+<li><code>frontend/src/app/dang-nhap/page.jsx</code>: Giao diện Tabs chuyển đổi mượt mà giữa Đăng nhập / Đăng ký.</li>
+<li><code>frontend/src/app/admin/dang-nhap/page.jsx</code>: Trang đăng nhập chuyên biệt cho quản trị viên, lưu <code>admin_token</code>, <code>admin_user</code> và điều hướng về <code>/admin</code>.</li>
+<li><code>frontend/src/app/admin/(quan-tri)/layout.jsx</code>: Guard bảo vệ toàn bộ dashboard, nếu không có token hoặc token hết hạn thì đẩy ra trang đăng nhập admin ngay lập tức.</li>
+</ul>
+<hr/>
+<h2>3. MODULE 2: QUẢN LÝ &amp; TRÌNH BÀY SẢN PHẨM (PRODUCTS)</h2>
+<h3>3.1. Phía Backend (Laravel)</h3>
+<ul>
+<li><b>Tệp</b>: <code>backend/app/Http/Controllers/SanPhamController.php</code> &amp; <code>backend/app/Models/SanPham.php</code></li>
+</ul>
+<h4>Chi tiết các hàm trong <code>SanPham.php</code> (Local Scopes):</h4>
+<ol>
+<li><code>scopeHienThi($query)</code>: Lọc sản phẩm đang mở bán (<code>trang_thai = &#x27;hien_thi&#x27;</code>).</li>
+<li><code>scopeConHang($query)</code>: Lọc sản phẩm còn hàng (<code>so_luong_ton_kho &gt; 0</code>).</li>
+<li><code>scopeDangGiamGia($query)</code>: Lọc sản phẩm có khuyến mãi (<code>gia_giam &gt; 0</code> và <code>gia_giam &lt; gia_ban</code>).</li>
+<li><code>scopeTimKiem($query, $keyword)</code>: Tìm kiếm LIKE theo tên sản phẩm.</li>
+<li><code>scopeTheoDanhMuc($query, $id)</code> &amp; <code>scopeTheoThuongHieu($query, $id)</code>: Lọc theo khóa ngoại.</li>
+<li><code>scopeTheoKhoangGia($query, $min, $max)</code>: Lọc khoảng giá thông minh (ưu tiên giá giảm nếu có, ngược lại lấy giá gốc).</li>
+<li><code>scopeSapXep($query, $sortBy)</code>: Hỗ trợ sắp xếp <code>gia_tang</code>, <code>gia_giam</code>, <code>oldest</code>, <code>moi_nhat</code>.</li>
+</ol>
+<h4>Chi tiết các hàm trong <code>SanPhamController.php</code>:</h4>
+<ol>
+<li><code>index(Request $request)</code>:</li>
+</ol>
+<ul>
+<li><b>Luồng code</b>: Kết hợp chuỗi Scopes linh hoạt: <code>SanPham::query()&#8594;hienThi()&#8594;timKiem(...)&#8594;theoDanhMuc(...)&#8594;theoThuongHieu(...)&#8594;theoKhoangGia(...)&#8594;sapXep(...)</code> &#8594; Phân trang <code>paginate()</code>. Trả dữ liệu chuẩn hóa qua <code>SanPhamResource</code>.</li>
+</ul>
+<ol>
+<li><code>store(StoreSanPhamRequest $request)</code>:</li>
+</ol>
+<ul>
+<li><b>Luồng code</b>: Tiếp nhận dữ liệu &#8594; Kiểm tra <code>duong_dan_sp</code> (slug). Nếu người dùng để trống, tự động tạo bằng <code>Str::slug($ten) . &#x27;-&#x27; . time()</code> &#8594; Gọi <code>SanPham::create()</code> &#8594; Trả HTTP 201.</li>
+</ul>
+<ol>
+<li><code>show($id)</code>:</li>
+</ol>
+<ul>
+<li><b>Luồng code</b>: <code>SanPham::findOrFail($id)</code> &#8594; Trả về chi tiết 1 sản phẩm.</li>
+</ul>
+<ol>
+<li><code>update(UpdateSanPhamRequest $request, $id)</code>:</li>
+</ol>
+<ul>
+<li><b>Luồng code</b>: Tìm sản phẩm &#8594; Cập nhật thông tin &#8594; Giữ nguyên hoặc sinh lại slug nếu có thay đổi tên mà không chỉ định slug &#8594; Lưu và trả thông báo thành công.</li>
+</ul>
+<ol>
+<li><code>destroy($id)</code>:</li>
+</ol>
+<ul>
+<li><b>Luồng code</b>: Gọi <code>$sanPham&#8594;delete()</code> (Soft Delete). Cột <code>ngay_xoa</code> được gắn timestamp hiện tại, sản phẩm ẩn khỏi danh sách bán nhưng vẫn lưu giữ dữ liệu an toàn.</li>
+</ul>
+<ol>
+<li><code>trashed()</code>, <code>restore($id)</code>, <code>forceDelete($id)</code>:</li>
+</ol>
+<ul>
+<li><b>Luồng code</b>: Phục vụ chức năng <b>Thùng Rác</b>. <code>trashed()</code> lấy danh sách <code>onlyTrashed()</code>. <code>restore()</code> khôi phục sản phẩm về trạng thái bình thường. <code>forceDelete()</code> xóa vĩnh viễn khỏi CSDL khi Admin yêu cầu dọn sạch.</li>
+</ul>
+<h3>3.2. Phía Frontend (Next.js)</h3>
+<ul>
+<li><b>Tệp</b>:</li>
+<li><code>frontend/src/services/dich-vu-san-pham.js</code>: Giao tiếp API sản phẩm, thùng rác, xóa vĩnh viễn, khôi phục.</li>
+<li><code>frontend/src/app/admin/(quan-tri)/san-pham/page.jsx</code>:</li>
+<li><b>Quản lý trạng thái kép</b>: Chuyển đổi giữa chế độ *Danh sách hoạt động* và *Thùng rác*.</li>
+<li><b>Optimistic Toggle Switch</b>: Hàm <code>xuLyDoiTrangThai(sp)</code> lập tức cập nhật state giao diện trước khi request API hoàn thành, giúp trải nghiệm quản trị tức thì, không giật lag.</li>
+<li><b>Sao chép sản phẩm (Duplicate)</b>: Tự động nhân bản thông tin sản phẩm kèm hậu tố <code>(Bản sao)</code> để quản trị viên tạo sản phẩm tương tự nhanh chóng.</li>
+<li><code>frontend/src/components/san-pham/form-san-pham-modal.jsx</code>: Modal form thêm/sửa với validation lỗi từ Laravel 422 hiển thị đỏ dưới từng ô nhập.</li>
+</ul>
+<hr/>
+<h2>4. MODULE 3: QUẢN LÝ DANH MỤC NÔNG SẢN (CATEGORIES)</h2>
+<h3>4.1. Phía Backend (Laravel)</h3>
+<ul>
+<li><b>Tệp</b>: <code>backend/app/Http/Controllers/DanhMucController.php</code> &amp; <code>backend/app/Models/DanhMuc.php</code></li>
+<li><b>Các hàm xử lý đặc sắc</b>:</li>
+</ul>
+<ol>
+<li><code>taoSlugDuyNhat(string $ten, ?int $boQuaId = null)</code>:</li>
+</ol>
+<ul>
+<li><b>Hướng đi thuật toán</b>: Lấy chuỗi gốc chuyển thành slug (<code>rau-cu-sach</code>). Chạy vòng lặp <code>while (DanhMuc::where(&#x27;duong_dan_dm&#x27;, $slug)&#8594;exists())</code> để tự động cộng dồn số đuôi: <code>rau-cu-sach-2</code>, <code>rau-cu-sach-3</code>... đảm bảo đường dẫn chuẩn SEO không bao giờ bị xung đột (duplicate key constraint).</li>
+</ul>
+<ol>
+<li><code>index(Request $request)</code>:</li>
+</ol>
+<ul>
+<li><b>Hướng đi thích ứng DB</b>: Kiểm tra an toàn xem bảng có cột <code>parent_id</code> hay không bằng <code>Schema::hasColumn(&#x27;danh_muc&#x27;, &#x27;parent_id&#x27;)</code>. Nếu có thì nạp cây đa cấp <code>with(&#x27;children&#x27;)</code>, hỗ trợ lọc tham số <code>search</code> và tham số <code>all=1</code> (phục vụ lấy toàn bộ cho Select Box bên Form Sản Phẩm).</li>
+</ul>
+<ol>
+<li><code>destroy($id)</code>:</li>
+</ol>
+<ul>
+<li><b>Ràng buộc an toàn</b>: Kiểm tra nếu danh mục đang có danh mục con trực thuộc thì trả về HTTP 409 từ chối xóa, bắt buộc dọn dẹp danh mục con trước.</li>
+</ul>
+<h3>4.2. Phía Frontend (Next.js)</h3>
+<ul>
+<li><b>Tệp</b>:</li>
+<li><code>frontend/src/services/dich-vu-danh-muc.js</code>: Kết nối API CRUD danh mục.</li>
+<li><code>frontend/src/app/admin/(quan-tri)/danh-muc/page.jsx</code>:</li>
+<li>Bảng danh mục đồng bộ phong cách với trang Sản phẩm.</li>
+<li>Switch bật/tắt nhanh <code>sp_noi_bat</code> (Sản phẩm/Danh mục nổi bật ngoài trang chủ).</li>
+<li>Bộ lọc tìm kiếm Client-side thời gian thực không cần tải lại trang.</li>
+<li><code>frontend/src/components/danh-muc/form-danh-muc-modal.jsx</code>: Modal thêm/sửa danh mục có xem trước hình ảnh trực tiếp.</li>
+<li><code>frontend/src/app/danh-muc/page.jsx</code>: Trang trưng bày danh mục ngoài giao diện khách hàng.</li>
+</ul>
+<hr/>
+<h2>5. MODULE 4: QUẢN LÝ THƯƠNG HIỆU (BRANDS)</h2>
+<h3>5.1. Phía Backend (Laravel)</h3>
+<ul>
+<li><b>Tệp</b>: <code>backend/app/Http/Controllers/ThuongHieuController.php</code> &amp; <code>backend/app/Models/ThuongHieu.php</code></li>
+<li><b>Chức năng</b>:</li>
+<li>Quản lý các nhà sản xuất/thương hiệu liên kết (ví dụ: Dalat Gap, VinEco, MeatDeli...).</li>
+<li>Scopes: <code>scopeHienThi()</code>, <code>scopeTimKiem()</code>, <code>scopeCoSanPham()</code>, <code>scopeSapXep()</code>.</li>
+<li>Hỗ trợ đầy đủ hệ thống Thùng rác (SoftDeletes: <code>ngay_xoa</code>).</li>
+</ul>
+<h3>5.2. Phía Frontend (Next.js)</h3>
+<ul>
+<li><b>Tệp</b>:</li>
+<li><code>frontend/src/services/dich-vu-thuong-hieu.js</code>.</li>
+<li><code>frontend/src/app/admin/(quan-tri)/thuong-hieu/page.jsx</code>.</li>
+<li><code>frontend/src/components/thuong-hieu/form-thuong-hieu-modal.jsx</code>.</li>
+</ul>
+<hr/>
+<h2>6. MODULE 5: GIỎ HÀNG TRỰC TUYẾN (SHOPPING CART)</h2>
+<pre><code>graph LR
+    A[&quot;Khách hàng nhấn Thêm vào giỏ&quot;] --&gt; B[&quot;Gọi POST /api/gio-hang&quot;]
+    B --&gt; C{&quot;Kiểm tra tồn tại giỏ hàng của User&quot;}
+    C --&gt;|Chưa có| D[&quot;Tạo mới bản ghi giỏ hàng&quot;]
+    C --&gt;|Đã có| E{&quot;Kiểm tra sản phẩm đã có trong giỏ chưa?&quot;}
+    D --&gt; E
+    E --&gt;|Đã có| F[&quot;Cộng dồn số lượng: item.so_luong += request.so_luong&quot;]
+    E --&gt;|Chưa có| G[&quot;Tạo ChiTietGioHang mới&quot;]
+    F --&gt; H[&quot;Tính toán lại tổng tiền dựa trên giá khuyến mãi/giá gốc&quot;]
+    G --&gt; H
+    H --&gt; I[&quot;Trả về GioHangResource cập nhật cho UI&quot;]</code></pre>
+<h3>6.1. Phía Backend (Laravel)</h3>
+<ul>
+<li><b>Tệp</b>: <code>backend/app/Http/Controllers/GioHangController.php</code>, <code>backend/app/Models/GioHang.php</code>, <code>backend/app/Models/ChiTietGioHang.php</code></li>
+<li><b>Chi tiết các hàm</b>:</li>
+</ul>
+<ol>
+<li><code>index(Request $request)</code>:</li>
+</ol>
+<ul>
+<li>Lấy ID người dùng qua Token: <code>$user = $request&#8594;user()</code>.</li>
+<li>Tìm giỏ hàng theo scope <code>GioHang::theoNguoiDung($user&#8594;id)&#8594;kemChiTiet()&#8594;first()</code>. Nếu chưa có giỏ hàng, tự động khởi tạo mới rỗng.</li>
+</ul>
+<ol>
+<li><code>store(ThemGioHangRequest $request)</code>:</li>
+</ol>
+<ul>
+<li>Lấy <code>san_pham_id</code> và <code>so_luong</code>.</li>
+<li>Tìm hoặc tạo giỏ hàng của user bằng <code>firstOrCreate()</code>.</li>
+<li>Kiểm tra nếu mặt hàng đã nằm trong giỏ (<code>ChiTietGioHang::theoSanPham()</code>) &#8594; Cộng dồn số lượng. Ngược lại tạo mới dòng chi tiết.</li>
+<li>Nạp lại quan hệ <code>chiTiets.sanPham</code> và trả về <code>GioHangResource</code>.</li>
+</ul>
+<ol>
+<li><code>update(CapNhatGioHangRequest $request, $id)</code>:</li>
+</ol>
+<ul>
+<li>Cập nhật trực tiếp số lượng món hàng theo ID mục giỏ hàng.</li>
+</ul>
+<ol>
+<li><code>destroy(Request $request, $id)</code>:</li>
+</ol>
+<ul>
+<li>Xóa vĩnh viễn món hàng khỏi giỏ của người dùng.</li>
+</ul>
+<h3>6.2. Phía Frontend (Next.js)</h3>
+<ul>
+<li><b>Tệp</b>:</li>
+<li><code>frontend/src/services/dich-vu-gio-hang.js</code>: Kết nối API thêm, sửa, xóa, lấy giỏ.</li>
+<li><code>frontend/src/app/gio-hang/page.jsx</code>: Giao diện giỏ hàng, tăng giảm số lượng tức thì, tính tạm tính, phí giao hàng và nút điều hướng đến trang thanh toán.</li>
+</ul>
+<hr/>
+<h2>7. MODULE 6: ĐƠN HÀNG &amp; CỔNG THANH TOÁN VNPay (ORDERS &amp; PAYMENT)</h2>
+<p>Đây là module nghiệp vụ quan trọng và phức tạp nhất trong hệ thống, đòi hỏi tính toàn vẹn dữ liệu cực cao và bảo mật thanh toán tài chính.</p>
+<pre><code>sequenceDiagram
+    autonumber
+    actor C as Khách hàng
+    participant FE as Frontend (/thanh-toan)
+    participant BE as Backend (DonHangController)
+    participant DB as CSDL MySQL
+    participant VNP as Cổng VNPay Gateway
+
+    C-&gt;&gt;FE: Điền địa chỉ &amp; Chọn thanh toán (COD hoặc VNPAY)
+    FE-&gt;&gt;BE: POST /api/don-hang kèm thông tin nhận hàng
+    BE-&gt;&gt;DB: Bắt đầu DB::transaction
+    BE-&gt;&gt;DB: Khóa giỏ hàng (lockForUpdate)
+    BE-&gt;&gt;DB: Kiểm tra số lượng tồn kho từng món
+    BE-&gt;&gt;DB: Tạo bản ghi DonHang &amp; ChiTietDonHang
+    BE-&gt;&gt;DB: Xóa sạch giỏ hàng hiện tại
+    BE-&gt;&gt;DB: Commit Transaction
+    alt Phương thức COD
+        BE--&gt;&gt;FE: Trả về thành công, don_hang_id
+        FE--&gt;&gt;C: Điều hướng đến trang thông báo thành công
+    else Phương thức VNPAY
+        BE-&gt;&gt;BE: Ksort params, tạo chữ ký HMAC-SHA512 với HASH_SECRET
+        BE-&gt;&gt;BE: Tạo url_thanh_toan sang VNPay sandbox
+        BE--&gt;&gt;FE: Trả về { url_thanh_toan }
+        FE-&gt;&gt;VNP: Redirect trình duyệt khách sang trang thanh toán VNPay
+        C-&gt;&gt;VNP: Nhập thẻ / Quét QR thành công
+        par Webhook ngầm (IPN)
+            VNP-&gt;&gt;BE: GET /api/thanh-toan/vnpay/ipn
+            BE-&gt;&gt;BE: Xác thực chữ ký HMAC &amp; số tiền
+            BE-&gt;&gt;DB: Cập nhật trang_thai_thanh_toan = &#x27;da_thanh_toan&#x27;
+            BE--&gt;&gt;VNP: Trả về JSON RspCode: &#x27;00&#x27;
+        and Điều hướng trình duyệt (Return URL)
+            VNP-&gt;&gt;BE: GET /api/thanh-toan/vnpay/ket-qua
+            BE-&gt;&gt;BE: Xác minh chữ ký &amp; mã kết quả
+            BE-&gt;&gt;FE: Redirect sang /thanh-toan/ket-qua?thanh_toan=thanh_cong&amp;don_hang=ID
+            FE--&gt;&gt;C: Hiển thị màn hình Chúc mừng &amp; Chi tiết đơn
+        end
+    end</code></pre>
+<h3>7.1. Phía Backend (Laravel)</h3>
+<ul>
+<li><b>Tệp</b>: <code>backend/app/Http/Controllers/DonHangController.php</code>, <code>backend/app/Models/DonHang.php</code>, <code>backend/app/Models/ChiTietDonHang.php</code></li>
+<li><b>Phân tích chi tiết từng hàm nghiệp vụ</b>:</li>
+</ul>
+<ol>
+<li><code>store(StoreDonHangRequest $request)</code>:</li>
+</ol>
+<ul>
+<li><b>Tính toán toàn vẹn dữ liệu</b>: Được bọc trong <code>DB::transaction(...)</code>.</li>
+<li><b>Khóa chống race condition</b>: Dùng <code>lockForUpdate()</code> trên giỏ hàng để tránh việc khách hàng mở nhiều tab đặt đơn đồng thời gây trừ kho âm.</li>
+<li><b>Kiểm tra kho</b>: So sánh <code>$item&#8594;so_luong &gt; $sanPham&#8594;so_luong_ton_kho</code>. Nếu không đủ hàng lập tức <code>abort(422)</code>.</li>
+<li><b>Khóa giá</b>: Tính đơn giá hiện tại (<code>gia_giam</code> nếu hợp lệ, ngược lại là <code>gia_ban</code>), nhân số lượng, snapshot toàn bộ thông tin sản phẩm (tên, hình ảnh, đơn giá tại thời điểm mua) lưu vào bảng <code>chi_tiet_don_hang</code>. Điều này đảm bảo sau này sản phẩm có tăng giá hay đổi tên thì lịch sử đơn hàng cũ không bao giờ bị sai lệch.</li>
+<li><b>Dọn dẹp</b>: Gọi <code>$gioHang&#8594;chiTiets()&#8594;delete()</code>.</li>
+<li><b>Xử lý VNPay</b>: Nếu chọn phương thức VNPay, hàm gọi <code>taoUrlVnpay()</code> sinh liên kết bảo mật có thời hạn 15 phút.</li>
+</ul>
+<ol>
+<li><code>taoUrlVnpay(Request $request, DonHang $donHang)</code>:</li>
+</ol>
+<ul>
+<li>Sắp xếp các tham số theo bảng chữ cái: <code>ksort($params)</code>.</li>
+<li>Tạo chuỗi băm <code>hashData</code> dạng query string.</li>
+<li>Ký số: <code>hash_hmac(&#x27;sha512&#x27;, $hashData, config(&#x27;services.vnpay.hash_secret&#x27;))</code>.</li>
+<li>Trả về đường dẫn hoàn chỉnh gắn kèm mã <code>vnp_SecureHash</code>.</li>
+</ul>
+<ol>
+<li><code>vnpayReturn(Request $request)</code>:</li>
+</ol>
+<ul>
+<li>Bắt redirect từ VNPay về sau khi người dùng thanh toán trên cổng.</li>
+<li>Kiểm tra chữ ký qua <code>xacThucChuKyVnpay()</code>.</li>
+<li>Chuyển hướng người dùng về trang Frontend: <code>/thanh-toan/ket-qua?thanh_toan=thanh_cong&amp;don_hang=...</code>.</li>
+</ul>
+<ol>
+<li><code>vnpayIpn(Request $request)</code>:</li>
+</ol>
+<ul>
+<li>Đây là cổng Webhook Server-to-Server độc lập của VNPay bắn về backend nhằm đảm bảo đơn hàng được cập nhật trạng thái thanh toán kể cả khi người dùng tắt trình duyệt sau khi trả tiền.</li>
+<li>Kiểm tra chữ ký, kiểm tra số tiền khớp 100% với đơn hàng.</li>
+<li>Cập nhật trạng thái <code>da_thanh_toan</code>.</li>
+</ul>
+<ol>
+<li><code>index(Request $request)</code> &amp; <code>update(UpdateDonHangRequest $request, $id)</code>:</li>
+</ol>
+<ul>
+<li>Phục vụ Admin tra cứu danh sách đơn hàng, lọc theo trạng thái (<code>cho_xac_nhan</code>, <code>da_xac_nhan</code>, <code>dang_giao</code>, <code>hoan_thanh</code>, <code>huy</code>), tìm kiếm theo tên hoặc mã đơn, cập nhật tiến trình giao vận.</li>
+</ul>
+<h3>7.2. Phía Frontend (Next.js)</h3>
+<ul>
+<li><b>Tệp</b>:</li>
+<li><code>frontend/src/app/thanh-toan/page.jsx</code>: Thu thập địa chỉ giao hàng, phương thức thanh toán, tóm tắt đơn.</li>
+<li><code>frontend/src/app/thanh-toan/ket-qua/page.jsx</code>: Xử lý phản hồi kết quả giao dịch và hiển thị badge thành công/thất bại.</li>
+<li><code>frontend/src/app/don-hang/page.jsx</code> &amp; <code>frontend/src/app/don-hang/[id]/page.jsx</code>: Lịch sử đơn hàng và trang chi tiết tiến trình giao hàng của khách.</li>
+<li><code>frontend/src/app/admin/(quan-tri)/don-hang/page.jsx</code>: Trung tâm điều phối đơn hàng của Admin.</li>
+</ul>
+<hr/>
+<h2>8. MODULE 7: ĐÁNH GIÁ SẢN PHẨM &amp; KIỂM DUYỆT TỰ ĐỘNG (REVIEWS &amp; MODERATION)</h2>
+<p>Hệ thống sở hữu cơ chế kiểm duyệt nội dung đánh giá bằng thuật toán tự động kết hợp quản trị thủ công.</p>
+<h3>8.1. Phía Backend (Laravel)</h3>
+<ul>
+<li><b>Tệp</b>: <code>backend/app/Http/Controllers/DanhGiaController.php</code> &amp; <code>backend/app/Http/Controllers/AdminDanhGiaController.php</code></li>
+<li><b>Chi tiết luồng hoạt động</b>:</li>
+</ul>
+<ol>
+<li><code>DanhGiaController@store</code>:</li>
+</ol>
+<ul>
+<li>Khách hàng gửi số sao (1-5), nội dung nhận xét và tệp đính kèm.</li>
+<li>Tự động nạp cấu hình kiểm duyệt từ Cache (<code>Cache::get(&#x27;review_moderation_rules&#x27;)</code>).</li>
+<li><b>Xử lý từ cấm (Profanity Filter)</b>: Chuẩn hóa chữ thường không dấu / có dấu tiếng Việt qua <code>mb_strtolower(..., &#x27;UTF-8&#x27;)</code>. Quét các từ nhạy cảm như &quot;lừa đảo&quot;, &quot;hàng giả&quot;, &quot;kém chất lượng&quot;...</li>
+<li>Nếu cấu hình là <code>thay_the_sao</code>: Dùng Regex thay thế từ tục tĩu thành <code>***</code>.</li>
+<li>Nếu cấu hình là <code>an_danh_gia</code>: Tự động chuyển trạng thái đánh giá thành <code>an</code> (chờ duyệt).</li>
+<li><b>Kiểm tra ngưỡng sao</b>: Nếu số sao nhỏ hơn hoặc bằng <code>tu_dong_an_duoi_sao</code> (ví dụ 1 sao, 2 sao) &#8594; Đánh giá tự động bị ẩn để Quản trị viên can thiệp xử lý khiếu nại trước khi công khai.</li>
+</ul>
+<ol>
+<li><code>AdminDanhGiaController</code>:</li>
+</ol>
+<ul>
+<li><code>danhSachSanPhamReview()</code>: Thống kê số lượng review và điểm trung bình từng sản phẩm.</li>
+<li><code>chiTietReviewSanPham()</code>: Xem danh sách đánh giá của từng sản phẩm kèm lọc trạng thái.</li>
+<li><code>doiTrangThai()</code>: Admin bấm toggle duyệt cho phép hiển thị hoặc ẩn review.</li>
+<li><code>layRules()</code> &amp; <code>luuRules()</code>: Admin tùy biến danh sách từ cấm, ngưỡng sao kiểm duyệt được lưu vĩnh viễn vào Cache.</li>
+</ul>
+<h3>8.2. Phía Frontend (Next.js)</h3>
+<ul>
+<li><b>Tệp</b>:</li>
+<li><code>frontend/src/components/san-pham/binh-luan-danh-gia.jsx</code>: Form đánh giá sản phẩm phía khách hàng (chọn sao, viết cảm nhận, hiển thị danh sách đánh giá đã duyệt kèm điểm trung bình).</li>
+<li><code>frontend/src/app/admin/(quan-tri)/danh-gia/page.jsx</code>: Bảng điều khiển kiểm duyệt review.</li>
+<li><code>frontend/src/components/admin/danh-gia/FormCauHinhRules.jsx</code>: Giao diện cấu hình từ cấm và ngưỡng sao tự động.</li>
+</ul>
+<hr/>
+<h2>9. MODULE 8: HỒ SƠ KHÁCH HÀNG &amp; BẢO MẬT ĐỔI MẬT KHẨU OTP</h2>
+<h3>9.1. Phía Backend (Laravel)</h3>
+<ul>
+<li><b>Tệp</b>: <code>backend/app/Http/Controllers/TaiKhoanController.php</code> &amp; <code>backend/app/Http/Controllers/NguoiDungController.php</code></li>
+<li><b>Chi tiết các hàm bảo mật cao cấp</b>:</li>
+</ul>
+<ol>
+<li><code>guiOtpDoiMatKhau(Request $request)</code>:</li>
+</ol>
+<ul>
+<li><b>Chống Spam Rate-limit</b>: Khởi tạo khóa Cache <code>otp_resend_lock_{user_id}</code> thời hạn 60 giây. Nếu user ấn gửi liên tục sẽ bị chặn mã HTTP 429 (&quot;Vui lòng chờ 60 giây&quot;).</li>
+<li><b>Sinh mã OTP</b>: <code>sprintf(&quot;%06d&quot;, mt_rand(1, 999999))</code> sinh mã ngẫu nhiên 6 chữ số.</li>
+<li><b>Lưu Cache</b>: Lưu vào Cache với khóa <code>otp_doi_mk_{user_id}</code> có hạn sử dụng 5 phút.</li>
+<li><b>Gửi Mail</b>: Gửi email qua Mailable <code>GuiOtpDoiMatKhauMail</code> tới địa chỉ email của user.</li>
+</ul>
+<ol>
+<li><code>xacNhanDoiMatKhau(DoiMatKhauOtpRequest $request)</code>:</li>
+</ol>
+<ul>
+<li>Kiểm tra mã OTP gửi lên so với giá trị trong Cache. Nếu sai hoặc hết hạn trả về lỗi 422.</li>
+<li>Kiểm tra mật khẩu hiện tại bằng <code>Hash::check($request&#8594;mat_khau_cu, $user&#8594;mat_khau)</code>.</li>
+<li>Cập nhật mật khẩu mới qua <code>Hash::make()</code>.</li>
+<li>Xóa sạch cache OTP: <code>Cache::forget()</code>.</li>
+</ul>
+<ol>
+<li><code>capNhatHoSo(CapNhatHoSoRequest $request)</code>:</li>
+</ol>
+<ul>
+<li>Hỗ trợ đổi họ tên, số điện thoại, địa chỉ và upload ảnh đại diện (avatar) lưu vào đĩa <code>public</code>. Tự động xóa file ảnh cũ khi người dùng đổi avatar mới.</li>
+</ul>
+<ol>
+<li><code>NguoiDungController</code> (Phía Admin):</li>
+</ol>
+<ul>
+<li>Quản lý danh sách người dùng, xem lịch sử đơn hàng của người dùng cụ thể, khóa tài khoản (lập tức thu hồi mọi token Sanctum đang hoạt động của user đó bằng <code>$user&#8594;tokens()&#8594;delete()</code>), khôi phục và xóa vĩnh viễn.</li>
+</ul>
+<h3>9.2. Phía Frontend (Next.js)</h3>
+<ul>
+<li><b>Tệp</b>:</li>
+<li><code>frontend/src/app/ho-so/page.jsx</code>: Trang quản lý thông tin cá nhân.</li>
+<li><code>frontend/src/app/tai-khoan/doi-mat-khau/page.jsx</code>: Trang đổi mật khẩu tích hợp bộ đếm ngược 60s gửi mã OTP qua email.</li>
+<li><code>frontend/src/app/admin/(quan-tri)/nguoi-dung/page.jsx</code>: Quản lý danh sách khách hàng dành cho Admin.</li>
+</ul>
+<hr/>
+<h2>10. MODULE 9: TIN TỨC &amp; BÀI VIẾT (ARTICLES &amp; TOPICS)</h2>
+<h3>10.1. Phía Backend (Laravel)</h3>
+<ul>
+<li><b>Tệp</b>: <code>backend/app/Http/Controllers/BaiVietController.php</code>, <code>backend/app/Models/BaiViet.php</code>, <code>backend/app/Models/ChuDeBaiViet.php</code></li>
+<li><b>Chi tiết các hàm</b>:</li>
+</ul>
+<ol>
+<li><code>index(Request $request)</code>: Hỗ trợ tìm kiếm theo tiêu đề, lọc theo trạng thái (<code>xuat_ban</code>, <code>nhap</code>), hỗ trợ tham số <code>limit</code> (dùng cho trang chủ hiển thị 3 bài mới nhất).</li>
+<li><code>store(Request $request)</code> &amp; <code>update(Request $request, $id)</code>:</li>
+</ol>
+<ul>
+<li>Lưu trữ bài viết chia sẻ kinh nghiệm nông sản, mẹo bảo quản rau củ.</li>
+<li>Tự động lưu hình ảnh đại diện vào thư mục <code>posts</code> trên đĩa <code>public</code>.</li>
+<li>Tự sinh slug duy nhất bằng <code>BaiViet::taoDuongDanDuyNhat()</code>.</li>
+</ul>
+<ol>
+<li><code>chuDe()</code>: Lấy danh mục các chủ đề bài viết.</li>
+</ol>
+<h3>10.2. Phía Frontend (Next.js)</h3>
+<ul>
+<li><b>Tệp</b>:</li>
+<li><code>frontend/src/services/dich-vu-bai-viet.js</code>.</li>
+<li><code>frontend/src/app/bai-viet/page.jsx</code> &amp; <code>frontend/src/app/bai-viet/[id]/page.jsx</code>: Xem danh sách và chi tiết bài viết ngoài giao diện khách hàng.</li>
+<li><code>frontend/src/app/admin/(quan-tri)/bai-viet/page.jsx</code>: Trình biên soạn và quản lý bài viết Admin.</li>
+</ul>
+<hr/>
+<h2>11. MODULE 10: QUẢN LÝ MENU ĐA CẤP ĐỘNG (MENUS NAVIGATION)</h2>
+<p>Cho phép quản trị viên tự cấu hình toàn bộ thanh điều hướng Header và Footer mà không cần sửa code.</p>
+<h3>11.1. Phía Backend (Laravel)</h3>
+<ul>
+<li><b>Tệp</b>: <code>backend/app/Http/Controllers/AdminMenuController.php</code> &amp; <code>backend/app/Http/Controllers/MenuController.php</code>, <code>backend/app/Models/Menu.php</code></li>
+<li><b>Chi tiết các hàm</b>:</li>
+</ul>
+<ol>
+<li><code>danhSachNguonLienKet()</code>:</li>
+</ol>
+<ul>
+<li>Tổng hợp dữ liệu từ 3 nguồn: Tất cả danh mục nông sản, các chủ đề bài viết, và các bài viết mới xuất bản. Trả về cho giao diện Admin để người dùng chỉ cần chọn liên kết nguồn thay vì gõ URL thủ công.</li>
+</ul>
+<ol>
+<li><code>capNhatThuTu(CapNhatThuTuMenuRequest $request)</code>:</li>
+</ol>
+<ul>
+<li>Hỗ trợ cập nhật thứ tự hàng loạt khi quản trị viên kéo thả sắp xếp menu trên giao diện.</li>
+<li>Tự động xóa bộ nhớ đệm <code>Cache::forget(&quot;menu_{$viTri}&quot;)</code> sau mỗi lần thay đổi để giao diện khách hàng cập nhật tức thì.</li>
+</ul>
+<ol>
+<li><code>layTheoViTri($viTri)</code> (Trong <code>MenuController</code>):</li>
+</ol>
+<ul>
+<li>Truy vấn cây menu đa cấp theo vị trí (<code>header</code> hoặc <code>footer</code>) với bộ nhớ đệm Cache 24 giờ nhằm tối ưu hóa tối đa tốc độ tải trang.</li>
+</ul>
+<h3>11.2. Phía Frontend (Next.js)</h3>
+<ul>
+<li><b>Tệp</b>:</li>
+<li><code>frontend/src/services/dichVuMenu.js</code>.</li>
+<li><code>frontend/src/app/admin/(quan-tri)/menu/page.jsx</code>: Giao diện quản trị cây Menu kéo thả, gán nguồn liên kết động.</li>
+<li><code>frontend/src/components/dieu-huong/thanh-dieu-huong.jsx</code> &amp; <code>chan-trang.jsx</code>: Tự động nạp menu động hiển thị ra người dùng.</li>
+</ul>
+<hr/>
+<h2>12. TRANG CHỦ ĐỘNG (DYNAMIC LANDING PAGE)</h2>
+<ul>
+<li><b>Tệp</b>: <code>frontend/src/app/(trang-chu)/page.jsx</code> &amp; <code>frontend/src/services/dich-vu-trang-chu.js</code></li>
+<li><b>Kỹ thuật thực hiện</b>:</li>
+</ul>
+<pre><code>  const [resKhuyenMai, resNoiBat, resBanChay, resTinTuc] = await Promise.allSettled([
+    api.get(&#x27;/san-pham&#x27;, { params: { co_gia_giam: 1 } }),
+    api.get(&#x27;/san-pham&#x27;, { params: { noi_bat: 1 } }),
+    api.get(&#x27;/san-pham&#x27;, { params: { sap_xep: &#x27;ban_chay&#x27; } }),
+    api.get(&#x27;/bai-viet&#x27;, { params: { limit: 3 } }),
+  ]);</code></pre>
+<ul>
+<li><b>Hướng đi/Ưu điểm vượt trội</b>:</li>
+<li>Sử dụng <code>Promise.allSettled</code> thay vì <code>Promise.all</code> giúp 4 luồng dữ liệu (Sản phẩm khuyến mãi, Sản phẩm nổi bật, Sản phẩm bán chạy, Tin tức mới nhất) được nạp song song đồng thời.</li>
+<li>Nếu một trong các API gặp sự cố (ví dụ mục tin tức lỗi), các khu vực sản phẩm khác vẫn hiển thị bình thường mà không làm sập toàn bộ trang chủ.</li>
+</ul>
+<hr/>
+<h2>13. BẢNG TRA CỨU TỔNG HỢP TOÀN BỘ FILE TRONG DỰ ÁN</h2>
+<table border="1" cellspacing="0" cellpadding="6"><thead><tr>
+<th>#</th>
+<th>Phân Hệ</th>
+<th>File Frontend</th>
+<th>File Backend Tương Ứng</th>
+<th>Trách Nhiệm Nghiệp Vụ</th>
+</tr></thead><tbody>
+<tr>
+<td>1</td>
+<td><b>Core Network</b></td>
+<td><code>src/services/api.js</code></td>
+<td><code>config/cors.php</code>, <code>bootstrap/app.php</code></td>
+<td>Cấu hình axios, interceptor bắt token, CORS</td>
+</tr>
+<tr>
+<td>2</td>
+<td><b>Auth User</b></td>
+<td><code>src/app/dang-nhap/page.jsx</code>, <code>dich-vu-xac-thuc.js</code></td>
+<td><code>AuthController.php</code>, <code>TaiKhoanNguoiDung.php</code></td>
+<td>Đăng ký, đăng nhập khách hàng, cấp token Sanctum</td>
+</tr>
+<tr>
+<td>3</td>
+<td><b>Auth Admin</b></td>
+<td><code>src/app/admin/dang-nhap/page.jsx</code>, <code>layout.jsx</code></td>
+<td><code>AuthController.php</code>, <code>AdminMiddleware.php</code></td>
+<td>Đăng nhập ban quản trị, bảo vệ route /admin</td>
+</tr>
+<tr>
+<td>4</td>
+<td><b>Sản Phẩm</b></td>
+<td><code>admin/(quan-tri)/san-pham/page.jsx</code>, <code>form-san-pham-modal.jsx</code></td>
+<td><code>SanPhamController.php</code>, <code>SanPham.php</code></td>
+<td>CRUD sản phẩm, bộ lọc, sắp xếp, thùng rác, xóa vĩnh viễn</td>
+</tr>
+<tr>
+<td>5</td>
+<td><b>Danh Mục</b></td>
+<td><code>admin/(quan-tri)/danh-muc/page.jsx</code>, <code>danh-muc/page.jsx</code></td>
+<td><code>DanhMucController.php</code>, <code>DanhMuc.php</code></td>
+<td>Quản lý danh mục, slug tự động, toggle nổi bật</td>
+</tr>
+<tr>
+<td>6</td>
+<td><b>Thương Hiệu</b></td>
+<td><code>admin/(quan-tri)/thuong-hieu/page.jsx</code></td>
+<td><code>ThuongHieuController.php</code>, <code>ThuongHieu.php</code></td>
+<td>CRUD thương hiệu nông sản, thùng rác</td>
+</tr>
+<tr>
+<td>7</td>
+<td><b>Giỏ Hàng</b></td>
+<td><code>src/app/gio-hang/page.jsx</code>, <code>the-gio-hang.jsx</code></td>
+<td><code>GioHangController.php</code>, <code>GioHang.php</code></td>
+<td>Thêm món, tính tổng tiền, tăng/giảm số lượng</td>
+</tr>
+<tr>
+<td>8</td>
+<td><b>Đơn Hàng</b></td>
+<td><code>src/app/thanh-toan/page.jsx</code>, <code>admin/.../don-hang/page.jsx</code></td>
+<td><code>DonHangController.php</code>, <code>DonHang.php</code></td>
+<td>Đặt hàng COD, snapshot giá khoá đơn, quản lý trạng thái</td>
+</tr>
+<tr>
+<td>9</td>
+<td><b>VNPay</b></td>
+<td><code>src/app/thanh-toan/ket-qua/page.jsx</code></td>
+<td><code>DonHangController.php</code> (taoUrl, Return, IPN)</td>
+<td>Ký số HMAC SHA512, thanh toán sandbox, Webhook IPN</td>
+</tr>
+<tr>
+<td>10</td>
+<td><b>Đánh Giá</b></td>
+<td><code>binh-luan-danh-gia.jsx</code>, <code>admin/.../danh-gia/page.jsx</code></td>
+<td><code>DanhGiaController.php</code>, <code>AdminDanhGiaController.php</code></td>
+<td>Đánh giá sao, lọc từ nhạy cảm tự động qua Cache</td>
+</tr>
+<tr>
+<td>11</td>
+<td><b>Tài Khoản</b></td>
+<td><code>src/app/ho-so/page.jsx</code>, <code>tai-khoan/doi-mat-khau</code></td>
+<td><code>TaiKhoanController.php</code>, <code>GuiOtpDoiMatKhauMail.php</code></td>
+<td>Hồ sơ, đổi avatar, gửi mã OTP 6 số qua Mail để đổi mật khẩu</td>
+</tr>
+<tr>
+<td>12</td>
+<td><b>Khách Hàng</b></td>
+<td><code>admin/(quan-tri)/nguoi-dung/page.jsx</code></td>
+<td><code>NguoiDungController.php</code></td>
+<td>Admin quản lý tài khoản khách, khóa/mở khóa tài khoản</td>
+</tr>
+<tr>
+<td>13</td>
+<td><b>Tin Tức</b></td>
+<td><code>src/app/bai-viet/page.jsx</code>, <code>admin/.../bai-viet/page.jsx</code></td>
+<td><code>BaiVietController.php</code>, <code>BaiViet.php</code></td>
+<td>Đăng tin tức nông sản, cẩm nang sức khỏe</td>
+</tr>
+<tr>
+<td>14</td>
+<td><b>Menu Động</b></td>
+<td><code>admin/.../menu/page.jsx</code>, <code>thanh-dieu-huong.jsx</code></td>
+<td><code>AdminMenuController.php</code>, <code>MenuController.php</code></td>
+<td>Cây Menu kéo thả đa cấp, cache 24h vị trí Header/Footer</td>
+</tr>
+<tr>
+<td>15</td>
+<td><b>Trang Chủ</b></td>
+<td><code>src/app/(trang-chu)/page.jsx</code>, <code>dich-vu-trang-chu.js</code></td>
+<td><code>SanPhamController.php</code>, <code>BaiVietController.php</code></td>
+<td>Nạp song song bằng Promise.allSettled hiển thị banner, SP hot</td>
+</tr>
+</tbody></table>
+</div>
+</body>
+</html>

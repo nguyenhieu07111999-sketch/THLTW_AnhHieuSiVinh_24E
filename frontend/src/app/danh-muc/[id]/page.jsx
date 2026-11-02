@@ -217,7 +217,6 @@ export default function TrangChiTietSanPham({ params }) {
         </section>
       )}
 
-      {/* PHẦN ĐÁNH GIÁ & BÌNH LUẬN (ẢNH / VIDEO / RATING) */}
       <section className="pt-6 border-t border-emerald-100">
         <BinhLuanDanhGia sanPhamId={sanPham.id} />
       </section>

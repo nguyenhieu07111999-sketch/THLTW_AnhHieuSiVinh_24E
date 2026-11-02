@@ -15,8 +15,6 @@ use Illuminate\Support\Str;
 
 class DanhMucController extends Controller
 {
-    // GET /api/danh-muc?per_page=10&page=1        -> danh mục cha (kèm children)
-    // GET /api/danh-muc?parent_id=2               -> các danh mục con của id=2
     public function index(Request $request): AnonymousResourceCollection
     {
         $perPage = $request->input('per_page', 10);
@@ -32,7 +30,6 @@ class DanhMucController extends Controller
         return DanhMucResource::collection($query->paginate($perPage));
     }
 
-    // GET /api/danh-muc/{id}
     public function show($id): JsonResponse
     {
         $danhMuc = DanhMuc::with(['children', 'parent'])->find($id);
@@ -44,7 +41,6 @@ class DanhMucController extends Controller
         return response()->json(['success' => true, 'data' => new DanhMucResource($danhMuc)]);
     }
 
-    // POST /api/danh-muc
     public function store(StoreDanhMucRequest $request): JsonResponse
     {
         $validated = $request->validated();
@@ -60,7 +56,6 @@ class DanhMucController extends Controller
         ], 201);
     }
 
-    // PUT/PATCH /api/danh-muc/{id}
     public function update(UpdateDanhMucRequest $request, $id): JsonResponse
     {
         $danhMuc = DanhMuc::find($id);
@@ -84,7 +79,6 @@ class DanhMucController extends Controller
         ]);
     }
 
-    // DELETE /api/danh-muc/{id}
     public function destroy($id): JsonResponse
     {
         $danhMuc = DanhMuc::find($id);
@@ -101,7 +95,6 @@ class DanhMucController extends Controller
         return response()->json(['success' => true, 'message' => 'Đã chuyển danh mục vào thùng rác']);
     }
 
-    // GET /api/danh-muc/thung-rac
     public function trashed(Request $request): AnonymousResourceCollection
     {
         $perPage = min(max((int) $request->input('per_page', 10), 1), 200);
@@ -114,7 +107,6 @@ class DanhMucController extends Controller
         );
     }
 
-    // POST /api/danh-muc/{id}/khoi-phuc
     public function restore($id): JsonResponse
     {
         $danhMuc = DanhMuc::withTrashed()->find($id);

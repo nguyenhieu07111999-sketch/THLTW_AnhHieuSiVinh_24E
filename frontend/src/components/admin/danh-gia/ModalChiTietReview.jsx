@@ -87,7 +87,6 @@ export default function ModalChiTietReview({
             </div>
           </div>
 
-          {/* Danh sách review */}
           <div className="p-6 overflow-y-auto space-y-4 flex-1">
             {dangTaiModal ? (
               <div className="py-16 text-center text-xs text-gray-400">Đang tải danh sách reviews...</div>
@@ -179,7 +178,6 @@ export default function ModalChiTietReview({
         </div>
       </div>
 
-      {/* Lightbox phóng to ảnh / video */}
       {mediaPhongTo && (
         <div
           className="fixed inset-0 bg-black/80 z-[60] flex items-center justify-center p-4 cursor-pointer"

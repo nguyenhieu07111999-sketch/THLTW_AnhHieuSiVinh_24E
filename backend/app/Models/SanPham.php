@@ -52,27 +52,19 @@ class SanPham extends Model
         return $this->hasMany(\App\Models\DanhGiaSanPham::class, 'san_pham_id', 'id');
     }
     
-    // ==================== LOCAL SCOPES ====================
 
-    /**
-     * 1. Lọc sản phẩm đang hiển thị/kích hoạt (Dùng cho Client)
-     */
     public function scopeHienThi($query)
     {
         return $query->where('trang_thai', 'hien_thi'); 
     }
 
-    /**
-     * 2. Lọc sản phẩm còn hàng trong kho
-     */
+   
     public function scopeConHang($query)
     {
         return $query->where('so_luong_ton_kho', '>', 0);
     }
 
-    /**
-     * 3. Lọc sản phẩm đang có chương trình giảm giá/khuyến mãi
-     */
+   
     public function scopeDangGiamGia($query)
     {
         return $query->whereNotNull('gia_giam')
@@ -80,9 +72,6 @@ class SanPham extends Model
                      ->whereColumn('gia_giam', '<', 'gia_ban');
     }
 
-    /**
-     * 4. Tìm kiếm sản phẩm theo tên hoặc mã
-     */
     public function scopeTimKiem($query, $keyword)
     {
         if ($keyword) {
@@ -91,9 +80,6 @@ class SanPham extends Model
         return $query;
     }
 
-    /**
-     * 5. Lọc sản phẩm theo danh mục và thương hiệu
-     */
     public function scopeTheoDanhMuc($query, $danhMucId)
     {
         if ($danhMucId) {
@@ -110,12 +96,8 @@ class SanPham extends Model
         return $query;
     }
 
-    /**
-     * 6. Lọc theo khoảng giá (Lấy theo giá giảm nếu có, ngược lại lấy giá bán)
-     */
     public function scopeTheoKhoangGia($query, $min = null, $max = null)
     {
-        // Biểu thức lấy giá thực tế: nếu gia_giam > 0 thì lấy gia_giam, ngược lại lấy gia_ban
         $bieuThucGia = 'COALESCE(NULLIF(gia_giam, 0), gia_ban)';
 
         if ($min !== null && $min !== '') {
@@ -129,9 +111,6 @@ class SanPham extends Model
         return $query;
     }
 
-    /**
-     * 7. Sắp xếp sản phẩm (Mới nhất, giá tăng/giảm)
-     */
     public function scopeSapXep($query, $sortBy = 'moi_nhat')
     {
         return match ($sortBy) {
@@ -145,23 +124,19 @@ class SanPham extends Model
     public function scopeTheoTieuChi($query, $tieuChi = null, $sort = 'moi_nhat')
     {
         if ($tieuChi === 'khuyen-mai') {
-            // Lọc sản phẩm có giảm giá hợp lệ
             return $query->whereNotNull('gia_giam')
                          ->where('gia_giam', '>', 0)
                          ->whereColumn('gia_giam', '<', 'gia_ban');
         }
 
         if ($tieuChi === 'noi-bat') {
-            // Sắp xếp sản phẩm nổi bật theo giá bán cao nhất
             return $query->orderBy('gia_ban', 'desc');
         }
 
         if ($tieuChi === 'ban-chay') {
-            // Tạm thời sắp xếp theo ID mới nhất
             return $query->orderBy('id', 'desc');
         }
 
-        // Mặc định gọi scope sapXep đã có sẵn trong model
         return $query->sapXep($sort);
     }
 

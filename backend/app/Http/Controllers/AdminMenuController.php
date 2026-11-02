@@ -63,7 +63,6 @@ class AdminMenuController extends Controller
     {
         $validated = $request->validated();
         
-        // Nếu không truyền thứ tự, xếp cuối cùng
         if (!isset($validated['thu_tu'])) {
             $validated['thu_tu'] = Menu::where('vi_tri', $validated['vi_tri'])
                 ->where('parent_id', $validated['parent_id'] ?? null)
@@ -99,7 +98,6 @@ class AdminMenuController extends Controller
 
         $menu->update($request->validated());
 
-        // Xóa cache vị trí cũ và vị trí mới 
         $this->xoaCacheMenu($viTriCu);
         if ($menu->vi_tri !== $viTriCu) {
             $this->xoaCacheMenu($menu->vi_tri);
@@ -144,7 +142,6 @@ class AdminMenuController extends Controller
             }
             DB::commit();
 
-            // Xóa toàn bộ cache các vị trí menu
             $this->xoaToanBoCacheMenu();
 
             return response()->json([

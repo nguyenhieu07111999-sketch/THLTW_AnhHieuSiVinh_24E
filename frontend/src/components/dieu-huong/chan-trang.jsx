@@ -26,17 +26,15 @@ export default function ChanTrang() {
         }
       })
       .catch(() => {
-        // Giữ fallback FOOTER_MAC_DINH
+        // Lỗi thì giữ FOOTER_MAC_DINH
       });
   }, []);
 
-  // Trang quản trị có giao diện riêng, ẩn footer của cửa hàng
   if (pathname?.startsWith('/admin')) return null;
 
   return (
     <footer className="bg-emerald-900 text-white mt-16 border-t border-emerald-800">
       <div className="max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-3 gap-8">
-        {/* Cột 1: Thông tin thương hiệu */}
         <div>
           <div className="flex items-center space-x-2 mb-3">
             <span className="text-2xl">🌱</span>
@@ -47,7 +45,6 @@ export default function ChanTrang() {
           </p>
         </div>
 
-        {/* Cột 2: Điều hướng nhanh */}
         <div>
           <h3 className="font-bold text-lg mb-3 text-emerald-200">Liên Kết Nhanh</h3>
           <ul className="space-y-2 text-sm text-emerald-100">
@@ -65,7 +62,6 @@ export default function ChanTrang() {
           </ul>
         </div>
 
-        {/* Cột 3: Thông tin liên hệ */}
         <div>
           <h3 className="font-bold text-lg mb-3 text-emerald-200">Thông Tin Liên Hệ</h3>
           <p className="text-sm text-emerald-100 mb-1">📍 Địa chỉ: Nông sản sạch Đà Lạt / TP.HCM</p>

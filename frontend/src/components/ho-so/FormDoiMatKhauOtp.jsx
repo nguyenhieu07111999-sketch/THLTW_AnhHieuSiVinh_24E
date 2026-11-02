@@ -14,7 +14,6 @@ export default function FormDoiMatKhauOtp({
 }) {
   return (
     <form onSubmit={onSubmit} className="space-y-4">
-      {/* Thông báo lỗi / thành công */}
       {thongBao.msg && (
         <div
           className={`p-3 text-xs rounded-xl border ${
@@ -27,7 +26,6 @@ export default function FormDoiMatKhauOtp({
         </div>
       )}
 
-      {/* Mật khẩu cũ */}
       <div>
         <label className="block text-xs font-bold text-gray-700 mb-1">
           Mật khẩu hiện tại <span className="text-red-500">*</span>
@@ -43,7 +41,6 @@ export default function FormDoiMatKhauOtp({
         />
       </div>
 
-      {/* Mật khẩu mới */}
       <div>
         <label className="block text-xs font-bold text-gray-700 mb-1">
           Mật khẩu mới (tối thiểu 6 ký tự) <span className="text-red-500">*</span>
@@ -59,7 +56,6 @@ export default function FormDoiMatKhauOtp({
         />
       </div>
 
-      {/* Xác nhận mật khẩu mới */}
       <div>
         <label className="block text-xs font-bold text-gray-700 mb-1">
           Xác nhận mật khẩu mới <span className="text-red-500">*</span>
@@ -75,7 +71,6 @@ export default function FormDoiMatKhauOtp({
         />
       </div>
 
-      {/* Ô nhập mã OTP + Nút nhận OTP */}
       <div>
         <label className="block text-xs font-bold text-gray-700 mb-1">
           Mã xác thực OTP (Gửi về Gmail) <span className="text-red-500">*</span>
@@ -109,7 +104,6 @@ export default function FormDoiMatKhauOtp({
         </p>
       </div>
 
-      {/* Nút gửi form */}
       <div className="pt-2">
         <button
           type="submit"

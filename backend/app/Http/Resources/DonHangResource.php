@@ -23,17 +23,14 @@ class DonHangResource extends JsonResource
             'dia_chi_nhan' => $this->dia_chi_nhan,
             'ghi_chu' => $this->ghi_chu,
             
-            // Tài chính 
             'tong_tien' => (float) $this->tong_tien,
             'phi_vanchuyen' => (float) $this->phi_vanchuyen,
             'thanh_tien' => (float) $this->thanh_tien,
 
-            // Trạng thái
             'trang_thai_don_hang' => $this->trang_thai_don_hang,
             'trang_thai_thanh_toan' => $this->trang_thai_thanh_toan,
             'phuong_thuc_thanh_toan' => $this->phuong_thuc_thanh_toan,
 
-            // Danh sách sản phẩm chi tiết trong đơn hàng 
             'chi_tiet' => $this->whenLoaded('chiTiet', function () {
                 return $this->chiTiet->map(function ($item) {
                     $hinhAnh = $item->hinh_anh;
@@ -57,7 +54,6 @@ class DonHangResource extends JsonResource
                 });
             }),
 
-            // Thời gian
             'ngay_tao'      => $this->created_at?->toIso8601String(),
             'ngay_cap_nhat' => $this->updated_at?->toIso8601String(),
         ];

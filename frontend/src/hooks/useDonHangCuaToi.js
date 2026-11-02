@@ -9,7 +9,6 @@ export default function useDonHangCuaToi({ gioiHan, trang = 1, trangThai } = {})
   const [donHang, setDonHang] = useState([]);
   const [meta, setMeta] = useState(null);
   
-  // Khởi tạo trạng thái đang tải dựa vào điều kiện sẵn sàng để tránh gọi setState đồng bộ
   const [dangTai, setDangTai] = useState(() => daSanSang && !!user);
   const [loi, setLoi] = useState(null);
   const [lanTai, setLanTai] = useState(0);
