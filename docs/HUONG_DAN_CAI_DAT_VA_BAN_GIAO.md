@@ -17,10 +17,10 @@
 
 ---
 # note: Tài khoản 
-admin: 
+# admin: 
    admin@gmail.com
    123
-user:(có thể sửa pwd các tài khoản có sẵn ở DB hoặc dùng tài khoản mật khẩu bên dưới)
+# user:(có thể sửa pwd các tài khoản có sẵn ở DB hoặc dùng tài khoản mật khẩu bên dưới)
    1. nguyenvanc@gmail.com
       123456
    2. nguyenhieu07121999@gmail.com
