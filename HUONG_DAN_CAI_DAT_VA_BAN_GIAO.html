@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Báo Cáo Tổng Hợp Toàn Bộ Chức Năng & Luồng Mã Nguồn (FE & BE)</title>
+<style>
+  @media print {
+    @page {
+      size: A4 portrait;
+      margin: 1.5cm;
+    }
+    .no-print {
+      display: none !important;
+    }
+    body {
+      font-size: 10.5pt;
+      line-height: 1.5;
+    }
+    h1, h2, h3 {
+      page-break-after: avoid;
+    }
+    pre, table {
+      page-break-inside: avoid;
+    }
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color: #1e293b;
+    background-color: #f8fafc;
+    margin: 0;
+    padding: 20px;
+    line-height: 1.6;
+  }
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: #ffffff;
+    padding: 40px 50px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    border: 1px solid #e2e8f0;
+  }
+  .action-bar {
+    position: sticky;
+    top: 15px;
+    margin-bottom: 25px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    z-index: 100;
+  }
+  .btn {
+    padding: 10px 20px;
+    background-color: #059669;
+    color: #fff;
+    font-weight: 600;
+    font-size: 14px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(5,150,105,0.3);
+    transition: all 0.2s;
+  }
+  .btn:hover {
+    background-color: #047857;
+  }
+  h1 {
+    font-size: 24px;
+    color: #065f46;
+    text-align: center;
+    border-bottom: 3px solid #10b981;
+    padding-bottom: 15px;
+    margin-top: 10px;
+  }
+  h2 {
+    font-size: 18px;
+    color: #047857;
+    margin-top: 30px;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 8px;
+  }
+  h3 {
+    font-size: 15px;
+    color: #0f766e;
+    margin-top: 22px;
+  }
+  h4 {
+    font-size: 14px;
+    color: #334155;
+    margin-top: 16px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 18px 0;
+    font-size: 13px;
+  }
+  th {
+    background: #ecfdf5;
+    color: #065f46;
+    padding: 10px 12px;
+    border: 1px solid #cbd5e1;
+    text-align: left;
+  }
+  td {
+    padding: 9px 12px;
+    border: 1px solid #cbd5e1;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td {
+    background-color: #f8fafc;
+  }
+  pre {
+    background: #0f172a;
+    color: #f8fafc;
+    padding: 14px 18px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  code {
+    font-family: 'Consolas', monospace;
+    color: #0d9488;
+    background: #f1f5f9;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 13px;
+  }
+  pre code {
+    color: #f8fafc;
+    background: transparent;
+    padding: 0;
+  }
+  ul, ol {
+    padding-left: 22px;
+  }
+  li {
+    margin-bottom: 6px;
+  }
+  hr {
+    border: 0;
+    height: 1px;
+    background: #e2e8f0;
+    margin: 30px 0;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="action-bar no-print">
+    <button class="btn" onclick="window.print()">🖨️ In ra PDF (Print / Save as PDF)</button>
+  </div>
+  <h1>TÀI LIỆU HƯỚNG DẪN CÀI ĐẶT, VẬN HÀNH &amp; BÀN GIAO PHẦN MỀM</h1>
+<p><b>Dự án</b>: Website Thương Mại Điện Tử Nông Sản Tươi</p>
+<p><b>Kiến trúc</b>: Decoupled (Backend Laravel 12 API + Frontend Next.js 16)</p>
+<p><b>Dành cho</b>: Khách hàng / Quản trị viên / Đội ngũ kỹ thuật tiếp nhận bàn giao</p>
+<hr/>
+<h2>MỤC LỤC</h2>
+<ol>
+<li><a href="#1-yêu-cầu-cấu-hình-máy-chủ--môi-trường" style="color: #047857; text-decoration: underline;">Yêu cầu cấu hình máy chủ &amp; môi trường</a></li>
+<li><a href="#2-cấu-trúc-mã-nguồn-bàn-giao" style="color: #047857; text-decoration: underline;">Cấu trúc mã nguồn bàn giao</a></li>
+<li><a href="#3-hướng-dẫn-cài-đặt-backend-laravel-12-api" style="color: #047857; text-decoration: underline;">Hướng dẫn cài đặt Backend (Laravel 12 API)</a></li>
+<li><a href="#4-hướng-dẫn-cài-đặt-frontend-nextjs-16" style="color: #047857; text-decoration: underline;">Hướng dẫn cài đặt Frontend (Next.js 16)</a></li>
+<li><a href="#5-hướng-dẫn-cài-đặt-chức-năng-gửi-mã-otp-về-gmail" style="color: #047857; text-decoration: underline;">HƯỚNG DẪN CÀI ĐẶT CHỨC NĂNG GỬI MÃ OTP VỀ GMAIL (CHI TIẾT)</a></li>
+<li><a href="#6-hướng-dẫn-cài-đặt-cổng-thanh-toán-vnpay" style="color: #047857; text-decoration: underline;">HƯỚNG DẪN CÀI ĐẶT CỔNG THANH TOÁN VNPAY (CHI TIẾT)</a></li>
+<li><a href="#7-tài-khoản-quản-trị--luồng-kiểm-thử-sau-cài-đặt" style="color: #047857; text-decoration: underline;">Tài khoản quản trị &amp; Luồng kiểm thử sau cài đặt</a></li>
+<li><a href="#8-các-lưu-ý-quan-trọng-khi-triển-khai-production" style="color: #047857; text-decoration: underline;">Các lưu ý quan trọng khi triển khai lên Hosting/VPS Production</a></li>
+</ol>
+<hr/>
+<h2>1. YÊU CẦU CẤU HÌNH MÁY CHỦ &amp; MÔI TRƯỜNG</h2>
+<p>Để ứng dụng vận hành trơn tru và tương thích 100%, máy chủ (hoặc máy cá nhân Localhost) cần cài đặt sẵn các công cụ sau:</p>
+<table border="1" cellspacing="0" cellpadding="6"><thead><tr>
+<th>Công cụ / Phần mềm</th>
+<th>Phiên bản tối thiểu</th>
+<th>Khuyến nghị</th>
+<th>Ghi chú</th>
+</tr></thead><tbody>
+<tr>
+<td><b>Hệ điều hành</b></td>
+<td>Windows 10/11, Ubuntu 20.04+, macOS</td>
+<td>Ubuntu 22.04 LTS (VPS)</td>
+<td></td>
+</tr>
+<tr>
+<td><b>PHP</b></td>
+<td><b>&gt;= 8.2</b></td>
+<td>PHP 8.2 hoặc 8.3</td>
+<td>Bắt buộc bật extensions: <code>pdo_mysql</code>, <code>mbstring</code>, <code>openssl</code>, <code>curl</code>, <code>fileinfo</code>, <code>gd</code></td>
+</tr>
+<tr>
+<td><b>Composer</b></td>
+<td>&gt;= 2.2</td>
+<td>Composer 2.7+</td>
+<td>Quản lý gói thư viện PHP</td>
+</tr>
+<tr>
+<td><b>Node.js &amp; npm</b></td>
+<td><b>&gt;= 18.18</b> hoặc <b>&gt;= 20.9</b></td>
+<td>Node.js 20 LTS (Active)</td>
+<td>Quản lý và build Frontend Next.js</td>
+</tr>
+<tr>
+<td><b>Hệ quản trị CSDL</b></td>
+<td>MySQL &gt;= 8.0 hoặc MariaDB &gt;= 10.4</td>
+<td>MySQL 8.0</td>
+<td>Bảng mã khuyến nghị <code>utf8mb4_unicode_ci</code></td>
+</tr>
+<tr>
+<td><b>Web Server Local</b></td>
+<td>Laragon / XAMPP / Docker</td>
+<td>Laragon (trên Windows)</td>
+<td>Khuyên dùng Laragon vì dễ quản lý PHP 8.2+ và MySQL</td>
+</tr>
+</tbody></table>
+<hr/>
+<h2>2. CẤU TRÚC MÃ NGUỒN BÀN GIAO</h2>
+<p>Gói mã nguồn bàn giao gồm 2 thư mục chính:</p>
+<pre><code>THLTW_AnhHieuSiVinh_24E/
+├── backend/                  # Thư mục mã nguồn Backend (Laravel 12 RESTful API)
+│   ├── app/                  # Controllers, Models, Requests, Resources, Mailables
+│   ├── config/               # Cấu hình hệ thống (mail.php, services.php, cors.php)
+│   ├── routes/api.php        # Danh sách API Endpoints
+│   ├── .env                  # Tệp cấu hình môi trường Backend (DB, Mail, VNPay)
+│   └── composer.json         # Danh sách thư viện PHP
+├── frontend/                 # Thư mục mã nguồn Frontend (Next.js 16 App Router)
+│   ├── src/app/              # Các trang giao diện (Client &amp; Admin)
+│   ├── src/components/       # Các khối giao diện dùng chung (Modal, Card, Table)
+│   ├── src/services/         # Tầng gọi API Backend (api.js, dich-vu-*.js)
+│   ├── .env.local            # Tệp cấu hình biến môi trường Frontend
+│   └── package.json          # Danh sách thư viện JavaScript / Next.js
+└── database.sql              # Tệp sao lưu CSDL hoàn chỉnh có sẵn dữ liệu mẫu</code></pre>
+<hr/>
+<h2>3. HƯỚNG DẪN CÀI ĐẶT BACKEND (LARAVEL 12 API)</h2>
+<h3>Bước 3.1: Mở Terminal tại thư mục Backend</h3>
+<p>Mở Command Prompt / PowerShell / Terminal tại đường dẫn thư mục <code>backend</code>:</p>
+<pre><code>cd backend</code></pre>
+<h3>Bước 3.2: Cài đặt các gói phụ thuộc PHP (Vendor)</h3>
+<p>Chạy lệnh composer để tải thư viện:</p>
+<pre><code>composer install</code></pre>
+<h3>Bước 3.3: Thiết lập tệp cấu hình môi trường (.env)</h3>
+<p>Nếu chưa có tệp <code>.env</code>, copy từ tệp <code>.env.example</code>:</p>
+<pre><code>cp .env.example .env     # (Linux/macOS)
+copy .env.example .env   # (Windows)</code></pre>
+<p>Tạo khóa bí mật của ứng dụng:</p>
+<pre><code>php artisan key:generate</code></pre>
+<h3>Bước 3.4: Cấu hình kết nối Cơ sở dữ liệu</h3>
+<p>Mở tệp <code>backend/.env</code> và cập nhật thông số kết nối MySQL của bạn:</p>
+<pre><code>DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=thltw_anhhieusivinh_24e
+DB_USERNAME=root
+DB_PASSWORD=</code></pre>
+<h3>Bước 3.5: Nạp dữ liệu vào Database</h3>
+<ul>
+<li><b>Cách 1 (Khuyên dùng)</b>: Mở <b>phpMyAdmin</b> (hoặc Navicat/DBeaver), tạo một CSDL mới tên <code>thltw_anhhieusivinh_24e</code>, sau đó bấm <b>Import</b> và chọn tệp <code>database.sql</code> đi kèm trong gói bàn giao.</li>
+<li><b>Cách 2</b>: Chạy migration và seed mặc định:</li>
+</ul>
+<pre><code>  php artisan migrate --seed</code></pre>
+<h3>Bước 3.6: Tạo liên kết thư mục ảnh (Storage Link)</h3>
+<p>Chức năng này bắt buộc để xem được hình ảnh sản phẩm, bài viết và avatar:</p>
+<pre><code>php artisan storage:link</code></pre>
+<h3>Bước 3.7: Khởi động máy chủ Backend</h3>
+<pre><code>php artisan serve --port=8000</code></pre>
+<p>Backend sẽ khởi chạy tại: <code>http://127.0.0.1:8000</code>.</p>
+<p>Bạn có thể kiểm tra nhanh bằng cách truy cập: <code>http://127.0.0.1:8000/api/ping</code> $\rightarrow$ Trả về <code>{&quot;message&quot;: &quot;API is working!&quot;}</code> là thành công.</p>
+<hr/>
+<h2>4. HƯỚNG DẪN CÀI ĐẶT FRONTEND (NEXT.JS 16)</h2>
+<h3>Bước 4.1: Mở Terminal tại thư mục Frontend</h3>
+<p>Mở một cửa sổ Terminal mới:</p>
+<pre><code>cd frontend</code></pre>
+<h3>Bước 4.2: Cài đặt các gói phụ thuộc Node.js</h3>
+<pre><code>npm install</code></pre>
+<h3>Bước 4.3: Cấu hình biến môi trường kết nối Backend</h3>
+<p>Tạo tệp <code>.env.local</code> trong thư mục <code>frontend/</code> (nếu chưa có) với nội dung:</p>
+<pre><code>NEXT_PUBLIC_API_URL=http://127.0.0.1:8000/api</code></pre>
+<p>*(Nếu triển khai máy chủ thật, thay <code>http://127.0.0.1:8000</code> thành tên miền/IP của Backend).*</p>
+<h3>Bước 4.4: Khởi chạy Frontend</h3>
+<ul>
+<li><b>Chạy chế độ phát triển (Development)</b>:</li>
+</ul>
+<pre><code>  npm run dev</code></pre>
+<p>Truy cập website tại: <code>http://localhost:3000</code></p>
+<ul>
+<li><b>Chạy chế độ tối ưu Production</b>:</li>
+</ul>
+<pre><code>  npm run build
+  npm run start</code></pre>
+<hr/>
+<h2>5. HƯỚNG DẪN CÀI ĐẶT CHỨC NĂNG GỬI MÃ OTP VỀ GMAIL</h2>
+<p>Hệ thống sử dụng giao thức <b>SMTP của Google</b> để gửi mã xác thực OTP 6 số tự động về email khách hàng khi thực hiện <b>Đổi mật khẩu</b> hoặc các thao tác bảo mật.</p>
+<p>&gt; [!IMPORTANT]</p>
+<p>&gt; Google <b>không cho phép</b> sử dụng mật khẩu đăng nhập Gmail thông thường để gửi mail từ phần mềm. Người mua <b>bắt buộc phải tạo &quot;Mật khẩu ứng dụng&quot; (App Password)</b> gồm 16 ký tự.</p>
+<h3>Bước 5.1: Các bước tạo Mật khẩu ứng dụng trên tài khoản Google (Gmail)</h3>
+<ol>
+<li>Đăng nhập vào tài khoản Gmail dùng để gửi thư cho cửa hàng.</li>
+<li>Truy cập vào trang quản lý tài khoản: <b><a href="https://myaccount.google.com/security" style="color: #047857; text-decoration: underline;">https://myaccount.google.com/security</a></b> (Tab <b>Bảo mật</b> / Security).</li>
+<li>Tại mục <b>&quot;Cách bạn đăng nhập vào Google&quot;</b>, kiểm tra:</li>
+</ol>
+<ul>
+<li>Tính năng <b>Xác minh 2 bước (2-Step Verification)</b> phải được <b>BẬT</b>. *(Nếu chưa bật, hãy làm theo hướng dẫn của Google để bật bằng số điện thoại)*.</li>
+</ul>
+<ol>
+<li>Tìm và nhấp vào mục <b>Mật khẩu ứng dụng</b> (App Passwords) hoặc tìm kiếm trực tiếp trên thanh tìm kiếm của Google Account với từ khóa <code>Mật khẩu ứng dụng</code>.</li>
+<li>Đặt tên ứng dụng gợi nhớ (Ví dụ: <code>NongSanTuoi Mailer</code>), sau đó nhấn nút <b>Tạo</b> (Create).</li>
+<li>Google sẽ hiển thị một cửa sổ chứa mã gồm <b>16 chữ cái màu vàng</b> (Ví dụ: <code>abcd efgh ijkl mnop</code>).</li>
+<li><b>Sao chép mã 16 chữ cái này</b> (Bỏ các khoảng trắng, chỉ lấy chuỗi chữ liền: <code>abcdefghijklmnop</code>).</li>
+</ol>
+<h3>Bước 5.2: Điền cấu hình vào tệp <code>backend/.env</code></h3>
+<p>Mở tệp <code>backend/.env</code> và cập nhật cụm cấu hình Mail như sau:</p>
+<pre><code>MAIL_MAILER=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=email_cua_ban@gmail.com
+MAIL_PASSWORD=abcdefghijklmnop
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS=&quot;email_cua_ban@gmail.com&quot;
+MAIL_FROM_NAME=&quot;Nông Sản Tươi&quot;</code></pre>
+<p>*Giải thích các tham số:*</p>
+<ul>
+<li><code>MAIL_MAILER=smtp</code>: Sử dụng giao thức gửi mail chuẩn SMTP.</li>
+<li><code>MAIL_HOST=smtp.gmail.com</code>: Máy chủ mail của Google.</li>
+<li><code>MAIL_PORT=587</code>: Cổng bảo mật STARTTLS của Google.</li>
+<li><code>MAIL_USERNAME</code>: Địa chỉ Gmail của bạn (tài khoản đã tạo App Password).</li>
+<li><code>MAIL_PASSWORD</code>: <b>Mã Mật khẩu ứng dụng 16 ký tự</b> vừa lấy ở Bước 5.1.</li>
+<li><code>MAIL_ENCRYPTION=tls</code>: Mã hóa TLS an toàn.</li>
+<li><code>MAIL_FROM_ADDRESS</code>: Địa chỉ email người gửi hiển thị trong hộp thư đến của khách hàng.</li>
+<li><code>MAIL_FROM_NAME</code>: Tên thương hiệu hiển thị (Ví dụ: &quot;Nông Sản Tươi&quot;).</li>
+</ul>
+<h3>Bước 5.3: Xóa cache cấu hình Laravel (Bắt buộc)</h3>
+<p>Mỗi khi sửa tệp <code>.env</code>, bạn bắt buộc phải chạy lệnh sau để Laravel nhận cấu hình mới:</p>
+<pre><code>php artisan config:clear</code></pre>
+<h3>Bước 5.4: Kiểm tra hoạt động thực tế trên giao diện</h3>
+<ol>
+<li>Khởi động cả FE và BE.</li>
+<li>Đăng nhập một tài khoản khách hàng trên website <code>http://localhost:3000/dang-nhap</code>.</li>
+<li>Vào trang cá nhân $\rightarrow$ Chọn mục <b>Đổi mật khẩu</b> (<code>/tai-khoan/doi-mat-khau</code>).</li>
+<li>Nhấn nút <b>&quot;Gửi mã OTP&quot;</b>.</li>
+<li>Mở hộp thư Gmail của tài khoản khách hàng $\rightarrow$ Kiểm tra email có tiêu đề <code>[Nông Sản Tươi] Mã OTP xác nhận đổi mật khẩu</code>.</li>
+<li>Nhập mã OTP 6 số cùng mật khẩu cũ &amp; mới để hoàn tất việc đổi mật khẩu.</li>
+</ol>
+<h3>Bước 5.5: Các lỗi thường gặp và cách xử lý</h3>
+<ul>
+<li><b>Lỗi 535: 5.7.8 Username and Password not accepted</b>: Do bạn nhập mật khẩu đăng nhập Gmail bình thường, hoặc nhập sai Mật khẩu ứng dụng. Hãy tạo lại App Password mới.</li>
+<li><b>Lỗi Connection timeout / Không kết nối được port 587</b>: Mạng nội bộ hoặc nhà mạng chặn cổng 587. Cách khắc phục: Đổi sang cổng SSL:</li>
+</ul>
+<pre><code>  MAIL_PORT=465
+  MAIL_ENCRYPTION=ssl</code></pre>
+<ul>
+<li><b>Thông báo &quot;Vui lòng chờ 60 giây&quot;</b>: Đây là tính năng bảo vệ chống spam (Rate-limit) có sẵn trong hệ thống để ngăn người dùng ấn gửi OTP liên tục.</li>
+</ul>
+<hr/>
+<h2>6. HƯỚNG DẪN CÀI ĐẶT CỔNG THANH TOÁN VNPAY</h2>
+<p>Hệ thống đã tích hợp sẵn luồng thanh toán VNPay chuẩn quốc gia:</p>
+<ul>
+<li>Tạo URL thanh toán có chữ ký băm bảo mật <b>HMAC SHA512</b>.</li>
+<li>Xử lý điều hướng người dùng (Return URL).</li>
+<li>Xử lý Webhook máy chủ sang máy chủ (Instant Payment Notification - <b>IPN</b>) tự động xác nhận đơn đã thanh toán.</li>
+</ul>
+<hr/>
+<h3>PHẦN A: CẤU HÌNH MÔI TRƯỜNG THỬ NGHIỆM (SANDBOX TEST)</h3>
+<p>Để thử nghiệm tính năng thanh toán mà không mất tiền thật:</p>
+<h4>Bước 6.1: Đăng ký tài khoản Sandbox miễn phí</h4>
+<ol>
+<li>Truy cập: <b><a href="https://sandbox.vnpayment.vn/devreg/" style="color: #047857; text-decoration: underline;">https://sandbox.vnpayment.vn/devreg/</a></b></li>
+<li>Đăng ký thông tin để nhận tài khoản thử nghiệm.</li>
+<li>VNPay sẽ cung cấp:</li>
+</ol>
+<ul>
+<li><b>Mã định danh website (TMN Code)</b>.</li>
+<li><b>Khóa bí mật tạo chữ ký (Hash Secret)</b>.</li>
+</ul>
+<p>*(Dự án đã cấu hình sẵn một tài khoản Sandbox để bạn có thể test ngay).*</p>
+<h4>Bước 6.2: Cấu hình trong tệp <code>backend/.env</code></h4>
+<pre><code># Cấu hình VNPAY Sandbox
+VNPAY_TMN_CODE=CGXZLS0Z
+VNPAY_HASH_SECRET=XNBCJFAKAZQSGTARRLGCHVZWCIOIGSHN
+VNPAY_URL=https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+FRONTEND_URL=http://localhost:3000</code></pre>
+<p>Chạy lệnh xóa cache:</p>
+<pre><code>php artisan config:clear</code></pre>
+<h4>Bước 6.3: Thông tin thẻ ngân hàng thử nghiệm (VNPay Sandbox Card)</h4>
+<p>Khi tiến hành thanh toán đơn hàng trên website, chọn <b>&quot;Thanh toán qua VNPAY&quot;</b>, hệ thống sẽ chuyển hướng bạn sang cổng VNPay. Hãy sử dụng thông tin thẻ test dưới đây:</p>
+<table border="1" cellspacing="0" cellpadding="6"><thead><tr>
+<th>Thông tin</th>
+<th>Giá trị thẻ test</th>
+</tr></thead><tbody>
+<tr>
+<td><b>Ngân hàng chấp nhận</b></td>
+<td><b>NCB</b> (hoặc chọn logo Ngân hàng Quốc Dân NCB)</td>
+</tr>
+<tr>
+<td><b>Số thẻ</b></td>
+<td><code>9704198526191432198</code></td>
+</tr>
+<tr>
+<td><b>Tên chủ thẻ</b></td>
+<td><code>NGUYEN VAN A</code></td>
+</tr>
+<tr>
+<td><b>Ngày phát hành</b></td>
+<td><code>07/15</code></td>
+</tr>
+<tr>
+<td><b>Mật khẩu OTP xác nhận</b></td>
+<td><code>123456</code></td>
+</tr>
+</tbody></table>
+<p>Sau khi nhập OTP <code>123456</code> và nhấn xác nhận:</p>
+<ol>
+<li>VNPay xử lý giao dịch thành công.</li>
+<li>Trình duyệt tự động chuyển hướng về: <code>http://localhost:3000/thanh-toan/ket-qua?thanh_toan=thanh_cong&amp;don_hang=...</code></li>
+<li>Trạng thái thanh toán của đơn hàng trong cơ sở dữ liệu tự động chuyển thành: <code>da_thanh_toan</code>.</li>
+</ol>
+<hr/>
+<h3>PHẦN B: CẤU HÌNH KHI ĐƯA VÀO VẬN HÀNH THỰC TẾ (PRODUCTION)</h3>
+<p>Khi người mua muốn thu tiền thật của khách hàng qua tài khoản ngân hàng doanh nghiệp/hộ kinh doanh:</p>
+<h4>Bước 6.4: Ký hợp đồng với Công ty Cổ phần Giải pháp Thanh toán Việt Nam (VNPAY)</h4>
+<ol>
+<li>Đăng ký mở cổng thanh toán thật tại <b><a href="https://vnpay.vn/" style="color: #047857; text-decoration: underline;">https://vnpay.vn/</a></b> hoặc liên hệ hotline VNPAY: <code>1900 55 55 77</code>.</li>
+<li>VNPAY sẽ tiến hành thẩm định website và cấp cho doanh nghiệp:</li>
+</ol>
+<ul>
+<li>Một mã <code>VNPAY_TMN_CODE</code> thật.</li>
+<li>Một chuỗi <code>VNPAY_HASH_SECRET</code> thật.</li>
+</ul>
+<h4>Bước 6.5: Cập nhật biến môi trường Production trong <code>backend/.env</code></h4>
+<pre><code># Cấu hình VNPAY Môi trường Thật (Production)
+VNPAY_TMN_CODE=&lt;MÃ_DOANH_NGHIỆP_VNPAY_CẤP&gt;
+VNPAY_HASH_SECRET=&lt;CHUỖI_BÍ_MẬT_VNPAY_CẤP&gt;
+VNPAY_URL=https://pay.vnpay.vn/vpcpay.html
+FRONTEND_URL=https://tenmiencuakhach.vn</code></pre>
+<h4>Bước 6.6: Đăng ký hai địa chỉ URL với kỹ thuật viên của VNPay</h4>
+<p>Khi bàn giao cổng thật, nhân viên kỹ thuật của VNPAY sẽ yêu cầu bạn cung cấp 2 đường link:</p>
+<ol>
+<li><b>Return URL (Đường dẫn trả về trình duyệt)</b>:</li>
+</ol>
+<pre><code>   https://api.tenmiencuakhach.vn/api/thanh-toan/vnpay/ket-qua</code></pre>
+<ol>
+<li><b>IPN URL (Webhook Server-to-Server để tự động xác nhận đơn hàng)</b>:</li>
+</ol>
+<pre><code>   https://api.tenmiencuakhach.vn/api/thanh-toan/vnpay/ipn</code></pre>
+<p>*Lưu ý quan trọng:*</p>
+<ul>
+<li>Website Production <b>bắt buộc phải cài chứng chỉ SSL (HTTPS)</b> thì VNPay mới cấp quyền duyệt thanh toán thật.</li>
+<li>Đường link IPN phải ở trạng thái mở ra ngoài Internet (không bị chặn tường lửa) để máy chủ VNPay có thể gửi tín hiệu xác thực giao dịch về.</li>
+</ul>
+<hr/>
+<h2>7. TÀI KHOẢN QUẢN TRỊ &amp; LUỒNG KIỂM THỬ SAU CÀI ĐẶT</h2>
+<h3>7.1. Cổng quản trị Admin</h3>
+<ul>
+<li><b>Đường dẫn</b>: <code>http://localhost:3000/admin/dang-nhap</code></li>
+<li><b>Tài khoản mẫu</b>:</li>
+<li>Email: <code>admin@gmail.com</code></li>
+<li>Mật khẩu: <code>123456</code></li>
+<li>Vai trò: <code>super_admin</code></li>
+</ul>
+<h3>7.2. Các mục quản lý trong trang Admin</h3>
+<ol>
+<li><b>Bảng điều khiển (Dashboard)</b>: Thống kê nhanh.</li>
+<li><b>Quản lý Sản phẩm</b>: Đăng sản phẩm, chỉnh sửa giá, số lượng tồn kho, đơn vị tính, xem thùng rác, khôi phục.</li>
+<li><b>Quản lý Danh mục</b>: Thêm/sửa danh mục rau củ, trái cây, bật/tắt hiển thị nổi bật.</li>
+<li><b>Quản lý Thương hiệu</b>: Quản lý các nhà cung cấp nông sản.</li>
+<li><b>Quản lý Đơn hàng</b>: Xem chi tiết đơn hàng, cập nhật trạng thái (Chờ xác nhận $\rightarrow$ Đã xác nhận $\rightarrow$ Đang giao $\rightarrow$ Hoàn thành).</li>
+<li><b>Kiểm duyệt Đánh giá</b>: Bật/tắt hiển thị review của khách, cài đặt bộ lọc từ cấm tự động.</li>
+<li><b>Quản lý Khách hàng</b>: Tra cứu lịch sử mua sắm của từng khách hàng, khóa/mở khóa tài khoản vi phạm.</li>
+<li><b>Quản lý Menu Đa Cấp</b>: Kéo thả sắp xếp menu điều hướng Header và Footer.</li>
+</ol>
+<hr/>
+<h2>8. CÁC LƯU Ý QUAN TRỌNG KHI TRIỂN KHAI PRODUCTION</h2>
+<ol>
+<li><b>Chế độ bảo mật Laravel</b>:</li>
+</ol>
+<p>Trong môi trường chạy thật trên VPS, hãy đổi trong <code>backend/.env</code>:</p>
+<pre><code>   APP_ENV=production
+   APP_DEBUG=false</code></pre>
+<ol>
+<li><b>Cấu hình CORS (<code>backend/config/cors.php</code>)</b>:</li>
+</ol>
+<p>Đảm bảo <code>allowed_origins</code> chứa đúng tên miền Frontend của bạn:</p>
+<pre><code>   &#x27;allowed_origins&#x27; =&gt; [&#x27;https://tenmiencuakhach.vn&#x27;],</code></pre>
+<ol>
+<li><b>Quyền ghi thư mục (Permissions trên Linux/Ubuntu)</b>:</li>
+</ol>
+<p>Nếu triển khai trên máy chủ Linux, cần cấp quyền ghi cho thư mục lưu trữ cache và file upload:</p>
+<pre><code>   sudo chown -R www-data:www-data storage bootstrap/cache
+   sudo chmod -R 775 storage bootstrap/cache</code></pre>
+<ol>
+<li><b>Tối ưu hóa tốc độ tải trang</b>:</li>
+</ol>
+<p>Chạy các lệnh tối ưu hóa của Laravel trước khi bàn giao:</p>
+<pre><code>   php artisan config:cache
+   php artisan route:cache
+   php artisan view:cache</code></pre>
+<hr/>
+<p>*Tài liệu được soạn thảo hoàn chỉnh cho gói phần mềm thương mại điện tử Nông Sản Tươi. Mọi thắc mắc kỹ thuật vui lòng liên hệ đội ngũ phát triển.*</p>
+</div>
+</body>
+</html>
