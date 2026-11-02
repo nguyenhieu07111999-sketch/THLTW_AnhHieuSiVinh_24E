@@ -18,6 +18,14 @@ class DonHangResource extends JsonResource
         return [
             'id' => $this->id,
             'nguoi_dung_id' => $this->nguoi_dung_id,
+            'nguoi_dung' => $this->whenLoaded('nguoiDung', function () {
+                return $this->nguoiDung ? [
+                    'id' => $this->nguoiDung->id,
+                    'ho_ten' => $this->nguoiDung->ho_ten,
+                    'email' => $this->nguoiDung->email,
+                    'so_dien_thoai' => $this->nguoiDung->so_dien_thoai,
+                ] : null;
+            }),
             'ten_nguoi_nhan' => $this->ten_nguoi_nhan,
             'so_dien_thoai_nhan' => $this->so_dien_thoai_nhan,
             'dia_chi_nhan' => $this->dia_chi_nhan,
@@ -29,6 +37,7 @@ class DonHangResource extends JsonResource
 
             'trang_thai_don_hang' => $this->trang_thai_don_hang,
             'trang_thai_thanh_toan' => $this->trang_thai_thanh_toan,
+            'thanh_toan_that_bai' => (bool) $this->thanh_toan_that_bai,
             'phuong_thuc_thanh_toan' => $this->phuong_thuc_thanh_toan,
 
             'chi_tiet' => $this->whenLoaded('chiTiet', function () {

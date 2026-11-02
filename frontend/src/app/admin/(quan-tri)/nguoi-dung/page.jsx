@@ -1,11 +1,10 @@
 'use client';
 
 import { useEffect, useMemo, useState, useCallback } from 'react';
+import Link from 'next/link';
 import * as dichVu from '@/services/dich-vu-nguoi-dung';
 
 const PER_PAGE = 10;
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api';
-const BACKEND_URL = API_URL.replace(/\/api\/?$/, '');
 const FORM_RONG = {
     ho_ten: '',
     email: '',
@@ -16,30 +15,6 @@ const FORM_RONG = {
 };
 
 const toMang = (r) => (Array.isArray(r) ? r : r?.data ?? []);
-const tien = (n) => Number(n || 0).toLocaleString('vi-VN') + 'đ';
-const ngayGio = (d) => (d ? new Date(d).toLocaleString('vi-VN') : '');
-const urlAnhSanPham = (duongDan) => {
-    if (!duongDan) return '';
-    if (/^(https?:|data:)/i.test(duongDan)) return duongDan;
-    const duongDanSach = duongDan.replace(/^\/+/, '');
-    return duongDanSach.startsWith('storage/')
-        ? `${BACKEND_URL}/${duongDanSach}`
-        : `${BACKEND_URL}/storage/${duongDanSach}`;
-};
-
-const NHAN_DON = {
-    cho_xac_nhan: 'Chờ xác nhận',
-    da_xac_nhan: 'Đã xác nhận',
-    dang_giao: 'Đang giao',
-    da_giao: 'Đã giao',
-    hoan_thanh: 'Hoàn thành',
-    da_huy: 'Đã huỷ',
-};
-const NHAN_THANH_TOAN = {
-    chua_thanh_toan: 'Chưa thanh toán',
-    da_thanh_toan: 'Đã thanh toán',
-};
-const nhan = (map, v) => map[v] || String(v || '').replace(/_/g, ' ');
 
 /* ---------- Icon (SVG, không cần cài thư viện) ---------- */
 function Icon({ children }) {
@@ -102,156 +77,6 @@ function NutIcon({ title, onClick, mau, children }) {
     );
 }
 
-/* ---------- Modal: danh sách đơn + chi tiết đơn ---------- */
-function ModalDonHang({ nguoiDung, onClose }) {
-    const [donHang, setDonHang] = useState([]);
-    const [dangTai, setDangTai] = useState(true);
-    const [chon, setChon] = useState(null); // đơn đang xem chi tiết
-
-    useEffect(() => {
-        dichVu
-            .layDonHang(nguoiDung.id)
-            .then((r) => setDonHang(toMang(r)))
-            .catch((e) => alert(e.response?.data?.message || 'Không tải được đơn hàng'))
-            .finally(() => setDangTai(false));
-    }, [nguoiDung.id]);
-
-    return (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg w-full max-w-3xl max-h-[85vh] overflow-auto p-6">
-                <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-xl font-bold">
-                        {chon ? `Chi tiết đơn #${chon.id}` : `Đơn hàng của ${nguoiDung.ho_ten}`}
-                    </h2>
-                    <button onClick={onClose} className="px-2 text-lg">✕</button>
-                </div>
-
-                {dangTai ? (
-                    <p>Đang tải...</p>
-                ) : chon ? (
-                    /* ----- Chi tiết 1 đơn ----- */
-                    <div className="space-y-4 text-sm">
-                        <button
-                            type="button"
-                            onClick={() => setChon(null)}
-                            className="text-blue-600 hover:underline"
-                        >
-                            ← Quay lại danh sách
-                        </button>
-
-                        <div className="grid grid-cols-2 gap-3">
-                            <div className="border rounded p-3 space-y-1">
-                                <p className="font-semibold">Thông tin đơn</p>
-                                <p>Mã đơn: #{chon.id}</p>
-                                <p>Ngày đặt: {ngayGio(chon.created_at)}</p>
-                                <p>Trạng thái: <b>{nhan(NHAN_DON, chon.trang_thai_don_hang)}</b></p>
-                            </div>
-                            <div className="border rounded p-3 space-y-1">
-                                <p className="font-semibold">Thanh toán</p>
-                                <p>Phương thức: {chon.phuong_thuc_thanh_toan}</p>
-                                <p>Trạng thái: <b>{nhan(NHAN_THANH_TOAN, chon.trang_thai_thanh_toan)}</b></p>
-                            </div>
-                        </div>
-
-                        <div className="border rounded p-3 space-y-1">
-                            <p className="font-semibold">Giao hàng</p>
-                            <p>Người nhận: {chon.ten_nguoi_nhan}</p>
-                            <p>Số điện thoại: {chon.so_dien_thoai_nhan}</p>
-                            <p>Địa chỉ: {chon.dia_chi_nhan}</p>
-                            {chon.ghi_chu && <p>Ghi chú: {chon.ghi_chu}</p>}
-                        </div>
-
-                        <table className="w-full border rounded">
-                            <thead className="bg-gray-100 text-left">
-                                <tr>
-                                    <th className="p-2">Sản phẩm</th>
-                                    <th className="p-2">Giá bán</th>
-                                    <th className="p-2">Giảm</th>
-                                    <th className="p-2">SL</th>
-                                    <th className="p-2 text-right">Thành tiền</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {chon.chi_tiet.map((c) => (
-                                    <tr key={c.id} className="border-t">
-                                        <td className="p-2">
-                                            <div className="flex items-center gap-2">
-                                                {c.hinh_anh && (
-                                                    <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg border border-gray-200 bg-emerald-50">
-                                                        <span className="absolute inset-0 flex items-center justify-center text-2xl" aria-hidden="true">🥬</span>
-                                                        <img
-                                                            src={urlAnhSanPham(c.hinh_anh)}
-                                                            alt={c.ten_san_pham || 'Hình ảnh sản phẩm'}
-                                                            loading="lazy"
-                                                            className="absolute inset-0 h-full w-full object-cover"
-                                                            onError={(event) => { event.currentTarget.style.display = 'none'; }}
-                                                        />
-                                                    </div>
-                                                )}
-                                                <span>{c.ten_san_pham}</span>
-                                            </div>
-                                        </td>
-                                        <td className="p-2">{tien(c.gia_ban)}</td>
-                                        <td className="p-2">{tien(c.gia_giam)}</td>
-                                        <td className="p-2">{c.so_luong}</td>
-                                        <td className="p-2 text-right">{tien(c.thanh_tien)}</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-
-                        <div className="text-right space-y-1">
-                            <p>Tạm tính: {tien(chon.tong_tien)}</p>
-                            <p>Phí vận chuyển: {tien(chon.phi_vanchuyen)}</p>
-                            <p className="text-base font-bold text-green-700">
-                                Tổng cộng: {tien(chon.thanh_tien)}
-                            </p>
-                        </div>
-                    </div>
-                ) : donHang.length === 0 ? (
-                    <p>Người dùng này chưa có đơn hàng.</p>
-                ) : (
-                    /* ----- Danh sách đơn ----- */
-                    <div className="overflow-x-auto border rounded">
-                        <table className="w-full text-sm">
-                            <thead className="bg-gray-100 text-left">
-                                <tr>
-                                    <th className="p-2">Mã đơn</th>
-                                    <th className="p-2">Ngày đặt</th>
-                                    <th className="p-2">Trạng thái</th>
-                                    <th className="p-2">Thanh toán</th>
-                                    <th className="p-2 text-right">Tổng tiền</th>
-                                    <th className="p-2 text-center">Thao tác</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {donHang.map((d) => (
-                                    <tr key={d.id} className="border-t">
-                                        <td className="p-2">#{d.id}</td>
-                                        <td className="p-2">{ngayGio(d.created_at)}</td>
-                                        <td className="p-2">{nhan(NHAN_DON, d.trang_thai_don_hang)}</td>
-                                        <td className="p-2">{nhan(NHAN_THANH_TOAN, d.trang_thai_thanh_toan)}</td>
-                                        <td className="p-2 text-right font-semibold">{tien(d.thanh_tien)}</td>
-                                        <td className="p-2 text-center">
-                                            <button
-                                                type="button"
-                                                onClick={() => setChon(d)}
-                                                className="px-3 py-1 border rounded text-blue-600 hover:bg-gray-100"
-                                            >
-                                                Chi tiết
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                )}
-            </div>
-        </div>
-    );
-}
-
 export default function TrangNguoiDung() {
     const [ds, setDs] = useState([]);
     const [dangTai, setDangTai] = useState(false);
@@ -261,7 +86,6 @@ export default function TrangNguoiDung() {
     const [modal, setModal] = useState({ mo: false, nguoiDung: null });
     const [form, setForm] = useState(FORM_RONG);
     const [loi, setLoi] = useState('');
-    const [nguoiXemDon, setNguoiXemDon] = useState(null);
 
     const taiDuLieu = useCallback(async () => {
         setDangTai(true);
@@ -419,13 +243,14 @@ export default function TrangNguoiDung() {
                                     </td>
                                     <td className="p-3">
                                         <div className="flex items-center justify-center gap-1">
-                                            <NutIcon
+                                            <Link
+                                                href={`/admin/nguoi-dung/${u.id}/don-hang`}
                                                 title="Xem đơn hàng"
-                                                mau="text-green-700"
-                                                onClick={() => setNguoiXemDon(u)}
+                                                aria-label={`Xem đơn hàng của ${u.ho_ten}`}
+                                                className="p-2 rounded-md text-green-700 hover:bg-gray-100"
                                             >
                                                 <IconDonHang />
-                                            </NutIcon>
+                                            </Link>
 
                                             <NutIcon title="Sửa" mau="text-blue-600" onClick={() => moForm(u)}>
                                                 <IconSua />
@@ -537,9 +362,6 @@ export default function TrangNguoiDung() {
                 </div>
             )}
 
-            {nguoiXemDon && (
-                <ModalDonHang nguoiDung={nguoiXemDon} onClose={() => setNguoiXemDon(null)} />
-            )}
         </div>
     );
 }

@@ -1,5 +1,6 @@
 'use client';
 import React from 'react';
+import Link from 'next/link';
 
 const HUY_HIEU_TRANG_THAI = {
   cho_xac_nhan: { label: 'Chờ xác nhận', bg: 'bg-amber-100 text-amber-800' },
@@ -14,9 +15,11 @@ const HUY_HIEU_THANH_TOAN = {
   hoan_tien: { label: 'Đã hoàn tiền', bg: 'bg-gray-100 text-gray-800' },
 };
 
-export default function HangDonHang({ donHang, onXemChiTiet, onCapNhatTrangThai }) {
+export default function HangDonHang({ donHang, onCapNhatTrangThai }) {
   const trangThaiInfo = HUY_HIEU_TRANG_THAI[donHang.trang_thai_don_hang] || { label: donHang.trang_thai_don_hang, bg: 'bg-gray-100 text-gray-800' };
-  const thanhToanInfo = HUY_HIEU_THANH_TOAN[donHang.trang_thai_thanh_toan] || { label: donHang.trang_thai_thanh_toan, bg: 'bg-gray-100 text-gray-800' };
+  const thanhToanInfo = donHang.thanh_toan_that_bai
+    ? { label: 'Thanh toán thất bại', bg: 'bg-red-100 text-red-800' }
+    : HUY_HIEU_THANH_TOAN[donHang.trang_thai_thanh_toan] || { label: donHang.trang_thai_thanh_toan, bg: 'bg-gray-100 text-gray-800' };
 
   return (
     <tr className="hover:bg-gray-50/80 transition">
@@ -42,13 +45,13 @@ export default function HangDonHang({ donHang, onXemChiTiet, onCapNhatTrangThai 
       <td className="p-4 text-center">
         <div className="flex items-center justify-center gap-2">
           {/* Nút xem chi tiết */}
-          <button
-            onClick={() => onXemChiTiet(donHang.id)}
+          <Link
+            href={`/admin/don-hang/${donHang.id}`}
             className="p-1.5 bg-gray-100 hover:bg-emerald-50 text-gray-600 hover:text-emerald-600 rounded-lg transition"
             title="Xem chi tiết"
           >
             👁️
-          </button>
+          </Link>
           
           <select
             value={donHang.trang_thai_don_hang}

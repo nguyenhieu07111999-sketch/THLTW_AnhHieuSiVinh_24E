@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { dichVuSanPham } from '@/services/dich-vu-san-pham';
 import { themVaoGio } from '@/services/dich-vu-gio-hang';
 import TheSanPham from '@/components/san-pham/the-san-pham';
+import Toast from '@/components/thong-bao/toast';
 import BinhLuanDanhGia from '@/components/san-pham/binh-luan-danh-gia';
 import { tinhTongTien, dinhDangTienVND } from '@/utils/tinh-toan';
 
@@ -19,6 +20,14 @@ export default function TrangChiTietSanPham({ params }) {
   const [dangTai, setDangTai] = useState(true);
   const [dangThemVaoGio, setDangThemVaoGio] = useState(false);
   const [loiThemVaoGio, setLoiThemVaoGio] = useState('');
+  const [thongBaoThemVaoGio, setThongBaoThemVaoGio] = useState('');
+
+  useEffect(() => {
+    if (!thongBaoThemVaoGio) return undefined;
+
+    const timer = setTimeout(() => setThongBaoThemVaoGio(''), 5000);
+    return () => clearTimeout(timer);
+  }, [thongBaoThemVaoGio]);
 
   useEffect(() => {
     const taiChiTietVaLienQuan = async () => {
@@ -82,7 +91,7 @@ export default function TrangChiTietSanPham({ params }) {
     setDangThemVaoGio(true);
     try {
       await themVaoGio(sanPham.id, soLuong);
-      router.push('/gio-hang');
+      setThongBaoThemVaoGio(`Đã thêm ${sanPham.ten_san_pham} vào giỏ hàng thành công!`);
     } catch (error) {
       const errors = error.response?.data?.errors;
       setLoiThemVaoGio(
@@ -193,6 +202,7 @@ export default function TrangChiTietSanPham({ params }) {
               {dangThemVaoGio ? 'Đang thêm...' : '🛒 Thêm Vào Giỏ Hàng'}
             </button>
           </div>
+          <Toast thongBao={thongBaoThemVaoGio} loai="success" />
           {loiThemVaoGio && <p className="text-sm text-red-600" role="alert">{loiThemVaoGio}</p>}
         </div>
       </div>

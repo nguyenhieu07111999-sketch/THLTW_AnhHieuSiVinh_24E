@@ -8,6 +8,7 @@ const MENU = [
     { href: "/admin", label: "Dashboard", icon: "📊" },
     { href: "/admin/san-pham", label: "Sản phẩm", icon: "🥬" },
     { href: "/admin/danh-muc", label: "Danh mục", icon: "🗂️" },
+    { href: "/admin/don-hang", label: "Đơn hàng", icon: "📦" },
     { href: "/admin/thuong-hieu", label: "Thương hiệu", icon: "🏷️" },
     { href: "/admin/nguoi-dung", label: "Người dùng", icon: "👥" },
     { href: "/admin/bai-viet", label: "Bài viết", icon: "📝" },
