@@ -35,7 +35,6 @@ export default function QuanLyMenuPage() {
         </div>
 
         <div className="flex items-center gap-3 w-full sm:w-auto">
-          {/* Lọc vị trí */}
           <select
             value={locViTri}
             onChange={(e) => setLocViTri(e.target.value)}
@@ -132,7 +131,6 @@ export default function QuanLyMenuPage() {
                       </td>
                     </tr>
 
-                    {/* Hàng Menu Con (Submenu cấp 2) */}
                     {parent.children?.map((child) => (
                       <tr key={child.id} className="hover:bg-gray-50/40 text-gray-600">
                         <td className="py-2.5 px-4 font-mono text-gray-400 pl-8">↳ {child.thu_tu}</td>
@@ -178,7 +176,6 @@ export default function QuanLyMenuPage() {
         )}
       </div>
 
-      {/* MODAL THÊM / SỬA MENU */}
       {moModal && (
         <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-xl space-y-5 animate-in fade-in zoom-in-95">
@@ -202,7 +199,6 @@ export default function QuanLyMenuPage() {
 
             <form onSubmit={handleLuu} className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
-                {/* Vị trí menu */}
                 <div>
                   <label className="block text-xs font-bold text-gray-700 mb-1">Vị trí hiển thị *</label>
                   <select
@@ -237,7 +233,6 @@ export default function QuanLyMenuPage() {
                 </div>
               </div>
 
-              {/* Tên và Icon */}
               <div className="grid grid-cols-3 gap-3">
                 <div className="col-span-2">
                   <label className="block text-xs font-bold text-gray-700 mb-1">Tên mục menu *</label>
@@ -262,7 +257,6 @@ export default function QuanLyMenuPage() {
                 </div>
               </div>
 
-              {/* Loại liên kết */}
               <div>
                 <label className="block text-xs font-bold text-gray-700 mb-1">Loại liên kết *</label>
                 <select
@@ -283,7 +277,6 @@ export default function QuanLyMenuPage() {
                 </select>
               </div>
 
-              {/* Chọn nguồn tùy theo loại liên kết */}
               {formData.loai_lien_ket === 'tuy_chinh' ? (
                 <div>
                   <label className="block text-xs font-bold text-gray-700 mb-1">Đường dẫn URL *</label>
@@ -328,7 +321,6 @@ export default function QuanLyMenuPage() {
                 </div>
               )}
 
-              {/* Thứ tự & Mở tab mới */}
               <div className="grid grid-cols-2 gap-3 pt-1">
                 <div>
                   <label className="block text-xs font-bold text-gray-700 mb-1">Thứ tự hiển thị</label>
@@ -353,7 +345,6 @@ export default function QuanLyMenuPage() {
                 </div>
               </div>
 
-              {/* Trạng thái hiển thị */}
               <div className="flex items-center gap-2 pt-2">
                 <input
                   type="checkbox"
@@ -367,7 +358,6 @@ export default function QuanLyMenuPage() {
                 </label>
               </div>
 
-              {/* Nút hành động */}
               <div className="flex items-center justify-end gap-2 pt-3 border-t">
                 <button
                   type="button"

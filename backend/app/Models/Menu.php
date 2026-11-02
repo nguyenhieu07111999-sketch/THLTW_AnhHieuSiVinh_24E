@@ -57,7 +57,6 @@ class Menu extends Model
         return $this->belongsTo(ChuDeBaiViet::class, 'lien_ket_id');
     }
 
-    // Accessor: Tự động phân giải URL chuẩn trả về cho Frontend
     public function getUrlChuanAttribute(): string
     {
         return match ($this->loai_lien_ket) {

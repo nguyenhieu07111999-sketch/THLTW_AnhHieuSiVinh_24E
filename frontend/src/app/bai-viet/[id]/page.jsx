@@ -74,7 +74,6 @@ export default function TrangChiTietBaiViet() {
           <span className="text-gray-800 line-clamp-1">{baiViet.tieu_de}</span>
         </nav>
 
-        {/* Tiêu đề & Thông tin tác giả */}
         <div className="bg-white rounded-3xl p-6 md:p-10 border border-emerald-100 shadow-sm space-y-6">
           <div>
             <span className="px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-semibold rounded-full mb-3 inline-block">
@@ -100,20 +99,17 @@ export default function TrangChiTietBaiViet() {
             </div>
           )}
 
-          {/* Mô tả ngắn / Tóm tắt */}
           {baiViet.tom_tat && (
             <div className="p-4 bg-emerald-50/60 rounded-xl border-l-4 border-emerald-600 text-emerald-950 font-medium text-sm leading-relaxed">
               {baiViet.tom_tat}
             </div>
           )}
 
-          {/* Nội dung chi tiết (hỗ trợ HTML từ trình soạn thảo) */}
           <div
             className="prose prose-emerald max-w-none text-gray-700 text-sm md:text-base leading-relaxed space-y-4"
             dangerouslySetInnerHTML={{ __html: baiViet.noi_dung }}
           />
 
-          {/* Chân bài viết */}
           <div className="pt-6 border-t border-gray-100 flex justify-between items-center">
             <button
               type="button"

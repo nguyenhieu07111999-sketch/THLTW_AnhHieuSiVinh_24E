@@ -13,7 +13,7 @@ export function useDanhGia(sanPhamId) {
   const [noiDung, setNoiDung] = useState('');
   const [files, setFiles] = useState([]);
   const [previews, setPreviews] = useState([]);
-  const [locSao, setLocSao] = useState(null); // null: tất cả
+  const [locSao, setLocSao] = useState(null); 
 
   const taiDanhGia = useCallback(async () => {
     if (!sanPhamId) return;
@@ -60,7 +60,6 @@ export function useDanhGia(sanPhamId) {
     setPreviews((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // 3. Gửi đánh giá qua FormData
   const guiDanhGia = async () => {
     if (!noiDung.trim()) {
       setLoi('Vui lòng nhập nội dung đánh giá!');
@@ -80,7 +79,6 @@ export function useDanhGia(sanPhamId) {
 
       await api.post(`/san-pham/${sanPhamId}/danh-gia`, formData);
 
-      // Dọn dẹp form sau khi gửi thành công
       setNoiDung('');
       setFiles([]);
       setPreviews([]);

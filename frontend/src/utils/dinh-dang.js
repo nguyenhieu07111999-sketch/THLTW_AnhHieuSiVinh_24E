@@ -1,7 +1,7 @@
 const tienVND = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' });
 const ngayVN = new Intl.DateTimeFormat('vi-VN');
 const ngayGioVN = new Intl.DateTimeFormat('vi-VN', { dateStyle: 'short', timeStyle: 'short' });
-const toDate = (d) => new Date(String(d).replace(' ', 'T')); // an toàn cho Safari
+const toDate = (d) => new Date(String(d).replace(' ', 'T')); 
 
 export const dinhDangTien = (n) => tienVND.format(Number(n) || 0);
 
@@ -17,7 +17,6 @@ export const dinhDangNgayGio = (d) => {
 
 export const maDonHang = (id) => `DH-${String(id).padStart(6, '0')}`;
 
-// Khoá = giá trị enum trong DB
 export const TRANG_THAI_DON_HANG = {
   cho_xac_nhan: { nhan: 'Chờ xác nhận', cls: 'bg-gray-100 text-gray-700' },
   da_xac_nhan: { nhan: 'Đã xác nhận', cls: 'bg-blue-100 text-blue-700' },

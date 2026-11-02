@@ -22,13 +22,11 @@ class ChiTietDonHang extends Model
         'thanh_tien',
     ];
 
-    // Mối quan hệ: Chi tiết thuộc về một đơn hàng
     public function donHang()
     {
         return $this->belongsTo(DonHang::class, 'don_hang_id');
     }
 
-    // Mối quan hệ: Liên kết ngược lại sản phẩm gốc (nếu sản phẩm còn tồn tại)
     public function sanPham()
     {
         return $this->belongsTo(SanPham::class, 'san_pham_id');

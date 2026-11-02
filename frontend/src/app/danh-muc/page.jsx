@@ -14,7 +14,6 @@ export default function TrangDanhMuc() {
   const [khoangGiaChon, setKhoangGiaChon] = useState('tat-ca'); 
   const [dangTai, setDangTai] = useState(true);
 
-  // State phân trang
   const [trangHienTai, setTrangHienTai] = useState(1);
   const [tongSoTrang, setTongSoTrang] = useState(1);
   const [tongSoItem, setTongSoItem] = useState(0);
@@ -55,7 +54,6 @@ export default function TrangDanhMuc() {
           ...(tieuChiChon !== 'tat-ca' && { tieu_chi: tieuChiChon }),
         };
 
-        // Gửi tham số khoảng giá lên backend
         if (khoangGiaChon === 'duoi-100k') {
           params.gia_toi_da = 100000;
         } else if (khoangGiaChon === 'tren-100k') {
@@ -97,9 +95,7 @@ export default function TrangDanhMuc() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-4 gap-8">
-      {/* Cột trái: Danh mục & Tiêu chí lọc */}
       <div className="space-y-6">
-        {/* Khung 1: Danh mục thực phẩm */}
         <aside className="bg-white p-5 rounded-2xl border border-emerald-100 h-fit space-y-2 shadow-sm">
           <h3 className="font-bold text-lg mb-4 text-emerald-950">Danh Mục Thực Phẩm</h3>
 
@@ -131,7 +127,6 @@ export default function TrangDanhMuc() {
           ))}
         </aside>
 
-        {/* Khung 2: Tiêu chí nổi bật */}
         <aside className="bg-white p-5 rounded-2xl border border-emerald-100 h-fit space-y-2 shadow-sm">
           <h3 className="font-bold text-base mb-3 text-emerald-950 flex items-center gap-2">
             <span>⚡</span> Tiêu Chí Nổi Bật
@@ -158,7 +153,6 @@ export default function TrangDanhMuc() {
           ))}
         </aside>
 
-        {/* Khung 3: Khoảng Giá */}
         <aside className="bg-white p-5 rounded-2xl border border-emerald-100 h-fit space-y-2 shadow-sm">
           <h3 className="font-bold text-base mb-3 text-emerald-950 flex items-center gap-2">
             <span>🏷️</span> Khoảng Giá
@@ -185,7 +179,6 @@ export default function TrangDanhMuc() {
         </aside>
       </div>
 
-      {/* Cột phải: Lưới sản phẩm và phân trang */}
       <main className="md:col-span-3 space-y-6 flex flex-col justify-between">
         <div>
           {dangTai ? (
@@ -203,7 +196,6 @@ export default function TrangDanhMuc() {
           )}
         </div>
 
-        {/* Thanh phân trang */}
         {!dangTai && tongSoTrang > 1 && (
           <div className="flex justify-center mt-4">
             <div className="bg-white rounded-xl overflow-hidden border border-emerald-100 shadow-sm inline-block">

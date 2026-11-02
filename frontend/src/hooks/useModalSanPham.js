@@ -46,18 +46,17 @@ export default function useModalSanPham(taiDanhSach, hienThongBao, setDangTai) {
     setMoModal(true);
   };
 
-  // Sao chép: mở form THÊM MỚI với dữ liệu lấy từ sản phẩm đã chọn
   const xuLySaoChep = (sp) => {
     const banSao = {};
     Object.keys(GIA_TRI_MAC_DINH).forEach((key) => {
       banSao[key] = sp[key] ?? GIA_TRI_MAC_DINH[key];
     });
 
-    setIdDangSua(null); // null để khi lưu sẽ gọi themMoi, không phải capNhat
+    setIdDangSua(null); 
     setDuLieuForm({
       ...banSao,
       ten_san_pham: `${sp.ten_san_pham} (bản sao)`,
-      duong_dan_sp: '', // để trống vì đường dẫn phải khác sản phẩm gốc
+      duong_dan_sp: '', 
       hinh_anh_preview: '',
       hinh_anh_file: null,
     });
@@ -76,7 +75,6 @@ export default function useModalSanPham(taiDanhSach, hienThongBao, setDangTai) {
 
     const formData = new FormData();
 
-    // 1. Đưa toàn bộ các trường text vào formData (LOẠI BỎ TRIỆT ĐỂ mọi biến liên quan đến hinh_anh)
     Object.keys(duLieuForm).forEach((key) => {
       if (['hinh_anh', 'hinh_anh_preview', 'hinh_anh_file'].includes(key)) return;
 
@@ -85,7 +83,6 @@ export default function useModalSanPham(taiDanhSach, hienThongBao, setDangTai) {
       }
     });
 
-    // 2. ⚡ ĐÍNH KÈM DUY NHẤT 1 FILE ẢNH VẬT LÝ VÀO ĐÚNG TÊN 'hinh_anh'
     if (duLieuForm.hinh_anh_file) {
       formData.append('hinh_anh', duLieuForm.hinh_anh_file);
       console.log('✅ Đã đính kèm file ảnh chính thức:', duLieuForm.hinh_anh_file.name);

@@ -11,10 +11,8 @@ import TheBanner from '@/components/dieu-huong/the-banner';
 export default function TrangChu() {
   const router = useRouter();
 
-  // 1. Quản lý trạng thái Banner tự chuyển (Giữ nguyên tĩnh)
   const [currentBanner, setCurrentBanner] = useState(0);
 
-  // 2. State lưu trữ dữ liệu thật từ DB
   const [sanPhamKhuyenMai, setSanPhamKhuyenMai] = useState([]);
   const [sanPhamNoiBat, setSanPhamNoiBat] = useState([]);
   const [sanPhamBanChay, setSanPhamBanChay] = useState([]);
@@ -37,7 +35,6 @@ export default function TrangChu() {
 
   return (
     <div className="space-y-12 pb-12">
-      {/* 1. SLIDER BANNER QUẢNG CÁO TỰ ĐỘNG CHUYỂN (GIỮ NGUYÊN) */}
       <TheBanner />
 
      {/* 2. SẢN PHẨM KHUYẾN MÃI */}

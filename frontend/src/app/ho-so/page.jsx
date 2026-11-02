@@ -19,24 +19,20 @@ function Truong({ nhan, giaTri }) {
 export default function TrangHoSo() {
   const { user, daSanSang, capNhatUser } = useXacThuc();
 
-  // Trạng thái bật/tắt form chỉnh sửa và gửi dữ liệu
   const [dangChinhSua, setDangChinhSua] = useState(false);
   const [dangLuu, setDangLuu] = useState(false);
   const [thongBao, setThongBao] = useState({ loai: '', noiDung: '' });
 
-  // State form nhập thông tin
   const [formData, setFormData] = useState({
     ho_ten: '',
     so_dien_thoai: '',
     dia_chi: '',
   });
 
-  // State xử lý ảnh đại diện
   const [fileAnh, setFileAnh] = useState(null);
   const [previewAnh, setPreviewAnh] = useState(null);
   const fileInputRef = useRef(null);
 
-  // Đồng bộ thông tin mới nhất từ API backend
   useEffect(() => {
     if (!daSanSang || !user) return;
     const controller = new AbortController();
@@ -76,7 +72,6 @@ export default function TrangHoSo() {
     setDangChinhSua(true);
   };
 
-  // Xử lý khi chọn file ảnh từ máy
   const handleChonAnh = (e) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -90,7 +85,6 @@ export default function TrangHoSo() {
     }
   };
 
-  // Hủy chỉnh sửa, hoàn tác lại ảnh và thông tin ban đầu
   const handleHuy = () => {
     setDangChinhSua(false);
     setFileAnh(null);
@@ -103,7 +97,6 @@ export default function TrangHoSo() {
     setThongBao({ loai: '', noiDung: '' });
   };
 
-  // Gửi cập nhật thông tin và file ảnh
   const handleLuu = async (e) => {
     e.preventDefault();
     setDangLuu(true);

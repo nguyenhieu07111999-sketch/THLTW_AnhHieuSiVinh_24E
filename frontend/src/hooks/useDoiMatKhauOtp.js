@@ -16,7 +16,6 @@ export function useDoiMatKhauOtp() {
   const [dangXuLy, setDangXuLy] = useState(false);
   const [thongBao, setThongBao] = useState({ type: '', msg: '' });
 
-  // Xử lý bộ đếm ngược 60s khi gửi OTP
   useEffect(() => {
     if (demNguoc > 0) {
       const timer = setTimeout(() => setDemNguoc((prev) => prev - 1), 1000);
@@ -24,13 +23,11 @@ export function useDoiMatKhauOtp() {
     }
   }, [demNguoc]);
 
-  // Hàm thay đổi giá trị từng ô input
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // 1. API Gửi mã OTP về Gmail
   const handleGuiOtp = async () => {
     setDangGuiOtp(true);
     setThongBao({ type: '', msg: '' });
@@ -51,7 +48,6 @@ export function useDoiMatKhauOtp() {
     }
   };
 
-  // 2. API Xác nhận và Đổi mật khẩu mới
   const handleSubmit = async (e) => {
     e.preventDefault();
     setDangXuLy(true);
@@ -63,7 +59,6 @@ export function useDoiMatKhauOtp() {
         type: 'success',
         msg: res.data?.message || 'Đổi mật khẩu thành công!',
       });
-      // Reset form sau khi đổi thành công
       setFormData({
         mat_khau_cu: '',
         mat_khau_moi: '',

@@ -10,13 +10,11 @@ export default function useSanPhamData(hienThongBao) {
   const [dangXemThungRac, setDangXemThungRac] = useState(false);
   const [trangHienTai, setTrangHienTai] = useState(1);
 
-  // 1. Hàm tải dữ liệu (Tải TẤT CẢ các trang gom lại thành 1 mảng như Danh Mục)
   const taiDanhSach = useCallback(async () => {
     setDangTai(true);
     try {
       const layTrang = dangXemThungRac ? dichVuSanPham.layThungRac : dichVuSanPham.layDanhSach;
       
-      // Gọi trang đầu tiên
       const resTrangDau = await layTrang({ per_page: 100, page: 1 });
       
       let danhSachDayDu = [];
@@ -25,7 +23,6 @@ export default function useSanPhamData(hienThongBao) {
         danhSachDayDu = [...duLieuTrangDau];
       }
 
-      // Xác định tổng số trang từ API
       let tongSoTrangAPI = 1;
       if (resTrangDau.data?.meta?.last_page) {
         tongSoTrangAPI = Number(resTrangDau.data.meta.last_page);
@@ -33,7 +30,6 @@ export default function useSanPhamData(hienThongBao) {
         tongSoTrangAPI = Number(resTrangDau.data.last_page);
       }
 
-      // Vòng lặp tải các trang còn lại (nếu có)
       for (let page = 2; page <= tongSoTrangAPI; page += 1) {
         const resTrang = await layTrang({ per_page: 100, page });
         const duLieuTrang = resTrang.data?.data || resTrang.data || [];

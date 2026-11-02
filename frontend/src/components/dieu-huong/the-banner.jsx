@@ -33,7 +33,6 @@ export default function TheBanner() {
     },
   ];
 
-  // Tự động chuyển Banner sau 4 giây
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentBanner((prev) => (prev + 1) % banners.length);

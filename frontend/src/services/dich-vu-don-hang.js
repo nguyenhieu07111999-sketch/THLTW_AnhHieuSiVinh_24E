@@ -7,7 +7,6 @@ export const dichVuDonHang = {
 
   capNhat: (id, data) => api.put(`/don-hang/${id}`, data),
 
-  // Khách đặt hàng từ giỏ hàng
   datHang: (data) => api.post('/don-hang', data),
 };
 

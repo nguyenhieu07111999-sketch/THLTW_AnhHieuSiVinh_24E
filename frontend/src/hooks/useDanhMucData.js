@@ -8,7 +8,6 @@ export default function useDanhMucData(hienThongBao) {
   const [trangHienTai, setTrangHienTai] = useState(1);
   const [boLocDanhMuc, setBoLocDanhMuc] = useState(null);
 
-  // 1. Hàm tải dữ liệu
   const taiDanhSach = useCallback(async () => {
     try {
       const layTrang = dangXemThungRac ? dichVuDanhMuc.layThungRac : dichVuDanhMuc.layDanhSach;
@@ -31,7 +30,6 @@ export default function useDanhMucData(hienThongBao) {
 
   useEffect(() => { taiDanhSach(); }, [taiDanhSach]);
 
-  // 2. Xử lý danh sách cha và lọc hiển thị
   const danhSachCha = useMemo(() => danhSach.filter((dm) => !dm.parent_id), [danhSach]);
 
   const danhSachDangHienThi = useMemo(() => {
@@ -52,7 +50,6 @@ export default function useDanhMucData(hienThongBao) {
     });
   }, [danhSach, dangXemThungRac, boLocDanhMuc]);
 
-  // 3. Logic phân trang
   const soMucMoiTrang = 8;
   const tongSoTrang = Math.max(1, Math.ceil(danhSachDangHienThi.length / soMucMoiTrang));
   const trangDangXem = Math.min(trangHienTai, tongSoTrang);

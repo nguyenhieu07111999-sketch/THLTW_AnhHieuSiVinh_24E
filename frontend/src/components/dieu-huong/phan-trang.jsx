@@ -10,10 +10,8 @@ export default function PhanTrang({
 }) {
   if (tongSoItem === 0) return null;
 
-  // Đảm bảo trang hiện tại không vượt quá tổng số trang
   const trangDangXem = Math.min(trangHienTai, tongSoTrang);
   
-  // Tính toán hiển thị các nút phân trang (tối đa 5 nút liền kề)
   const soTrangHienThi = Math.min(5, tongSoTrang);
   const trangBatDau = Math.max(
     1,
@@ -27,7 +25,6 @@ export default function PhanTrang({
     (_, index) => trangBatDau + index
   );
 
-  // Tính toán số thứ tự item đang hiển thị
   const itemBatDau = (trangDangXem - 1) * soItemMoiTrang + 1;
   const itemKetThuc = Math.min(trangDangXem * soItemMoiTrang, tongSoItem);
 
@@ -37,7 +34,6 @@ export default function PhanTrang({
         Hiển thị {itemBatDau}–{itemKetThuc} trong tổng số {tongSoItem} {tenLoaiItem}
       </span>
       <nav aria-label="Phân trang" className="flex items-center gap-1">
-        {/* Nút Trước */}
         <button
           disabled={trangDangXem <= 1}
           onClick={() => setTrangHienTai(Math.max(1, trangDangXem - 1))}
@@ -46,7 +42,6 @@ export default function PhanTrang({
           ◀ Trước
         </button>
 
-        {/* Nút Trang 1 (Nếu bị ẩn) */}
         {trangBatDau > 1 && (
           <>
             <button
@@ -59,7 +54,6 @@ export default function PhanTrang({
           </>
         )}
 
-        {/* Các nút trang hiện tại */}
         {cacTrangHienThi.map((page) => (
           <button
             key={page}
@@ -74,7 +68,6 @@ export default function PhanTrang({
           </button>
         ))}
 
-        {/* Nút Trang Cuối (Nếu bị ẩn) */}
         {trangBatDau + soTrangHienThi - 1 < tongSoTrang && (
           <>
             {trangBatDau + soTrangHienThi < tongSoTrang && (
@@ -89,7 +82,6 @@ export default function PhanTrang({
           </>
         )}
 
-        {/* Nút Sau */}
         <button
           disabled={trangDangXem >= tongSoTrang}
           onClick={() => setTrangHienTai(Math.min(tongSoTrang, trangDangXem + 1))}

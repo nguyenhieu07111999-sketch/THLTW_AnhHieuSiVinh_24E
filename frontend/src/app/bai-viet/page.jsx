@@ -32,7 +32,6 @@ export default function TrangDanhSachBaiViet() {
         const listBv = Array.isArray(resBaiViet) ? resBaiViet : (resBaiViet?.data || []);
         const listCd = Array.isArray(resChuDe) ? resChuDe : (resChuDe?.data || []);
         
-        // Chỉ lấy các bài viết đã xuất bản
         const bvXuatBan = listBv.filter((b) => b.trang_thai === 'xuat_ban' || b.trang_thai === 'dang');
         setDsBaiViet(bvXuatBan);
         setDsChuDe(listCd);
@@ -49,7 +48,6 @@ export default function TrangDanhSachBaiViet() {
     };
   }, []);
 
-  // Lọc bài viết theo danh mục chủ đề và từ khóa tìm kiếm
   const dsLoc = useMemo(() => {
     return dsBaiViet.filter((b) => {
       const khopTuKhoa = !tuKhoa.trim() || b.tieu_de?.toLowerCase().includes(tuKhoa.trim().toLowerCase());
@@ -71,7 +69,6 @@ export default function TrangDanhSachBaiViet() {
   return (
     <div className="bg-emerald-50/30 min-h-screen py-8">
       <div className="max-w-7xl mx-auto px-4">
-        {/* Banner tiêu đề */}
         <div className="bg-gradient-to-r from-emerald-800 to-teal-700 text-white rounded-3xl p-8 md:p-12 mb-8 shadow-sm relative overflow-hidden">
           <div className="relative z-10 max-w-2xl">
             <span className="px-3 py-1 bg-white/20 backdrop-blur-md text-emerald-100 rounded-full text-xs font-semibold uppercase tracking-wider mb-3 inline-block">
@@ -89,10 +86,8 @@ export default function TrangDanhSachBaiViet() {
           </div>
         </div>
 
-        {/* Thanh tìm kiếm & Tabs chủ đề */}
         <div className="bg-white p-4 md:p-5 rounded-2xl border border-emerald-100 shadow-sm mb-8 space-y-4">
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-            {/* Lọc nhanh theo chủ đề */}
             <div className="flex flex-wrap gap-2 w-full md:w-auto">
               <button
                 type="button"
@@ -138,7 +133,6 @@ export default function TrangDanhSachBaiViet() {
           </div>
         </div>
 
-        {/* Lưới danh sách bài viết */}
         {dangTai ? (
           <div className="py-24 text-center">
             <div className="inline-block animate-spin text-3xl mb-3">🌱</div>
@@ -160,7 +154,6 @@ export default function TrangDanhSachBaiViet() {
           </div>
         )}
 
-        {/* Phân trang */}
         {!dangTai && tongSoTrang > 1 && (
           <div className="flex justify-center mt-10">
             <div className="bg-white rounded-2xl overflow-hidden border border-emerald-100 shadow-sm inline-block">

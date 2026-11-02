@@ -172,7 +172,6 @@ import { useXacThuc } from '@/context/xac-thuc-context';
 import { dichVuXacThuc } from '@/services/dich-vu-xac-thuc';
 import { dichVuMenu } from '@/services/dichVuMenu';
 
-// Menu dự phòng (fallback) nếu backend chưa phản hồi hoặc chưa cấu hình
 const MENU_MAC_DINH = [
   { url: '/', ten: 'Trang chủ', target: '_self' },
   { url: '/danh-muc', ten: 'Danh mục', target: '_self' },
@@ -188,7 +187,6 @@ export default function ThanhDieuHuong() {
   const [danhSachMenu, setDanhSachMenu] = useState(MENU_MAC_DINH);
   const dropdownRef = useRef(null);
 
-  // Lấy danh sách menu động vị trí header
   useEffect(() => {
     dichVuMenu
       .layMenuPublic?.('header')
@@ -203,7 +201,6 @@ export default function ThanhDieuHuong() {
       });
   }, []);
 
-  // Đóng dropdown khi click ra ngoài hoặc nhấn Esc
   useEffect(() => {
     if (!isOpen) return;
     const onPointerDown = (e) => {
@@ -225,13 +222,11 @@ export default function ThanhDieuHuong() {
     try {
       await dichVuXacThuc.dangXuat();
     } catch {
-      // Bỏ qua lỗi token hết hạn
     }
     dangXuat();
     router.push('/dang-nhap');
   };
 
-  // Trang quản trị có thanh điều hướng riêng, ẩn header cửa hàng
   if (pathname?.startsWith('/admin')) return null;
 
   const itemCls =
@@ -246,7 +241,6 @@ export default function ThanhDieuHuong() {
           <span className="font-bold text-xl text-emerald-800 tracking-wide">NôngSảnTươi</span>
         </Link>
 
-        {/* Menu Điều hướng Động */}
         <nav className="hidden md:flex items-center space-x-7 font-medium text-sm text-gray-700">
           {danhSachMenu.map((m) => {
             const hasChildren = Array.isArray(m.children) && m.children.length > 0;
@@ -275,7 +269,6 @@ export default function ThanhDieuHuong() {
                   )}
                 </Link>
 
-                {/* Dropdown Menu Con khi hover */}
                 {hasChildren && (
                   <div className="absolute left-0 top-full hidden group-hover:block w-56 bg-white rounded-2xl shadow-xl border border-emerald-100 py-2 z-50 animate-in fade-in zoom-in-95">
                     {m.children.map((sub) => (
@@ -296,12 +289,10 @@ export default function ThanhDieuHuong() {
           })}
         </nav>
 
-        {/* Nút hành động */}
         <div className="flex items-center space-x-4">
           {!daSanSang ? (
             <div className="w-28 h-9 rounded-xl bg-gray-100 animate-pulse" />
           ) : user ? (
-            /* Dropdown Profile */
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setIsOpen((v) => !v)}
