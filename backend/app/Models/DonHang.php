@@ -28,6 +28,11 @@ class DonHang extends Model
         'trang_thai_don_hang',
         'trang_thai_thanh_toan',
         'phuong_thuc_thanh_toan',
+        'thanh_toan_that_bai',
+    ];
+
+    protected $casts = [
+        'thanh_toan_that_bai' => 'boolean',
     ];
 
     public function chiTiet()

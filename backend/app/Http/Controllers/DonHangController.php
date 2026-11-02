@@ -13,7 +13,6 @@ use RuntimeException;
 
 class DonHangController extends Controller
 {
-
     public function store(StoreDonHangRequest $request)
     {
         $validated = $request->validated();
@@ -72,7 +71,10 @@ class DonHangController extends Controller
                 'phi_vanchuyen' => $phiVanChuyen,
                 'thanh_tien' => $tongTien + $phiVanChuyen,
                 'trang_thai_don_hang' => 'cho_xac_nhan',
-                'trang_thai_thanh_toan' => 'chua_thanh_toan',
+                'trang_thai_thanh_toan' => $phuongThuc === 'COD'
+                    ? 'da_thanh_toan'
+                    : 'chua_thanh_toan',
+                'thanh_toan_that_bai' => false,
                 'phuong_thuc_thanh_toan' => $phuongThuc,
             ]);
             $donHang->chiTiet()->createMany($chiTiets);
@@ -104,8 +106,12 @@ class DonHangController extends Controller
         $hopLe = $donHang && $this->xacThucChuKyVnpay($params)
             && $this->soTienCallbackHopLe($params, $donHang);
 
-        if ($hopLe && $this->vnpayThanhToanThanhCong($params)) {
-            $this->xacNhanDaThanhToan($donHang);
+        if ($hopLe) {
+            if ($this->vnpayThanhToanThanhCong($params)) {
+                $this->xacNhanDaThanhToan($donHang);
+            } else {
+                $this->ghiNhanThanhToanThatBai($donHang);
+            }
         }
 
         $ketQua = $hopLe && $this->vnpayThanhToanThanhCong($params)
@@ -139,6 +145,8 @@ class DonHangController extends Controller
 
         if ($this->vnpayThanhToanThanhCong($params)) {
             $this->xacNhanDaThanhToan($donHang);
+        } else {
+            $this->ghiNhanThanhToanThatBai($donHang);
         }
 
         return response()->json(['RspCode' => '00', 'Message' => 'Confirm Success']);
@@ -229,7 +237,20 @@ class DonHangController extends Controller
         DB::transaction(function () use ($donHang) {
             $donHang = DonHang::whereKey($donHang->id)->lockForUpdate()->first();
             if ($donHang && $donHang->trang_thai_thanh_toan === 'chua_thanh_toan') {
-                $donHang->update(['trang_thai_thanh_toan' => 'da_thanh_toan']);
+                $donHang->update([
+                    'trang_thai_thanh_toan' => 'da_thanh_toan',
+                    'thanh_toan_that_bai' => false,
+                ]);
+            }
+        });
+    }
+
+    private function ghiNhanThanhToanThatBai(DonHang $donHang): void
+    {
+        DB::transaction(function () use ($donHang) {
+            $donHang = DonHang::whereKey($donHang->id)->lockForUpdate()->first();
+            if ($donHang && $donHang->trang_thai_thanh_toan === 'chua_thanh_toan') {
+                $donHang->update(['thanh_toan_that_bai' => true]);
             }
         });
     }

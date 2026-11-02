@@ -1,13 +1,22 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { themVaoGio } from '@/services/dich-vu-gio-hang';
+import Toast from '@/components/thong-bao/toast';
 
 export default function TheSanPham({ sp, type = 'normal' }) {
   const router = useRouter();
   const [dangThemVaoGio, setDangThemVaoGio] = useState(false);
   const [loiThemVaoGio, setLoiThemVaoGio] = useState('');
+  const [thongBaoThemVaoGio, setThongBaoThemVaoGio] = useState('');
+
+  useEffect(() => {
+    if (!thongBaoThemVaoGio) return undefined;
+
+    const timer = setTimeout(() => setThongBaoThemVaoGio(''), 5000);
+    return () => clearTimeout(timer);
+  }, [thongBaoThemVaoGio]);
 
   const giaGiamNum = Number(sp.gia_giam);
   const giaBanNum = Number(sp.gia_ban);
@@ -29,7 +38,7 @@ export default function TheSanPham({ sp, type = 'normal' }) {
     setDangThemVaoGio(true);
     try {
       await themVaoGio(sp.id);
-      router.push('/gio-hang');
+      setThongBaoThemVaoGio(`Đã thêm ${sp.ten_san_pham} vào giỏ hàng thành công!`);
     } catch (error) {
       const errors = error.response?.data?.errors;
       setLoiThemVaoGio(
@@ -47,6 +56,7 @@ export default function TheSanPham({ sp, type = 'normal' }) {
       onClick={() => router.push(`/danh-muc/${sp.id}`)}
       className={`relative bg-white rounded-2xl p-4 border ${borderColor} shadow-sm hover:shadow-md transition-all cursor-pointer group`}
     >
+      <Toast thongBao={thongBaoThemVaoGio} loai="success" />
       {/* Nhãn giảm giá */}
       {coGiamGia && isPromotion && (
         <span className="absolute top-3 left-3 bg-rose-500 text-white text-xs font-bold px-2 py-1 rounded-lg z-10">

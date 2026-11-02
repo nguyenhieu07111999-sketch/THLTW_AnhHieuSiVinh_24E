@@ -13,7 +13,7 @@ export default function Toast({ thongBao, loai }) {
         '⚠️';
 
   return (
-    <div className={`fixed bottom-6 right-6 z-[100] ${mau} text-white px-5 py-3 rounded-xl shadow-xl text-sm font-medium flex items-center gap-2 animate-bounce`}>
+    <div onClick={(event) => event.stopPropagation()} className={`fixed bottom-6 right-6 z-[100] ${mau} text-white px-5 py-3 rounded-xl shadow-xl text-sm font-medium flex items-center gap-2 animate-bounce`}>
       {icon}
       <span>{thongBao}</span>
     </div>

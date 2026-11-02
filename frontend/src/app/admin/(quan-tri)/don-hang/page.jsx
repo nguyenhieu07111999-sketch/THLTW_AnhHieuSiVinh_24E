@@ -3,11 +3,9 @@ import React, { useState, useCallback } from 'react';
 import Toast from '@/components/thong-bao/toast';
 import PhanTrang from '@/components/dieu-huong/phan-trang';
 import HangDonHang from '@/components/don-hang/hang-don-hang';
-import ChiTietDonHangModal from '@/components/don-hang/chi-tiet-don-hang-modal';
 
 import useDonHangData from '@/hooks/useDonHangData';
 import useDonHangActions from '@/hooks/useDonHangActions';
-import useModalDonHang from '@/hooks/useModalDonHang';
 
 export default function QuanLyDonHangPage() {
   const [thongBao, setThongBao] = useState('');
@@ -21,7 +19,6 @@ export default function QuanLyDonHangPage() {
 
   const data = useDonHangData(hienThongBao);
   const actions = useDonHangActions(data.taiDanhSach, hienThongBao);
-  const modal = useModalDonHang(hienThongBao);
 
   return (
     <div className="p-6 font-sans">
@@ -75,7 +72,6 @@ export default function QuanLyDonHangPage() {
                 <HangDonHang
                   key={dh.id}
                   donHang={dh}
-                  onXemChiTiet={modal.xemChiTiet}
                   onCapNhatTrangThai={actions.capNhatTrangThaiDonHang}
                 />
               ))
@@ -95,12 +91,6 @@ export default function QuanLyDonHangPage() {
         )}
       </div>
 
-      <ChiTietDonHangModal
-        moModal={modal.moModalChiTiet}
-        dongModal={modal.dongModalChiTiet}
-        donHang={modal.donHangChiTiet}
-        dangTai={modal.dangTaiChiTiet}
-      />
     </div>
   );
 }
